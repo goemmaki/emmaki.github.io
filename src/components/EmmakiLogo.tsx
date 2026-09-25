@@ -38,6 +38,21 @@ export function EmmakiLogo({ width, reduceMotion = false }: EmmakiLogoProps) {
             }}
           />
         </clipPath>
+
+        <clipPath id="emmaki-frame-reveal">
+          <motion.rect
+            x="0"
+            y="0"
+            height="185"
+            initial={shouldAnimate ? { width: 0 } : { width: 414 }}
+            animate={{ width: 414 }}
+            transition={{
+              duration: shouldAnimate ? 0.72 : 0,
+              delay: shouldAnimate ? 1.2 : 0,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          />
+        </clipPath>
       </defs>
 
       {/* Speech bubble frame */}
@@ -46,11 +61,28 @@ export function EmmakiLogo({ width, reduceMotion = false }: EmmakiLogoProps) {
           id="frame"
           className="brand-logo__frame"
           fill="#ffffff"
-          initial={shouldAnimate ? { opacity: 0 } : { opacity: 1 }}
-          animate={{ opacity: 1 }}
+          clipPath="url(#emmaki-frame-reveal)"
+          initial={
+            shouldAnimate
+              ? { opacity: 0, filter: "drop-shadow(0 0 0px rgba(255,195,0,0))" }
+              : { opacity: 1, filter: "none" }
+          }
+          animate={
+            shouldAnimate
+              ? {
+                  opacity: [0, 1, 1],
+                  filter: [
+                    "drop-shadow(0 0 0px rgba(255,195,0,0))",
+                    "drop-shadow(0 0 10px rgba(255,195,0,0.95)) drop-shadow(0 0 3px rgba(255,255,255,0.85))",
+                    "drop-shadow(0 0 0px rgba(255,195,0,0))",
+                  ],
+                }
+              : { opacity: 1, filter: "none" }
+          }
           transition={{
-            duration: 0.45,
-            delay: shouldAnimate ? 1.25 : 0,
+            duration: shouldAnimate ? 0.82 : 0,
+            delay: shouldAnimate ? 1.18 : 0,
+            times: [0, 0.34, 1],
             ease: "easeOut",
           }}
           d="M 125.13062,935.30513 V 917.158 l -2.90284,-0.1467 c -1.59659,-0.081 -8.44853,-0.116 -15.2264,-0.079 l -12.323452,0.068 v -5.5145 l 9.8e-5,-5.5145 20.648534,0.057 20.64865,0.057 0.10956,11.3177 0.10956,11.31763 3.08243,-2.8527 C 151.48987,914.5652 157.895,908.6781 159.65336,907.1393 l 1.33143,-1.1654 h 167.5271 167.52699 V 889.935 873.896 h 5.57803 5.57822 l 0.0629,4.7337 c 0.0344,2.6036 0.0344,12.3021 5.9e-4,21.5524 l -0.0629,16.8186 -170.92059,-0.029 -170.9209,-0.029 -1.76388,1.5729 c -2.14901,1.9162 -7.09906,6.425 -9.21975,8.39803 -0.85603,0.7964 -2.72553,2.5005 -4.15444,3.787 -1.42899,1.2865 -3.8404,3.4918 -5.3588,4.9008 -2.32113,2.1538 -10.84941,9.8835 -15.36114,13.9226 -0.68421,0.6126 -1.94661,1.747 -2.80529,2.5209 l -1.56118,1.4071 z"
