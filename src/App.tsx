@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react"
-import { motion, useReducedMotion } from "motion/react"
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"\nimport { EmmakiLogo } from "./components/EmmakiLogo"
 
 const work = [
   {
