@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react"
 import { ArrowUpRight } from "lucide-react"
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
+import { motion, useReducedMotion } from "motion/react"
 import { EmmakiLogo } from "./components/EmmakiLogo"
 
 const work = [
@@ -38,6 +39,16 @@ const capabilities = [
 
 export default function App() {
   const reduceMotion = useReducedMotion()
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const enter = {
     initial: reduceMotion ? false : { opacity: 0, y: 18 },
@@ -46,9 +57,9 @@ export default function App() {
 
   return (
     <main>
-      <header className="site-header">
+      <header className={`site-header ${isScrolled ? "site-header--scrolled" : ""}`}>
         <a className="wordmark" href="#top" aria-label="Emma Rawson home">
-          ER
+          <EmmakiLogo reduceMotion={reduceMotion} />
         </a>
         <nav aria-label="Primary navigation">
           <a href="#work">Work</a>
