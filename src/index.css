@@ -60,7 +60,7 @@ main {
 }
 
 .site-header {
-  min-height: 64px;
+  min-height: 92px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -79,7 +79,7 @@ main {
 }
 
 .site-header--scrolled {
-  min-height: 48px;
+  min-height: 60px;
   background: rgba(10, 10, 11, 0.95);
   border-bottom-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
@@ -88,27 +88,27 @@ main {
 .wordmark {
   display: flex;
   align-items: center;
-  min-height: 52px;
+  min-height: 80px;
   color: var(--text);
   transition: min-height 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-header--scrolled .wordmark {
-  min-height: 40px;
+  min-height: 52px;
 }
 
 .brand-logo {
   display: block;
   height: auto;
-  width: 108px;
-  max-width: min(40vw, 108px);
+  width: 176px;
+  max-width: min(46vw, 176px);
   overflow: visible;
   transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-header--scrolled .brand-logo {
-  width: 80px;
-  max-width: min(30vw, 80px);
+  width: 120px;
+  max-width: min(34vw, 120px);
 }
 
 .brand-logo__frame {
@@ -354,13 +354,13 @@ footer a {
   }
 
   .brand-logo {
-    width: 100px;
-    max-width: 100px;
+    width: 150px;
+    max-width: 150px;
   }
 
   .site-header--scrolled .brand-logo {
-    width: 76px;
-    max-width: 76px;
+    width: 108px;
+    max-width: 108px;
   }
 
   .hero {
@@ -396,13 +396,13 @@ footer a {
   }
 
   .brand-logo {
-    width: 90px;
-    max-width: 90px;
+    width: 132px;
+    max-width: 132px;
   }
 
   .site-header--scrolled .brand-logo {
-    width: 70px;
-    max-width: 70px;
+    width: 96px;
+    max-width: 96px;
   }
 
   .hero h1 {
