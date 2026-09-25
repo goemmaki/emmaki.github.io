@@ -24,35 +24,81 @@ export function EmmakiLogo({ width, reduceMotion = false }: EmmakiLogoProps) {
       style={width ? { width } : undefined}
     >
       <defs>
-        <clipPath id="emmaki-signature-reveal">
-          <motion.rect
-            x="0"
-            y="0"
-            height="185"
-            initial={shouldAnimate ? { width: 0 } : { width: 414 }}
-            animate={{ width: 414 }}
-            transition={{
-              duration: 1.35,
-              delay: 0.1,
-              ease: [0.25, 0.1, 0.25, 1],
-            }}
-          />
-        </clipPath>
+        <mask
+          id="emmaki-write-mask"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="414"
+          height="185"
+        >
+          <rect x="0" y="0" width="414" height="185" fill="black" />
 
-        <clipPath id="emmaki-frame-reveal">
-          <motion.rect
-            x="0"
-            y="0"
-            height="185"
-            initial={shouldAnimate ? { width: 0 } : { width: 414 }}
-            animate={{ width: 414 }}
-            transition={{
-              duration: shouldAnimate ? 0.72 : 0,
-              delay: shouldAnimate ? 1.2 : 0,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          />
-        </clipPath>
+          {/* Broad guide strokes reveal the real filled signature underneath.
+              These are deliberately invisible; only the original logo path is shown. */}
+          {[
+            {
+              d: "M 82 91 C 67 82, 72 63, 99 43 C 121 27, 145 18, 165 14 C 149 29, 128 46, 108 59 C 95 67, 83 74, 80 85 C 78 99, 99 105, 124 97",
+              delay: 0.08,
+              duration: 0.42,
+              width: 16,
+            },
+            {
+              d: "M 118 92 C 132 82, 143 68, 151 56 C 145 76, 145 92, 156 94 C 168 96, 179 80, 188 62",
+              delay: 0.43,
+              duration: 0.30,
+              width: 15,
+            },
+            {
+              d: "M 181 94 C 194 83, 204 68, 212 57 C 207 75, 207 91, 218 94 C 230 96, 242 80, 250 63",
+              delay: 0.68,
+              duration: 0.30,
+              width: 15,
+            },
+            {
+              d: "M 244 94 C 258 82, 269 68, 279 56 C 274 75, 274 90, 286 94 C 298 97, 311 82, 322 66",
+              delay: 0.93,
+              duration: 0.30,
+              width: 15,
+            },
+            {
+              d: "M 314 92 C 326 82, 337 72, 347 62 C 338 76, 331 88, 336 94 C 342 101, 356 93, 371 80 C 363 91, 357 99, 362 103 C 371 110, 386 101, 400 94",
+              delay: 1.18,
+              duration: 0.36,
+              width: 16,
+            },
+            {
+              d: "M 324 31 C 330 23, 335 16, 339 10",
+              delay: 1.08,
+              duration: 0.16,
+              width: 12,
+            },
+            {
+              d: "M 370 49 C 374 46, 378 45, 382 45",
+              delay: 1.42,
+              duration: 0.12,
+              width: 11,
+            },
+          ].map((stroke, index) => (
+            <motion.path
+              key={index}
+              d={stroke.d}
+              fill="none"
+              stroke="white"
+              strokeWidth={stroke.width}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              initial={shouldAnimate ? { pathLength: 0 } : { pathLength: 1 }}
+              animate={{ pathLength: 1 }}
+              transition={{
+                duration: shouldAnimate ? stroke.duration : 0,
+                delay: shouldAnimate ? stroke.delay : 0,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            />
+          ))}
+        </mask>
       </defs>
 
       {/* Speech bubble frame */}
@@ -61,7 +107,6 @@ export function EmmakiLogo({ width, reduceMotion = false }: EmmakiLogoProps) {
           id="frame"
           className="brand-logo__frame"
           fill="#ffffff"
-          clipPath="url(#emmaki-frame-reveal)"
           initial={
             shouldAnimate
               ? { opacity: 0, filter: "drop-shadow(0 0 0px rgba(255,195,0,0))" }
@@ -73,24 +118,24 @@ export function EmmakiLogo({ width, reduceMotion = false }: EmmakiLogoProps) {
                   opacity: [0, 1, 1],
                   filter: [
                     "drop-shadow(0 0 0px rgba(255,195,0,0))",
-                    "drop-shadow(0 0 10px rgba(255,195,0,0.95)) drop-shadow(0 0 3px rgba(255,255,255,0.85))",
+                    "drop-shadow(0 0 11px rgba(255,195,0,0.9)) drop-shadow(0 0 3px rgba(255,255,255,0.7))",
                     "drop-shadow(0 0 0px rgba(255,195,0,0))",
                   ],
                 }
               : { opacity: 1, filter: "none" }
           }
           transition={{
-            duration: shouldAnimate ? 0.82 : 0,
-            delay: shouldAnimate ? 1.18 : 0,
-            times: [0, 0.34, 1],
+            duration: shouldAnimate ? 0.7 : 0,
+            delay: shouldAnimate ? 1.56 : 0,
+            times: [0, 0.32, 1],
             ease: "easeOut",
           }}
           d="M 125.13062,935.30513 V 917.158 l -2.90284,-0.1467 c -1.59659,-0.081 -8.44853,-0.116 -15.2264,-0.079 l -12.323452,0.068 v -5.5145 l 9.8e-5,-5.5145 20.648534,0.057 20.64865,0.057 0.10956,11.3177 0.10956,11.31763 3.08243,-2.8527 C 151.48987,914.5652 157.895,908.6781 159.65336,907.1393 l 1.33143,-1.1654 h 167.5271 167.52699 V 889.935 873.896 h 5.57803 5.57822 l 0.0629,4.7337 c 0.0344,2.6036 0.0344,12.3021 5.9e-4,21.5524 l -0.0629,16.8186 -170.92059,-0.029 -170.9209,-0.029 -1.76388,1.5729 c -2.14901,1.9162 -7.09906,6.425 -9.21975,8.39803 -0.85603,0.7964 -2.72553,2.5005 -4.15444,3.787 -1.42899,1.2865 -3.8404,3.4918 -5.3588,4.9008 -2.32113,2.1538 -10.84941,9.8835 -15.36114,13.9226 -0.68421,0.6126 -1.94661,1.747 -2.80529,2.5209 l -1.56118,1.4071 z"
         />
       </g>
 
-      {/* Signature handwriting with written-in wipe animation */}
-      <g clipPath="url(#emmaki-signature-reveal)">
+      {/* The original signature path is revealed by the animated pen-stroke mask. */}
+      <g mask="url(#emmaki-write-mask)">
         <g transform="translate(-94.677922, -769.19482)">
           <path
             id="signature"
