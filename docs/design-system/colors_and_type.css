@@ -1,0 +1,109 @@
+/* Emmaki canonical color and typography roles. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-canvas: #000000;
+  --color-canvas-secondary: #1A1A1A;
+  --color-surface-subtle: #1F1F1F;
+  --color-surface-raised: #292929;
+  --color-neutral-strong: #454545;
+  --color-text-primary: #EDEDED;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #878787;
+  --color-text-maximum: #FFFFFF;
+  --color-border-faint: rgb(255 255 255 / 7%);
+  --color-border-default: rgb(255 255 255 / 9%);
+  --color-border-strong: rgb(255 255 255 / 13%);
+  --color-border-emphasized: rgb(255 255 255 / 14%);
+  --color-border-solid: #454545;
+
+  /* Authored/brand activity: same tier logic as system green. */
+  --color-brand-yellow-ghost: rgb(252 195 0 / 8%);
+  --color-brand-yellow-motif: rgb(252 195 0 / 14%);
+  --color-brand-yellow-active: rgb(252 195 0 / 24%);
+  --color-brand-yellow-splash: #FCC300;
+
+  /* Machine/system activity only; never semantic success. */
+  --color-system-green-ghost: rgb(72 205 57 / 8%);
+  --color-system-green-motif: rgb(72 205 57 / 14%);
+  --color-system-green-active: rgb(72 205 57 / 24%);
+  --color-system-green-crisp: #48CD39;
+
+  --color-semantic-success: #00AB3E;
+  --color-semantic-warning: #F58B00;
+  --color-semantic-error: #F13242;
+  --color-semantic-info: #0090FF;
+
+  /* Focus is neutral/high-contrast, not a brand/activity color. */
+  --color-focus: #EDEDED;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --color-canvas: #FFFFFF;
+  --color-canvas-secondary: #FAFAFA;
+  --color-surface-subtle: #F2F2F2;
+  --color-surface-raised: #EBEBEB;
+  --color-neutral-strong: #C9C9C9;
+  --color-text-primary: #171717;
+  --color-text-secondary: #4D4D4D;
+  --color-text-muted: #7D7D7D;
+  --color-text-maximum: #000000;
+  --color-border-faint: rgb(0 0 0 / 5%);
+  --color-border-default: rgb(0 0 0 / 8%);
+  --color-border-strong: rgb(0 0 0 / 10%);
+  --color-border-emphasized: rgb(0 0 0 / 14%);
+  --color-border-solid: #C9C9C9;
+
+  --color-brand-yellow-ghost: rgb(252 195 0 / 8%);
+  --color-brand-yellow-motif: rgb(252 195 0 / 14%);
+  --color-brand-yellow-active: rgb(252 195 0 / 24%);
+  --color-brand-yellow-splash: #FCC300;
+
+  --color-system-green-ghost: rgb(26 159 11 / 8%);
+  --color-system-green-motif: rgb(26 159 11 / 14%);
+  --color-system-green-active: rgb(26 159 11 / 24%);
+  --color-system-green-crisp: #147809;
+
+  --color-semantic-success: #28A948;
+  --color-semantic-warning: #F58B00;
+  --color-semantic-error: #FC0035;
+  --color-semantic-info: #0070F7;
+
+  --color-focus: #171717;
+}
+
+:root {
+  --font-display: "Geist", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --font-weight-read: 400;
+  --font-weight-emphasize: 500;
+  --font-weight-announce: 600;
+
+  --type-display-mega-size: clamp(4rem, 7vw, 6rem);
+  --type-display-mega-leading: 1.03;
+  --type-display-mega-tracking: -0.045em;
+  --type-heading-h1-size: clamp(3rem, 5.2vw, 4.5rem);
+  --type-heading-h1-leading: 1.08;
+  --type-heading-h1-tracking: -0.03em;
+  --type-heading-h2-size: clamp(2rem, 3.6vw, 3rem);
+  --type-heading-h2-leading: 1.12;
+  --type-heading-h2-tracking: -0.025em;
+  --type-heading-h3-size: 1.625rem;
+  --type-heading-h3-leading: 1.2;
+  --type-heading-h3-tracking: -0.01em;
+  --type-body-lead-size: 1.25rem;
+  --type-body-lead-leading: 1.5;
+  --type-body-editorial-size: 1.125rem;
+  --type-body-editorial-leading: 1.58;
+  --type-body-default-size: 1rem;
+  --type-body-default-leading: 1.5;
+  --type-body-secondary-size: 0.875rem;
+  --type-body-secondary-leading: 1.43;
+  --type-meta-default-size: 0.8125rem;
+  --type-meta-default-leading: 1.4;
+  --type-meta-technical-size: 0.875rem;
+  --type-meta-technical-leading: 1.43;
+}

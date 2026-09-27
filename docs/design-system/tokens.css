@@ -1,0 +1,34 @@
+/* Emmaki spacing and layout tokens — internal alignment vs. compositional break. */
+:root {
+  /* Interface register: component internals, controls, and local alignment. */
+  --space-interface-4: 4px;
+  --space-interface-8: 8px;
+  --space-interface-12: 12px;
+  --space-interface-16: 16px;
+  --space-interface-24: 24px;
+  --space-interface-32: 32px;
+
+  /* Editorial register: macro composition and section rhythm. */
+  --space-editorial-52: 52px;
+  --space-editorial-84: 84px;
+  --space-editorial-136: 136px;
+  --space-hero-exceptional: 220px;
+
+  --layout-gutter-desktop: 32px;
+  --layout-gutter-mobile: 24px;
+  --layout-gutter-narrow-survival: 16px;
+  --layout-shell-standard: 1200px;
+  --layout-shell-visual: 1400px;
+  --layout-reading-min: 640px;
+  --layout-reading-max: 700px;
+
+  /* Canonical until explicitly superseded by a later visual decision. */
+  --shape-control-radius: 2px;
+  --shape-border-width: 1px;
+
+  --breakpoint-layout-primary: 960px;
+  --breakpoint-content-primary: 600px;
+  --breakpoint-narrow-survival: 400px;
+  --breakpoint-shell: 1200px;
+  --breakpoint-wide: 1400px;
+}

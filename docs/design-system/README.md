@@ -1,0 +1,49 @@
+# Emmaki design system
+
+This directory is the canonical design-system handoff for the Emmaki portfolio website. It is derived from the OpenDesign package and updated to reflect the decisions made after that export.
+
+## Authority
+
+Use this precedence when sources conflict:
+
+1. `DESIGN.md` and `BRAND.md` — active visual and brand rules.
+2. `colors_and_type.css` and `tokens.css` — implementation tokens for color, type, spacing, layout, and shape.
+3. `ARCHITECTURE.md` — production implementation and deployment contract.
+4. `DESIGN-HANDOFF.md` and `SKILL.md` — agent handoff and reuse guidance.
+5. OpenDesign previews/UI-kit material — compositional reference only.
+6. OpenDesign `context/`, `system/`, generated themes, manifests, and artifacts — provenance/reference only. They are not implementation authority.
+
+The shadcn Luma preset is implementation substrate only. It may supply accessible component structure, font wiring, menu behavior, and neutral defaults, but it does not define the Emmaki brand. Emmaki rules override Luma/shadcn defaults; framework defaults come last.
+
+## Current visual thesis
+
+Emmaki is a premium, human-led B2B writing and strategy brand with technical fluency. Writerly judgment leads; technical capability supports it. The system is dark-first with a genuine light mode, monochrome hierarchy, restrained technical detail, and deliberate negative space.
+
+Two ambient color registers sit on top of the neutral foundation:
+
+- **Yellow** = authored/brand activity. Use `#FCC300` through ghost/motif/active tiers at 8% / 14% / 24%; use solid `#FCC300` only as a rare splash. Yellow is not a generic primary UI color.
+- **Green** = machine/system activity. Use its theme-specific ghost/motif/active tiers at 8% / 14% / 24%; use its crisp value only when the system signal genuinely needs to resolve clearly. Green is not semantic success.
+
+Monochrome carries hierarchy. Semantic success/warning/error/info colors are reserved for genuine UI state.
+
+## Current non-negotiables
+
+- Geist for display hierarchy.
+- IBM Plex Sans for reading and interface copy.
+- IBM Plex Mono for genuine metadata/technical annotation.
+- No serif family.
+- Interface spacing: 4 / 8 / 12 / 16 / 24 / 32px.
+- Editorial spacing: 52 / 84 / 136px.
+- 220px only for exceptional hero use.
+- Desktop gutter 32px; mobile 24px; 16px below ~400px only for survival.
+- Standard shell 1200px; wide visual shell 1400px; reading measure 640–700px.
+- One-pixel neutral structure.
+- No universal 12-column grid.
+- No generic SaaS card-dashboard repetition.
+- No robots, glowing brains, circuit boards, decorative gradients, neon effects, or invented client evidence.
+- No active editorial-mark grammar for now: do not turn highlights, underlines, circles, brackets, strikes, scribbles, or marker effects into recurring identity motifs.
+- The supplied black/white Emmaki wordmark is primary; the speech bubble is optional and subordinate. No yellow wordmark.
+
+## Package note
+
+The original OpenDesign export contained useful previews and generated material, but some generated files encoded an older yellow-as-primary model. Those files must never override this directory.
