@@ -40,6 +40,8 @@ Use for the Emmaki website, portfolio and case-study layouts, Fiverr visuals, pr
 - Semantic state colors remain separate.
 - Geist display, IBM Plex Sans body/interface, IBM Plex Mono technical/meta.
 - Interface spacing `4/8/12/16/24/32px`; editorial `52/84/136px`; `220px` exceptional only.
+- **Containers are punctuation:** default to open compositions using local gridwork, alignment, negative space, spans/offsets, and one-pixel rules; enclosure is occasional and semantically earned.
+- Avoid repeated card matrices. Let structural rules cross, terminate, intersect, or partially frame compositions, and recompose the grid responsively rather than shrinking boxes.
 - Writer/strategist first; technical fluency second.
 - Entry motion may be authored; interior motion remains sparse and controlled.
 - No active recurring marker/underline/circle/bracket/strike/scribble identity language.
