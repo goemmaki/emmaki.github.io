@@ -86,6 +86,21 @@ Use IBM Plex Mono only when the content is genuinely metadata, technical annotat
 
 Use centered shells, local grids, named areas, and content-shaped composition. Do not impose a universal 12-column grid. Do not introduce convenience spacing such as 48 / 64 / 96px as a parallel scale.
 
+### Containers are punctuation
+
+Open composition is the default. Create hierarchy with negative space, shared alignment axes, local grid tracks, deliberate spans and offsets, and one-pixel structural rules before reaching for a container.
+
+- A container is an occasional punctuation mark, not the default unit of layout.
+- Enclose content only when the object is genuinely discrete or benefits from a bounded interaction/surface: for example a menu, control cluster, modal, code/example surface, or an individual proof artifact.
+- Do not wrap every heading/copy/image group in a card merely to create hierarchy.
+- Avoid repeated same-size card matrices and boxed section stacks.
+- Structural rules may cross a composition, terminate intentionally, form intersections, or frame only part of a section. They do not need to complete a rectangle.
+- Local grids may change from section to section while sharing the same shell and alignment logic. The grid is editorial/technical scaffolding, not a universal 12-column template.
+- On smaller viewports, recompose the grid and remove nonessential rules. Do not simply shrink a desktop box matrix.
+- Yellow authored activity and green machine activity may occasionally travel along or activate this structural grid, but remain sparse and subordinate to the neutral composition.
+
+The target feeling is space with precision: less box collection, more editorial/technical drafting grid.
+
 ## Composition posture
 
 - Dark-first, with a genuine light mode.
