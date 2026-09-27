@@ -21,6 +21,8 @@ This directory — not the generated OpenDesign `system/` export — is the acti
 - Yellow is not generic primary, link, CTA, text-emphasis, or focus color.
 - Focus must be neutral/high-contrast and clearly visible.
 - Preserve the two spacing registers and named shell/gutter/reading values.
+- **Containers are punctuation:** default to open composition built from space, local gridwork, alignment axes, spans, offsets, and one-pixel rules. Enclose only semantically discrete objects that benefit from a bounded surface.
+- Do not turn sections into repeated card matrices. Structural rules may cross, terminate, intersect, or frame only part of a composition; responsive layouts should recompose the grid rather than shrink a box matrix.
 - Preserve Geist / IBM Plex Sans / IBM Plex Mono roles.
 - No serif.
 - No generic SaaS visual language, AI clichés, invented evidence, or card-dashboard repetition.
@@ -46,5 +48,6 @@ Before calling a design complete, verify:
 - no yellow/brown foreground workaround has crept back in;
 - yellow and green activity registers are not being used as semantic state;
 - spacing uses the declared registers instead of convenience values;
+- the layout uses open composition and gridwork by default, with containers appearing as punctuation rather than the page's basic unit;
 - the page reads as a senior writer/strategist with technical fluency, not an AI startup or developer-tool landing page;
 - client proof and technical claims are real and sourced.
