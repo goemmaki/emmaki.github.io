@@ -40,6 +40,8 @@ Use 2px corners unless explicitly superseded by a later visual decision, one-pix
 
 The system should feel spacious without becoming soft or generic. Negative space is compositional, not merely padding.
 
+**Containers are punctuation.** The default composition is open: use local gridwork, alignment, whitespace, spans, offsets, and one-pixel rules to establish relationships. Enclose only the occasional object that genuinely benefits from a bounded surface. Avoid card matrices and repetitive boxed sections; structural rules may frame only part of a composition or terminate intentionally.
+
 ## Logo
 
 The supplied filled Emmaki wordmark SVG is the primary identity: black on light surfaces and white on dark surfaces. Use the matching SVG in headers, covers, and branded compositions. Write “Emmaki” in prose and ordinary labels. Never create a yellow wordmark variant. The speech bubble is optional and subordinate.
