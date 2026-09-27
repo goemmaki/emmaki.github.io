@@ -2,129 +2,198 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+/* Canonical Emmaki tokens. docs/design-system is the single source of truth. */
+@import "../../docs/design-system/colors_and_type.css";
+@import "../../docs/design-system/tokens.css";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/*
+ * Tailwind names are deliberately distinct from the canonical token names
+ * (e.g. `bg-bg` → --color-canvas) so @theme never self-references a token.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-bg: var(--color-canvas);
+  --color-bg-2: var(--color-canvas-secondary);
+  --color-surface: var(--color-surface-subtle);
+  --color-raised: var(--color-surface-raised);
+  --color-strong: var(--color-neutral-strong);
+  --color-fg: var(--color-text-primary);
+  --color-fg-2: var(--color-text-secondary);
+  --color-fg-muted: var(--color-text-muted);
+  --color-fg-max: var(--color-text-maximum);
+  --color-line-faint: var(--color-border-faint);
+  --color-line: var(--color-border-default);
+  --color-line-strong: var(--color-border-strong);
+  --color-line-solid: var(--color-border-solid);
+  --color-focus-ring: var(--color-focus);
+
+  --color-yellow-ghost: var(--color-brand-yellow-ghost);
+  --color-yellow-motif: var(--color-brand-yellow-motif);
+  --color-yellow-active: var(--color-brand-yellow-active);
+  --color-yellow-splash: var(--color-brand-yellow-splash);
+  --color-green-ghost: var(--color-system-green-ghost);
+  --color-green-motif: var(--color-system-green-motif);
+  --color-green-active: var(--color-system-green-active);
+  --color-green-crisp: var(--color-system-green-crisp);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+
+  /* Editorial register (interface register = Tailwind 1/2/3/4/6/8). */
+  --spacing-e1: var(--space-editorial-52);
+  --spacing-e2: var(--space-editorial-84);
+  --spacing-e3: var(--space-editorial-136);
+  --spacing-hero: var(--space-hero-exceptional);
+  --spacing-gutter: var(--gutter);
+
+  --container-shell: var(--layout-shell-standard);
+  --container-wide: var(--layout-shell-visual);
+  --container-read: var(--layout-reading-max);
+
+  /* shadcn substrate, mapped onto Emmaki roles. */
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-canvas-secondary);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-canvas-secondary);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-text-primary);
+  --color-primary-foreground: var(--color-canvas);
+  --color-secondary: var(--color-surface-subtle);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-muted: var(--color-surface-subtle);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-surface-raised);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-destructive: var(--color-semantic-error);
+  --color-border: var(--color-border-default);
+  --color-input: var(--color-border-strong);
+  --color-ring: var(--color-focus);
+
+  --radius-sm: var(--shape-control-radius);
+  --radius-md: var(--shape-control-radius);
+  --radius-lg: var(--shape-control-radius);
+  --radius-xl: var(--shape-control-radius);
 }
 
+/* next/font supplies self-hosted families; bind them to the canonical roles. */
 :root {
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --font-display: var(--nf-geist), system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--nf-plex-sans), system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--nf-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: var(--shape-control-radius);
+
+  --gutter: var(--layout-gutter-desktop);
+  --header-h: 52px;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+@media (max-width: 960px) {
+  :root { --gutter: var(--layout-gutter-mobile); }
+}
+@media (max-width: 400px) {
+  :root { --gutter: var(--layout-gutter-narrow-survival); }
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+    @apply border-line;
   }
   html {
-    @apply font-sans;
+    background: var(--color-canvas);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-canvas);
+  }
+  ::selection {
+    background: var(--color-text-primary);
+    color: var(--color-canvas);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--shape-control-radius);
+  }
+}
+
+/* Type roles */
+@utility type-mega {
+  font-family: var(--font-display);
+  font-size: var(--type-display-mega-size);
+  line-height: var(--type-display-mega-leading);
+  letter-spacing: var(--type-display-mega-tracking);
+  font-weight: var(--font-weight-announce);
+}
+@utility type-h1 {
+  font-family: var(--font-display);
+  font-size: var(--type-heading-h1-size);
+  line-height: var(--type-heading-h1-leading);
+  letter-spacing: var(--type-heading-h1-tracking);
+  font-weight: var(--font-weight-announce);
+}
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-size: var(--type-heading-h2-size);
+  line-height: var(--type-heading-h2-leading);
+  letter-spacing: var(--type-heading-h2-tracking);
+  font-weight: var(--font-weight-announce);
+}
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-size: var(--type-heading-h3-size);
+  line-height: var(--type-heading-h3-leading);
+  letter-spacing: var(--type-heading-h3-tracking);
+  font-weight: var(--font-weight-emphasize);
+}
+@utility type-lead {
+  font-size: var(--type-body-lead-size);
+  line-height: var(--type-body-lead-leading);
+}
+@utility type-editorial {
+  font-size: var(--type-body-editorial-size);
+  line-height: var(--type-body-editorial-leading);
+}
+@utility type-secondary {
+  font-size: var(--type-body-secondary-size);
+  line-height: var(--type-body-secondary-leading);
+}
+@utility type-meta {
+  font-family: var(--font-mono);
+  font-size: var(--type-meta-default-size);
+  line-height: var(--type-meta-default-leading);
+  letter-spacing: 0.02em;
+}
+
+/* Layout */
+@utility shell {
+  width: 100%;
+  max-width: var(--layout-shell-standard);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/*
+ * Entry choreography guard. An inline script adds `.intro` to <html> before
+ * paint (never under reduced motion); GSAP takes over on mount. If JS never
+ * runs, the failsafe reveals everything after 2.4s.
+ */
+.intro [data-intro] {
+  visibility: hidden;
+  animation: intro-failsafe 0s 2.4s forwards;
+}
+@keyframes intro-failsafe {
+  to { visibility: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

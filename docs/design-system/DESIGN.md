@@ -101,6 +101,26 @@ Open composition is the default. Create hierarchy with negative space, shared al
 
 The target feeling is space with precision: less box collection, more editorial/technical drafting grid.
 
+### Punctuation marks as containers (draft, 2026-09-28)
+
+When enclosure *is* earned, the container may be an oversized punctuation mark rather than a rectangle. Marks are drawn as geometry (square counters, 2px corners, 1px outlines), not typed glyphs, so they share one shape language.
+
+Each mark does its grammatical job in the layout. This is what keeps the idea architectural rather than decorative:
+
+| Mark | Job | Use |
+| --- | --- | --- |
+| `;` semicolon | joins two complete thoughts | Home hero: the authored counter (yellow) and the machine counter (green) join the two clauses. |
+| `:` colon | introduces what follows | Sections that open onto a list (services, principles). Its two counters can double as the authored/machine legend. |
+| `—` em dash | interrupts, sets something aside | Index rows (the work list leader), section headings that lead into content. |
+| `¶` pilcrow | opens a paragraph | About/bio: a portrait or texture seen through the mark. |
+| `.` full stop | ends | Closing statements. The only sanctioned solid `#FCC300` splash on a page. |
+
+- **Mask:** a mark can clip content (texture, portrait, project imagery) so the reader sees it *through* the punctuation.
+- **Layout:** a mark can be structure, such as a divider, leader, or legend.
+- **Reveal:** marks may morph between one another (`;` → `:` → `—` → `.`) as an interaction, never as perpetual motion.
+- Use at most one oversized mark per viewport. Marks stay neutral or use yellow/green tiers by meaning; no new colors.
+- Brackets, parentheses, and quotation marks are **excluded**. They conflict with the no-editorial-mark rule.
+
 ## Composition posture
 
 - Dark-first, with a genuine light mode.
