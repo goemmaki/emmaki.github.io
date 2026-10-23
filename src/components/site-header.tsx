@@ -49,7 +49,7 @@ export function SiteHeader() {
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger
               aria-label="Open menu"
-              className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg"
+              className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
             >
               <Menu className="size-5" aria-hidden />
             </Dialog.Trigger>
@@ -63,7 +63,7 @@ export function SiteHeader() {
                   </Link>
                   <Dialog.Close
                     aria-label="Close menu"
-                    className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg"
+                    className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
                   >
                     <X className="size-5" aria-hidden />
                   </Dialog.Close>
@@ -76,7 +76,7 @@ export function SiteHeader() {
                       target="_blank"
                       rel="noopener"
                       aria-label="Message emmaki on Fiverr (opens in a new tab)"
-                      className="text-fg-2 transition-colors hover:text-fg-max"
+                      className="text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
                     >
                       <MessageCircle className="size-(--menu-icon)" aria-hidden />
                     </a>
@@ -85,7 +85,7 @@ export function SiteHeader() {
                       target="_blank"
                       rel="noopener"
                       aria-label="emmaki on Fiverr (opens in a new tab)"
-                      className="transition-[filter] hover:brightness-125"
+                      className="transition-[filter] dark:hover:brightness-125 dark:focus-visible:brightness-125 light:hover:brightness-85 light:focus-visible:brightness-85"
                     >
                       <FiverrLogo className="size-(--menu-icon)" />
                     </a>
@@ -106,7 +106,7 @@ export function SiteHeader() {
                               href={href}
                               aria-current={active ? "page" : undefined}
                               onClick={() => setOpen(false)}
-                              className={`flex min-h-16 items-center type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max ${active ? "text-fg-max" : "text-fg-2"}`}
+                              className={`flex min-h-16 items-center type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max focus-visible:text-fg-max ${active ? "text-fg-max" : "text-fg-2"}`}
                             >
                               {label}
                             </Link>
