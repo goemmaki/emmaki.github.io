@@ -14,6 +14,8 @@ import { Wordmark } from "@/components/wordmark";
 const nav = [
   { href: "/", label: "Home" },
   { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
+  { href: "/proof", label: "Proof" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
 ];
@@ -53,7 +55,7 @@ export function SiteHeader() {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity duration-200 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
-              <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] flex h-dvh w-full max-w-[720px] flex-col bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl outline-none transition-transform duration-300 ease-out data-[starting-style]:translate-x-full data-[ending-style]:translate-x-full motion-reduce:transition-none sm:px-12">
+              <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] flex h-dvh w-full max-w-[720px] flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl outline-none transition-transform duration-300 ease-out data-[starting-style]:translate-x-full data-[ending-style]:translate-x-full motion-reduce:transition-none sm:px-12">
                 <div className="flex h-11 items-center justify-between">
                   <Dialog.Title className="sr-only">Site menu</Dialog.Title>
                   <Link href="/" aria-label="emmaki home" onClick={() => setOpen(false)}>
@@ -67,8 +69,8 @@ export function SiteHeader() {
                   </Dialog.Close>
                 </div>
                 <div className="flex flex-1 flex-col justify-center gap-e2">
-                  {/* Icons at half the size of the menu type. */}
-                  <div className="flex items-center gap-8 [--menu-icon:clamp(2rem,3.5vw,3rem)]">
+                  {/* Icons a little under half the size of the menu type. */}
+                  <div className="flex items-center gap-8 [--menu-icon:clamp(1.75rem,2.75vw,2.25rem)]">
                     <a
                       href={FIVERR_INBOX_URL}
                       target="_blank"
@@ -83,7 +85,7 @@ export function SiteHeader() {
                       target="_blank"
                       rel="noopener"
                       aria-label="emmaki on Fiverr (opens in a new tab)"
-                      className="transition-opacity hover:opacity-80"
+                      className="transition-[filter] hover:brightness-125"
                     >
                       <FiverrLogo className="size-(--menu-icon)" />
                     </a>
@@ -104,7 +106,7 @@ export function SiteHeader() {
                               href={href}
                               aria-current={active ? "page" : undefined}
                               onClick={() => setOpen(false)}
-                              className={`flex min-h-16 items-center type-mega transition-colors hover:text-fg-max ${active ? "text-fg-max" : "text-fg-2"}`}
+                              className={`flex min-h-16 items-center type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max ${active ? "text-fg-max" : "text-fg-2"}`}
                             >
                               {label}
                             </Link>
