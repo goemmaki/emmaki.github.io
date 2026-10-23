@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
 import { FiverrLogo } from "@/components/fiverr-logo";
+import { MenuRollLink } from "@/components/menu-roll-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Wordmark } from "@/components/wordmark";
 
@@ -98,18 +99,17 @@ export function SiteHeader() {
                       animate="visible"
                       className="w-full space-y-1"
                     >
-                      {nav.map(({ href, label }) => {
+                      {nav.map(({ href, label }, index) => {
                         const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
                         return (
                           <motion.li key={href} variants={menuItem}>
-                            <Link
+                            <MenuRollLink
                               href={href}
-                              aria-current={active ? "page" : undefined}
-                              onClick={() => setOpen(false)}
-                              className={`flex min-h-16 items-center type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max focus-visible:text-fg-max ${active ? "text-fg-max" : "text-fg-2"}`}
-                            >
-                              {label}
-                            </Link>
+                              label={label}
+                              number={String(index + 1).padStart(2, "0")}
+                              active={active}
+                              onNavigate={() => setOpen(false)}
+                            />
                           </motion.li>
                         );
                       })}
