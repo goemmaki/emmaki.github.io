@@ -1,10 +1,18 @@
+import { Bot } from "lucide-react";
+import { TooltipLink } from "@/components/tooltip-link";
+
 export function SiteFooter() {
   return (
-    <footer className="border-t border-line">
-      <div className="shell flex flex-col gap-2 py-8 type-meta text-fg-muted sm:flex-row sm:items-center sm:justify-between">
-        <span>© {new Date().getFullYear()} Emmaki</span>
-        <span>Senior copy &amp; AI content strategy</span>
-        <span>Set in Geist &amp; IBM Plex</span>
+    <footer>
+      <div className="shell flex items-center justify-end gap-2 py-4 type-meta text-fg-2">
+        <span>© emmaki {new Date().getFullYear()}</span>
+        <TooltipLink
+          href="/agents.md"
+          label="View as agent"
+          className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg"
+        >
+          <Bot className="size-[18px]" aria-hidden />
+        </TooltipLink>
       </div>
     </footer>
   );

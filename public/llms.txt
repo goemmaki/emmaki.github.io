@@ -1,0 +1,11 @@
+# emmaki
+
+> Writing portfolio. Contact is Fiverr-only: https://www.fiverr.com/emmaki
+
+## Site guide
+
+- [Agent guide](/agents.md)
+- [Home](/)
+- [Work](/work)
+- [Blog](/blog)
+- [About](/about)

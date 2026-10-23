@@ -39,8 +39,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-dvh flex-col">
         <MotionProvider>
+          <a href="#content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">
+            Skip to content
+          </a>
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <main id="content" className="flex-1">{children}</main>
           <SiteFooter />
         </MotionProvider>
       </body>
