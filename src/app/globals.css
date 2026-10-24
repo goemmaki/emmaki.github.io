@@ -210,7 +210,7 @@
  */
 .hero-lab-frame {
   container-type: inline-size;
-  max-width: calc((100svh - 4rem - 2 * var(--space-editorial-52) - 36px) / 0.383);
+  max-width: calc((100svh - 2 * (4rem + var(--space-editorial-52)) - 36px) / 0.383); /* the hero runs under the header, so both sides keep its height clear */
 }
 .hero-lab-poster {
   --cap: 0.72;

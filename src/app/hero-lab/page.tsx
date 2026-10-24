@@ -7,7 +7,7 @@ export const metadata = { robots: { index: false } };
 // rectangle on lines the headline draws; rect-fit.tsx does the measuring.
 export default function HeroLab() {
   return (
-    <section className="shell flex min-h-[calc(100svh-4rem)] flex-col justify-center py-e1">
+    <section className="shell -mt-16 flex min-h-svh flex-col justify-center py-[calc(4rem+var(--spacing-e1))]">
       <RectFit />
       <div className="hero-lab-frame">
         <div className="hero-lab-poster font-heading text-fg-max">
