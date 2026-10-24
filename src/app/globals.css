@@ -205,12 +205,12 @@
  */
 /*
  * The rectangle's height is ~0.383 x its width + 36px (the fixed row gap), so this
- * width is the largest that still fits the first screen under the header (h-16 + 1px
- * rule) with 52px above and below.
+ * width is the largest that still fits the first screen under the header (h-16)
+ * with 52px above and below.
  */
 .hero-lab-frame {
   container-type: inline-size;
-  max-width: calc((100svh - 4rem - 1px - 2 * var(--space-editorial-52) - 36px) / 0.383);
+  max-width: calc((100svh - 4rem - 2 * var(--space-editorial-52) - 36px) / 0.383);
 }
 .hero-lab-poster {
   --cap: 0.72;

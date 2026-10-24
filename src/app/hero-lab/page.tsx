@@ -6,7 +6,7 @@ export const metadata = { robots: { index: false } };
 // Hello runs the height of the block; the question on two lines and the H1 fitted beside it close the rectangle.
 export default function HeroLab() {
   return (
-    <section className="shell flex min-h-[calc(100svh-4rem-1px)] flex-col justify-center py-e1">
+    <section className="shell flex min-h-[calc(100svh-4rem)] flex-col justify-center py-e1">
       <RectFit />
       <div className="hero-lab-frame">
         <div className="hero-lab-poster font-heading text-fg-max">

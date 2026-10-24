@@ -45,9 +45,8 @@ export function SiteHeader() {
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const [closePosition, setClosePosition] = useState<{ top: number; right: number } | null>(null);
-  // Hidden while scrolling down, back on any scroll up; the rule shows once the page has moved.
+  // Hidden while scrolling down, back on any scroll up.
   const [hidden, setHidden] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     let last = window.scrollY;
@@ -56,7 +55,6 @@ export function SiteHeader() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const y = window.scrollY;
-        setScrolled(y > 0);
         if (Math.abs(y - last) < SCROLL_THRESHOLD) return;
         setHidden(y > last && y > 64); // never while the header (h-16) still covers its own spot
         last = y;
@@ -98,9 +96,8 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b bg-bg/70 backdrop-blur-md transition-[translate,border-color] duration-300 ease-out focus-within:translate-y-0",
+        "sticky top-0 z-50 bg-bg/70 backdrop-blur-md transition-[translate] duration-300 ease-out focus-within:translate-y-0",
         hidden && !open && "-translate-y-full",
-        scrolled ? "border-line" : "border-transparent",
       )}
     >
       <div className="shell flex h-16 items-center justify-between">
