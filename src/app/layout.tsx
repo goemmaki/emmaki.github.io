@@ -37,6 +37,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn(geist.variable, plexSans.variable, plexMono.variable, sourceSerif.variable)}
     >
       <head>
+        {/* The site has its own dark theme; stop Dark Reader rewriting the markup before hydration. */}
+        <meta name="darkreader-lock" />
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
