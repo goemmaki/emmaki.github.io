@@ -87,6 +87,12 @@
 
   --gutter: var(--layout-gutter-desktop);
   --header-h: 52px;
+  --shell-max: var(--layout-shell-standard);
+}
+
+/* Large screens step up to the wide shell so the page doesn't sit as a small block in the middle. */
+@media (min-width: 1600px) {
+  :root { --shell-max: var(--layout-shell-visual); }
 }
 
 @media (max-width: 960px) {
@@ -172,7 +178,7 @@
 /* Layout */
 @utility shell {
   width: 100%;
-  max-width: var(--layout-shell-standard);
+  max-width: var(--shell-max);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
