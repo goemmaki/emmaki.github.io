@@ -4,8 +4,9 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Menu, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
+import { cn } from "@/lib/utils";
 import { FiverrLogo } from "@/components/fiverr-logo";
 import { MenuRollLink } from "@/components/menu-roll-link";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -32,6 +33,9 @@ const slideIn = (step: number) => ({
   animation: `menu-slide-in ${REVEAL.layer}s ${REVEAL_EASE} ${step * REVEAL.stagger}s both`,
 });
 
+// Scroll distance, in px, before the header reacts, so small jitters don't toggle it.
+const SCROLL_THRESHOLD = 8;
+
 export function SiteHeader() {
   const pathname = usePathname();
   // The menu belongs to the page it was opened on, so any route change closes it.
@@ -41,6 +45,32 @@ export function SiteHeader() {
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const menuPanelRef = useRef<HTMLDivElement>(null);
   const [closePosition, setClosePosition] = useState<{ top: number; right: number } | null>(null);
+  // Hidden while scrolling down, back on any scroll up; the rule shows once the page has moved.
+  const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let last = window.scrollY;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        setScrolled(y > 0);
+        if (Math.abs(y - last) < SCROLL_THRESHOLD) return;
+        setHidden(y > last && y > 64); // never while the header (h-16) still covers its own spot
+        last = y;
+      });
+    };
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     if (!open) return;
 
@@ -66,7 +96,13 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur-md">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b bg-bg/70 backdrop-blur-md transition-[translate,border-color] duration-300 ease-out focus-within:translate-y-0",
+        hidden && !open && "-translate-y-full",
+        scrolled ? "border-line" : "border-transparent",
+      )}
+    >
       <div className="shell flex h-16 items-center justify-between">
         <Link href="/" aria-label="emmaki home" className="flex h-11 items-center">
           <Wordmark className="w-[88px] sm:w-[120px]" />
