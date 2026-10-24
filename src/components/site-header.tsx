@@ -4,7 +4,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Menu, MessageCircle, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
 import { FiverrLogo } from "@/components/fiverr-logo";
 import { MenuRollLink } from "@/components/menu-roll-link";
@@ -38,6 +38,32 @@ export function SiteHeader() {
   const [openOn, setOpenOn] = useState<string | null>(null);
   const open = openOn === pathname;
   const setOpen = (next: boolean) => setOpenOn(next ? pathname : null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
+  const [closePosition, setClosePosition] = useState<{ top: number; right: number } | null>(null);
+  useLayoutEffect(() => {
+    if (!open) return;
+
+    let frame = 0;
+    const updateClosePosition = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
+          const trigger = menuTriggerRef.current?.getBoundingClientRect();
+          const panel = menuPanelRef.current?.getBoundingClientRect();
+          if (!trigger || !panel) return;
+          setClosePosition({ top: trigger.top - panel.top, right: panel.right - trigger.right });
+        });
+      });
+    };
+
+    updateClosePosition();
+    window.addEventListener("resize", updateClosePosition);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateClosePosition);
+    };
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 bg-bg/95 backdrop-blur-md">
@@ -50,6 +76,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger
+              ref={menuTriggerRef}
               aria-label="Open menu"
               className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
             >
@@ -61,7 +88,7 @@ export function SiteHeader() {
                 style={{ transitionDuration: `${REVEAL.backdrop}s`, transitionTimingFunction: REVEAL_EASE }}
               />
               {/* Opening: yellow, then grey, then the panel, each filling the menu's space. Closing is instant. */}
-              <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
+              <Dialog.Popup ref={menuPanelRef} className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
                 <div
                   aria-hidden
                   className="absolute inset-0 bg-[#FFC300] motion-reduce:hidden"
@@ -79,7 +106,8 @@ export function SiteHeader() {
                     </Link>
                     <Dialog.Close
                       aria-label="Close menu"
-                      className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+                      className="absolute grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+                      style={closePosition ?? undefined}
                     >
                       <X className="size-5" aria-hidden />
                     </Dialog.Close>
