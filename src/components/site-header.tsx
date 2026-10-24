@@ -173,14 +173,13 @@ export function SiteHeader() {
                     </div>
                     <nav aria-label="Main menu">
                       <ul className="w-full space-y-1">
-                        {nav.map(({ href, label }, index) => {
+                        {nav.map(({ href, label }) => {
                           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
                           return (
                             <li key={href}>
                               <MenuRollLink
                                 href={href}
                                 label={label}
-                                number={String(index + 1).padStart(2, "0")}
                                 active={active}
                                 onNavigate={() => setOpen(false)}
                               />

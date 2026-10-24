@@ -12,15 +12,8 @@ const SLOT_BLEED_EM = 0.15;
 /** -1 rolls the line up, 1 rolls it down. */
 type RollDirection = -1 | 1;
 
-function Line({ number, label }: { number: string; label: string }) {
-  return (
-    <span className="flex items-baseline gap-[0.5em] whitespace-nowrap">
-      <span className="text-fg-muted tabular-nums" aria-hidden>
-        {number}
-      </span>
-      <span>{label}</span>
-    </span>
-  );
+function Line({ label }: { label: string }) {
+  return <span className="block whitespace-nowrap">{label}</span>;
 }
 
 /**
@@ -30,13 +23,11 @@ function Line({ number, label }: { number: string; label: string }) {
 export function MenuRollLink({
   href,
   label,
-  number,
   active,
   onNavigate,
 }: {
   href: string;
   label: string;
-  number: string;
   active: boolean;
   onNavigate: () => void;
 }) {
@@ -80,20 +71,20 @@ export function MenuRollLink({
         style={{ paddingBlock: `${SLOT_BLEED_EM}em`, marginBlock: `-${SLOT_BLEED_EM}em` }}
       >
         <span ref={scope} className="relative block">
-          <Line number={number} label={label} />
+          <Line label={label} />
           <span
             className="absolute inset-x-0"
             style={{ bottom: `calc(100% + ${SLOT_BLEED_EM * 2}em)` }}
             aria-hidden
           >
-            <Line number={number} label={label} />
+            <Line label={label} />
           </span>
           <span
             className="absolute inset-x-0"
             style={{ top: `calc(100% + ${SLOT_BLEED_EM * 2}em)` }}
             aria-hidden
           >
-            <Line number={number} label={label} />
+            <Line label={label} />
           </span>
         </span>
       </span>
