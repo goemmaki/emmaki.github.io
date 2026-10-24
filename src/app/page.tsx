@@ -10,7 +10,7 @@ export default function Home() {
       <h1 className="type-h3 mt-e1 max-w-[40ch] text-fg-2">
         Emmaki ships as a B2B copywriter, AI content strategist, automation consultant, and{" "}
         <SparklesText
-          colors={{ first: "#FFC300", second: "#FFE38A" }}
+          colors={{ first: "var(--sparkle-first)", second: "var(--sparkle-second)" }}
           sparklesCount={5}
           className="inline font-[family-name:var(--nf-source-serif)] text-[length:inherit] font-light italic"
         >

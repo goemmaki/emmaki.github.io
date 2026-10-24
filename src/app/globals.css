@@ -88,6 +88,14 @@
   --gutter: var(--layout-gutter-desktop);
   --header-h: 52px;
   --shell-max: var(--layout-shell-standard);
+
+  /* Sparkles: brand yellow on dark; on light, amber-orange at 3:1 or better against white (not brown). */
+  --sparkle-first: #FFC300;
+  --sparkle-second: #FFE38A;
+}
+[data-theme="light"] {
+  --sparkle-first: #E07B00;
+  --sparkle-second: #E86A00;
 }
 
 /* Large screens step up to the wide shell so the page doesn't sit as a small block in the middle. */

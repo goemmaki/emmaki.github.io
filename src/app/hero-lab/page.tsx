@@ -23,7 +23,7 @@ export default function HeroLab() {
             <h1 className="hero-lab-copy">
               I’m a B2B copywriter, AI content strategist, automation consultant, and{" "}
               <SparklesText
-                colors={{ first: "#FFC300", second: "#FFE38A" }}
+                colors={{ first: "var(--sparkle-first)", second: "var(--sparkle-second)" }}
                 sparklesCount={5}
                 className="inline font-[family-name:var(--nf-source-serif)] text-[length:inherit] font-light italic"
               >
