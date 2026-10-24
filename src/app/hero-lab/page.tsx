@@ -3,7 +3,8 @@ import { RectFit } from "./rect-fit";
 
 export const metadata = { robots: { index: false } };
 
-// Hello runs the height of the block; the question on two lines and the H1 fitted beside it close the rectangle.
+// Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
+// rectangle on lines the headline draws; rect-fit.tsx does the measuring.
 export default function HeroLab() {
   return (
     <section className="shell flex min-h-[calc(100svh-4rem)] flex-col justify-center py-e1">
@@ -21,7 +22,7 @@ export default function HeroLab() {
               <span className="block">help you?</span>
             </p>
             <h1 className="hero-lab-copy">
-              Why didn’t you want to work with an easily startled copywriter turned{" "}
+              Easily startled copywriter by day,{" "}
               <SparklesText
                 colors={{ first: "var(--sparkle-first)", second: "var(--sparkle-second)" }}
                 sparklesCount={5}
@@ -29,7 +30,7 @@ export default function HeroLab() {
               >
                 vituperative
               </SparklesText>{" "}
-              Luddite against Skynet, again?
+              Luddite fighting Skynet’s patterns by night.
             </h1>
           </div>
         </div>

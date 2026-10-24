@@ -281,6 +281,7 @@
   font-family: var(--font-display);
   font-weight: var(--font-weight-emphasize);
   letter-spacing: var(--type-heading-h3-tracking);
+  text-align: justify; /* a solid block whose lines meet the rectangle's edge; the last line may stop short */
 }
 .hero-lab-poster[data-stacked] { --r: 0.985; }
 .hero-lab-poster[data-stacked] .hero-lab-bottom {
