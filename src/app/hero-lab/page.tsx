@@ -21,7 +21,7 @@ export default function HeroLab() {
               <span className="block">help you?</span>
             </p>
             <h1 className="hero-lab-copy">
-              I’m a B2B copywriter, AI content strategist, automation consultant, and{" "}
+              Why didn’t you want to work with an easily startled copywriter turned{" "}
               <SparklesText
                 colors={{ first: "var(--sparkle-first)", second: "var(--sparkle-second)" }}
                 sparklesCount={5}
@@ -29,7 +29,7 @@ export default function HeroLab() {
               >
                 vituperative
               </SparklesText>{" "}
-              Luddite.
+              Luddite against Skynet, again?
             </h1>
           </div>
         </div>
