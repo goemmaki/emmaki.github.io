@@ -20,15 +20,17 @@ const nav = [
   { href: "/about", label: "About" },
 ];
 
-// Menu opening, in seconds. The yellow layer and the panel slide in one after the other, a beat apart,
+// Menu opening, in seconds. Yellow, grey and the panel slide in one after another, a beat apart,
 // with a hard-decelerating ease (the reference menu's timings). Closing is instant.
+const REVEAL_EASE = "cubic-bezier(0.65, 0.01, 0.05, 0.99)";
 const REVEAL = {
-  yellow: 0.575,
-  panelDelay: 0.12,
-  panel: 0.575,
+  layer: 0.575,
+  stagger: 0.12,
   backdrop: 0.7,
 };
-const REVEAL_EASE = "cubic-bezier(0.65, 0.01, 0.05, 0.99)";
+const slideIn = (step: number) => ({
+  animation: `menu-slide-in ${REVEAL.layer}s ${REVEAL_EASE} ${step * REVEAL.stagger}s both`,
+});
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -58,16 +60,17 @@ export function SiteHeader() {
                 className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity data-[starting-style]:opacity-0"
                 style={{ transitionDuration: `${REVEAL.backdrop}s`, transitionTimingFunction: REVEAL_EASE }}
               />
-              {/* Opening: the yellow layer fills the menu's space, then the panel follows it in. Closing is instant. */}
+              {/* Opening: yellow, then grey, then the panel, each filling the menu's space. Closing is instant. */}
               <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
                 <div
                   aria-hidden
                   className="absolute inset-0 bg-[#FFC300] motion-reduce:hidden"
-                  style={{ animation: `menu-slide-in ${REVEAL.yellow}s ${REVEAL_EASE} both` }}
+                  style={slideIn(0)}
                 />
+                <div aria-hidden className="absolute inset-0 bg-fg-muted dark:bg-raised motion-reduce:hidden" style={slideIn(1)} />
                 <div
                   className="relative flex h-full flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl motion-reduce:[animation:none!important] sm:px-12"
-                  style={{ animation: `menu-slide-in ${REVEAL.panel}s ${REVEAL_EASE} ${REVEAL.panelDelay}s both` }}
+                  style={slideIn(2)}
                 >
                   <div className="flex h-11 items-center justify-between">
                     <Dialog.Title className="sr-only">Site menu</Dialog.Title>
