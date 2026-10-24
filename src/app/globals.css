@@ -184,6 +184,114 @@
 }
 
 /*
+ * Temporary hero at /hero-lab. Sizes are solved in CSS from Geist metrics
+ * (measured per em at the tracking used; Hello by its ink, not its advance), so
+ * the headline's widest line fills the column and the rotated Hello runs exactly
+ * from the headline's cap height to the question's last baseline. cqw is the
+ * shell's inner width.
+ *   S = (W - gap - cap*rowGap/kH) / (kW + cap*(cap + lead + qBlock*r)/kH)
+ * The question takes 35% of the text column on two lines (r = 0.35 * kW / 5.108,
+ * the width of "HELP YOU?"), and rect-fit.tsx sizes the H1 into the block beside
+ * it. When that would go under 16px it sets data-stacked: the question takes the
+ * full column and the H1 drops under the rectangle.
+ */
+/*
+ * The rectangle's height is ~0.383 x its width + 36px (the fixed row gap), so this
+ * width is the largest that still fits the first screen under the header (h-16 + 1px
+ * rule) with 52px above and below.
+ */
+.hero-lab-frame {
+  container-type: inline-size;
+  max-width: calc((100svh - 4rem - 1px - 2 * var(--space-editorial-52) - 36px) / 0.383);
+}
+.hero-lab-poster {
+  --cap: 0.72;
+  --lead: 0.92;
+  --track: var(--type-heading-h1-tracking); /* capitals collide at the mega -0.045em */
+  --kw: 5.032;  /* "ANTI-SLOP", Geist 600, -0.03em */
+  --kh: 2.205;  /* "Hello!" ink, Geist 400, -0.045em */
+  --hello-lsb: 0.09;
+  --r: 0.345;   /* tier 2 / tier 1 */
+  --q-block: calc(var(--cap) + var(--lead)); /* tier 2's two lines, cap to baseline, in tier 2 ems */
+  --gap: var(--space-interface-24);
+  --row-gap: var(--space-editorial-52);
+  --size: calc(
+    (100cqw - var(--gap) - var(--cap) * var(--row-gap) / var(--kh))
+    / (var(--kw) + var(--cap) * (var(--cap) + var(--lead) + var(--q-block) * var(--r)) / var(--kh))
+  );
+  --hello-size: calc(
+    (var(--size) * (var(--cap) + var(--lead) + var(--q-block) * var(--r)) + var(--row-gap))
+    / var(--kh)
+  );
+  display: grid;
+  grid-template-columns: calc(var(--hello-size) * var(--cap)) minmax(0, 1fr);
+  column-gap: var(--gap);
+  row-gap: var(--row-gap);
+  align-items: start;
+}
+.hero-lab-poster :is(.hero-lab-hello, .hero-lab-headline, .hero-lab-question, .hero-lab-copy) {
+  text-box: trim-both cap alphabetic;
+}
+.hero-lab-hello {
+  grid-row: 1 / span 2;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: var(--hello-size);
+  line-height: 1;
+  font-weight: var(--font-weight-read);
+  letter-spacing: var(--type-display-mega-tracking);
+  white-space: nowrap;
+  /* The H's side bearing overhangs the baseline end; keep it out of the row height. */
+  margin-bottom: calc(var(--hello-lsb) * -1em);
+}
+.hero-lab-headline {
+  grid-column: 2;
+  font-size: var(--size);
+  line-height: var(--lead);
+  font-weight: var(--font-weight-announce);
+  letter-spacing: var(--track);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.hero-lab-bottom {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--space-interface-32);
+}
+.hero-lab-question {
+  font-size: calc(var(--size) * var(--r));
+  line-height: var(--lead);
+  font-weight: var(--font-weight-announce);
+  letter-spacing: var(--type-heading-h1-tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-left: -0.08em; /* optical: the H's side bearing, so the stem sits on the axis */
+}
+.hero-lab-copy {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-emphasize);
+  letter-spacing: var(--type-heading-h3-tracking);
+}
+.hero-lab-poster[data-stacked] { --r: 0.985; }
+.hero-lab-poster[data-stacked] .hero-lab-bottom {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-interface-32);
+}
+.hero-lab-poster[data-stacked] .hero-lab-copy {
+  font-size: var(--type-body-lead-size);
+  line-height: var(--type-body-lead-leading);
+}
+
+@media (max-width: 600px) {
+  .hero-lab-poster {
+    --gap: var(--space-interface-12);
+    --row-gap: var(--space-interface-24);
+  }
+}
+
+/*
  * Entry choreography guard. An inline script adds `.intro` to <html> before
  * paint (never under reduced motion); GSAP takes over on mount. If JS never
  * runs, the failsafe reveals everything after 2.4s.
