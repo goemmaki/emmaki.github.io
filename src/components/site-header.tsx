@@ -2,7 +2,6 @@
 
 import { Dialog } from "@base-ui/react/dialog";
 import { Menu, MessageCircle, X } from "lucide-react";
-import { motion, type Variants } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -21,15 +20,15 @@ const nav = [
   { href: "/about", label: "About" },
 ];
 
-const menuItems: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.055, delayChildren: 0.04 } },
+// Menu opening, in seconds. The yellow layer and the panel slide in one after the other, a beat apart,
+// with a hard-decelerating ease (the reference menu's timings). Closing is instant.
+const REVEAL = {
+  yellow: 0.575,
+  panelDelay: 0.12,
+  panel: 0.575,
+  backdrop: 0.7,
 };
-
-const menuItem: Variants = {
-  hidden: { opacity: 0, x: 12 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.22, ease: "easeOut" } },
-};
+const REVEAL_EASE = "cubic-bezier(0.65, 0.01, 0.05, 0.99)";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -55,66 +54,75 @@ export function SiteHeader() {
               <Menu className="size-5" aria-hidden />
             </Dialog.Trigger>
             <Dialog.Portal>
-              <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity duration-200 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
-              <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] flex h-dvh w-full max-w-[720px] flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl outline-none transition-transform duration-300 ease-out data-[starting-style]:translate-x-full data-[ending-style]:translate-x-full motion-reduce:transition-none sm:px-12">
-                <div className="flex h-11 items-center justify-between">
-                  <Dialog.Title className="sr-only">Site menu</Dialog.Title>
-                  <Link href="/" aria-label="emmaki home" onClick={() => setOpen(false)}>
-                    <Wordmark className="w-[88px]" />
-                  </Link>
-                  <Dialog.Close
-                    aria-label="Close menu"
-                    className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
-                  >
-                    <X className="size-5" aria-hidden />
-                  </Dialog.Close>
-                </div>
-                <div className="flex flex-1 flex-col justify-center gap-e2">
-                  {/* Icons a little under half the size of the menu type. */}
-                  <div className="flex items-center gap-8 [--menu-icon:clamp(1.75rem,2.75vw,2.25rem)]">
-                    <a
-                      href={FIVERR_INBOX_URL}
-                      target="_blank"
-                      rel="noopener"
-                      aria-label="Message emmaki on Fiverr (opens in a new tab)"
-                      className="text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+              <Dialog.Backdrop
+                className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity data-[starting-style]:opacity-0"
+                style={{ transitionDuration: `${REVEAL.backdrop}s`, transitionTimingFunction: REVEAL_EASE }}
+              />
+              {/* Opening: the yellow layer fills the menu's space, then the panel follows it in. Closing is instant. */}
+              <Dialog.Popup className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-[#FFC300] motion-reduce:hidden"
+                  style={{ animation: `menu-slide-in ${REVEAL.yellow}s ${REVEAL_EASE} both` }}
+                />
+                <div
+                  className="relative flex h-full flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl motion-reduce:[animation:none!important] sm:px-12"
+                  style={{ animation: `menu-slide-in ${REVEAL.panel}s ${REVEAL_EASE} ${REVEAL.panelDelay}s both` }}
+                >
+                  <div className="flex h-11 items-center justify-between">
+                    <Dialog.Title className="sr-only">Site menu</Dialog.Title>
+                    <Link href="/" aria-label="emmaki home" onClick={() => setOpen(false)}>
+                      <Wordmark className="w-[88px]" />
+                    </Link>
+                    <Dialog.Close
+                      aria-label="Close menu"
+                      className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
                     >
-                      <MessageCircle className="size-(--menu-icon)" aria-hidden />
-                    </a>
-                    <a
-                      href={FIVERR_PROFILE_URL}
-                      target="_blank"
-                      rel="noopener"
-                      aria-label="emmaki on Fiverr (opens in a new tab)"
-                      className="transition-[filter] dark:hover:brightness-125 dark:focus-visible:brightness-125 light:hover:brightness-85 light:focus-visible:brightness-85"
-                    >
-                      <FiverrLogo className="size-(--menu-icon)" />
-                    </a>
-                    <ThemeToggle className="size-auto" iconClassName="size-(--menu-icon)" />
+                      <X className="size-5" aria-hidden />
+                    </Dialog.Close>
                   </div>
-                  <nav aria-label="Main menu">
-                    <motion.ul
-                      variants={menuItems}
-                      initial="hidden"
-                      animate="visible"
-                      className="w-full space-y-1"
-                    >
-                      {nav.map(({ href, label }, index) => {
-                        const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
-                        return (
-                          <motion.li key={href} variants={menuItem}>
-                            <MenuRollLink
-                              href={href}
-                              label={label}
-                              number={String(index + 1).padStart(2, "0")}
-                              active={active}
-                              onNavigate={() => setOpen(false)}
-                            />
-                          </motion.li>
-                        );
-                      })}
-                    </motion.ul>
-                  </nav>
+                  <div className="flex flex-1 flex-col justify-center gap-e2">
+                    {/* Theme, Fiverr inbox, Fiverr profile. */}
+                    <div className="flex items-center gap-8 [--menu-icon:clamp(2rem,3.5vw,3rem)]">
+                      <ThemeToggle className="size-auto" iconClassName="size-(--menu-icon)" />
+                      <a
+                        href={FIVERR_INBOX_URL}
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Message emmaki on Fiverr (opens in a new tab)"
+                        className="text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+                      >
+                        <MessageCircle className="size-(--menu-icon)" aria-hidden />
+                      </a>
+                      <a
+                        href={FIVERR_PROFILE_URL}
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="emmaki on Fiverr (opens in a new tab)"
+                        className="transition-[filter] dark:hover:brightness-125 dark:focus-visible:brightness-125 light:hover:brightness-85 light:focus-visible:brightness-85"
+                      >
+                        <FiverrLogo className="size-(--menu-icon)" />
+                      </a>
+                    </div>
+                    <nav aria-label="Main menu">
+                      <ul className="w-full space-y-1">
+                        {nav.map(({ href, label }, index) => {
+                          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+                          return (
+                            <li key={href}>
+                              <MenuRollLink
+                                href={href}
+                                label={label}
+                                number={String(index + 1).padStart(2, "0")}
+                                active={active}
+                                onNavigate={() => setOpen(false)}
+                              />
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </nav>
+                  </div>
                 </div>
               </Dialog.Popup>
             </Dialog.Portal>
