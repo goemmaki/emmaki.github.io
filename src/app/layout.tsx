@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Geist, IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/site-header";
@@ -13,6 +13,8 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
   variable: "--nf-plex-mono",
 });
+// Light italic serif for accent words.
+const sourceSerif = Source_Serif_4({ subsets: ["latin"], style: "italic", weight: "300", variable: "--nf-source-serif" });
 
 export const metadata: Metadata = {
   title: {
@@ -32,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       data-theme="dark"
       suppressHydrationWarning
-      className={cn(geist.variable, plexSans.variable, plexMono.variable)}
+      className={cn(geist.variable, plexSans.variable, plexMono.variable, sourceSerif.variable)}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
