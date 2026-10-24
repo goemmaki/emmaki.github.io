@@ -12,7 +12,7 @@ export default function HeroLab() {
         <div className="hero-lab-poster font-heading text-fg-max">
           <p className="hero-lab-hello">Hello!</p>
           <p className="hero-lab-headline">
-            <span className="block text-yellow-splash light:text-fg-max">Anti-slop</span>
+            <span className="block">Anti-slop</span>
             <span className="block">ops here.</span>
           </p>
           <div className="hero-lab-bottom">
