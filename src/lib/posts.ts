@@ -22,6 +22,8 @@ export type Post = {
   published: string;
   /** Set only when the post was revised after publishing. */
   updated?: string;
+  /** Full-screen cover photo under the title (a path in public/). Without one, the title sits on stripes. */
+  cover?: string;
   /** The question Ask AI opens with, about this page. */
   aiQuestion?: string;
   /** The action after the article. */
@@ -50,6 +52,8 @@ export const posts: Post[] = [
     author: "Emma Rawson",
     published: "2026-10-20",
     updated: "2026-10-25",
+    // Dev-only photo, kept out of git (.git/info/exclude); replace before publishing.
+    cover: "/blog/blog-photo.jpg",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
     cta: { label: "See my X work", href: "/work" },
     intro:

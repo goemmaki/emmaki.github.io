@@ -46,13 +46,17 @@ export function SiteHeader() {
   const [closePosition, setClosePosition] = useState<{ top: number; right: number } | null>(null);
   // Hidden while scrolling down, back on any scroll up.
   const [hidden, setHidden] = useState(false);
+  // Transparent while it sits over a page's full-screen photo (an element marked data-under-header).
+  const [overMedia, setOverMedia] = useState(false);
 
   useEffect(() => {
     let last = window.scrollY;
     let frame = 0;
+    const media = document.querySelector("[data-under-header]");
     const onScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
+        setOverMedia(!!media && media.getBoundingClientRect().bottom > 64);
         const y = window.scrollY;
         if (Math.abs(y - last) < SCROLL_THRESHOLD) return;
         setHidden(y > last && y > 64); // never while the header (h-16) still covers its own spot
@@ -66,7 +70,7 @@ export function SiteHeader() {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [pathname]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -95,7 +99,8 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 bg-bg/70 backdrop-blur-md transition-[translate] duration-300 ease-out focus-within:translate-y-0",
+        "sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out focus-within:translate-y-0",
+        overMedia ? "header-on-media" : "bg-bg/70 backdrop-blur-md",
         hidden && !open && "-translate-y-full",
       )}
     >

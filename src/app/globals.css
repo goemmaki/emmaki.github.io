@@ -614,6 +614,30 @@
 @keyframes footer-drift { to { translate: calc(-1 * var(--footer-tile)) 0; } }
 @keyframes footer-rise { from { translate: 0 30%; } }
 
+/*
+ * Post cover (post-cover.tsx). A shade darkens the photo: more along the top for the header and
+ * along the bottom for the title (white title on the shade over the brightest photo: at least
+ * 4.5:1). Under a mouse the shade clears in a spotlight, the footer's: a 190px circle, clear to
+ * 35%, fading in and out over 300ms.
+ */
+@property --cover-spot {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+.post-cover-shade {
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.85));
+  mask-image: radial-gradient(circle var(--cover-spot) at var(--cover-x, 50%) var(--cover-y, 50%), transparent 35%, #000 100%);
+  transition: --cover-spot 300ms;
+}
+.cover-lit .post-cover-shade { --cover-spot: 190px; }
+/* The site header over a cover: transparent, with dark-theme ink in both themes. */
+.header-on-media {
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a0a0a0;
+  --color-text-maximum: #fff;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

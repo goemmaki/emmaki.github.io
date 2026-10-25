@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight, Clock, House, ListChecks } from "lucide-react";
 import { FloodButton } from "@/components/flood-button";
+import { PostCover } from "@/components/blog/post-cover";
 import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
 import { TextLink } from "@/components/text-link";
@@ -55,18 +56,57 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     ...[...post.sections.map(({ heading }) => heading), POST_FAQ_LABEL].map((text) => ({ id: headingId(text), text })),
   ];
 
+  const dates = (
+    <>
+      <time dateTime={post.published}>
+        <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
+      </time>
+      {post.updated && (
+        <span>
+          Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
+        </span>
+      )}
+      {/* From lg the read time sits above the TOC instead. */}
+      <span className="lg:hidden">{minutes} min read</span>
+    </>
+  );
+
   return (
     <article>
+      {/* With a cover photo, the title and byline go on it, full screen and cinematic; the breadcrumb
+          and tools follow below it. */}
+      {post.cover && (
+        <PostCover src={post.cover}>
+          <h1 className="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-balance">
+            {post.title}
+          </h1>
+          <div className="mt-e1 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+            <span className="font-sans text-sm font-medium">{post.author}</span>
+            <div className="flex flex-col gap-1 type-meta text-white/80 sm:items-end">{dates}</div>
+          </div>
+        </PostCover>
+      )}
       {/* The headline area has its own grid, matching the body's so the columns line up. */}
       <div className={`pt-e2 pb-e2 ${postGrid}`}>
-        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
-        <header className="relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
-          {/* Diagonal stripes lit around the title and fading out into the page, kept within the
-              headline column and just past the author line: texture, not light (owner, 2026-10-25).
-              Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
-          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
-            <StripedPattern className="stroke-[0.75] text-fg-muted" />
-          </div>
+        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
+            With a cover, only the breadcrumb and tools are here. */}
+        <header
+          className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 md:gap-x-4 lg:col-start-2 ${
+            post.cover
+              ? "[grid-template-areas:'breadcrumb_tools']"
+              : "[grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta']"
+          }`}
+        >
+{!post.cover && (
+            <>
+              {/* Diagonal stripes lit around the title and fading out into the page, kept within the
+                  headline column and just past the author line: texture, not light (owner, 2026-10-25).
+                  Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
+              <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
+                <StripedPattern className="stroke-[0.75] text-fg-muted" />
+              </div>
+            </>
+          )}
           <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
             <ol className="flex min-w-0 items-center gap-2">
               <li className="flex shrink-0">
@@ -87,28 +127,23 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <PostTools post={post} />
           </div>
 
-          <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
+          {!post.cover && (
+            <>
+              <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
 
-          <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
-            <div className="flex items-center gap-3 [grid-area:author]">
-              <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
-                ER
+              <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
+                <div className="flex items-center gap-3 [grid-area:author]">
+                  <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
+                    ER
+                  </div>
+                  <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
+                </div>
+                <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
+                  {dates}
+                </div>
               </div>
-              <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
-            </div>
-            <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
-              <time dateTime={post.published}>
-                <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
-              </time>
-              {post.updated && (
-                <span>
-                  Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
-                </span>
-              )}
-              {/* From lg the read time sits above the TOC instead. */}
-              <span className="lg:hidden">{minutes} min read</span>
-            </div>
-          </div>
+            </>
+          )}
         </header>
       </div>
 
