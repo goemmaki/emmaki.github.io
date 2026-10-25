@@ -617,8 +617,8 @@
 /*
  * Post cover (post-cover.tsx). Both modes: a black shade over the photo, heaviest along the top for
  * the header, under a white title. Dark mode: the shade also turns the photo grayscale and melts
- * into the black page at the bottom edge; a mouse spotlight clears it and shows the colour, the
- * footer's: a 190px circle, clear to 35%, fading in and out over 300ms. Light mode: the photo keeps
+ * into the black page at the bottom edge; a spotlight under the mouse or a finger clears it and
+ * shows the colour, the footer's: a 190px circle, clear to 35%, fading in and out over 300ms. Light mode: the photo keeps
  * its colour under a lighter shade that eases off below the header and is gone by the photo's bottom
  * edge, with no white at rest; the title and the header over the photo take dark mode's light text
  * (WCAG 1.4.3, large text, 3:1); no spotlight.

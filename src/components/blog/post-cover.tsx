@@ -6,7 +6,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 // A post's full-screen cover: the photo under a shade of the page colour (black, or white in light
 // mode), with the title centred on it, left-aligned. The site header sits over it, transparent
 // (data-under-header, read by site-header.tsx). In dark mode the photo is grayscale and under a
-// mouse the shade clears in a spotlight, using the footer's settings, showing its colour. Scrolling
+// mouse or finger the shade clears in a spotlight, using the footer's settings, showing its colour. Scrolling
 // plays a parallax, the title rises and fades, and the photo pixelates and dissolves into the page
 // (in dark mode as the spotlight splutters and dies). Styles: the "Post cover" block in globals.css.
 // The photo's pixelation: block sizes in CSS px, stepped like a censor's mosaic, over
@@ -104,8 +104,9 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     return () => observer.disconnect();
   }, []);
 
-  // The mouse is followed on the whole window, not the cover, so the spotlight keeps working under
-  // the site header, which overlaps the cover's top and takes its pointer events. It is placed in
+  // The mouse, or on touch screens a finger while it is down, is followed on the whole window, not
+  // the cover, so the spotlight keeps working under the site header, which overlaps the cover's top
+  // and takes its pointer events. It is placed in
   // the photo frame's coordinates, so it is placed again on scroll to stay under a mouse that isn't
   // moving. While a live spotlight reaches the header, data-cover-torch on <html> turns the header's
   // buttons white so the lit photo doesn't swallow them (globals.css).
@@ -138,12 +139,27 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
       pointer.current = null;
       place();
     };
+    // Touch events, not pointer events: a finger that scrolls the page cancels its pointer events,
+    // but its touchmoves keep coming.
+    const onTouch = (event: TouchEvent) => {
+      const touch = event.touches[0];
+      pointer.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+      place();
+    };
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("touchend", onTouch, { passive: true });
+    window.addEventListener("touchcancel", onTouch, { passive: true });
     window.addEventListener("scroll", place, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
     return () => {
       cancelAnimationFrame(frame.current);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("touchend", onTouch);
+      window.removeEventListener("touchcancel", onTouch);
       window.removeEventListener("scroll", place);
       document.documentElement.removeEventListener("pointerleave", onLeave);
       root.removeAttribute("data-cover-torch");
