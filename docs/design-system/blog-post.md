@@ -124,12 +124,11 @@ After grafit's article FAQs, with the owner's change: **+ opens and − closes**
 
 These need the owner's decision before the audit promotes or reverses them:
 
-- **Shell and gutter:** 1440px shell and fluid 16–48px gutter vs `DESIGN.md`'s 1200/1400px shells and 32/24/16px gutters.
 - **Headings:** article headings use their own lighter sizes and weights, and H4–H6 have no `DESIGN.md` role.
 - **Body text:** gray (`fg-2`) rather than primary text.
 - **Unlit notches:** below 3:1 non-text contrast.
 - **Yellow:** a full-button yellow flood on hover, a larger splash than usual.
-- **From the hero session:** the 1400px shell step and the serif italic "vituperative".
+- **From the hero session:** the serif italic "vituperative".
 
 ## Not designed yet
 

@@ -80,9 +80,9 @@ Use IBM Plex Mono only when the content is genuinely metadata, technical annotat
 - **Interface spacing:** 4 / 8 / 12 / 16 / 24 / 32px.
 - **Editorial spacing:** 52 / 84 / 136px.
 - **Exceptional hero spacing:** 220px only when composition genuinely needs it.
-- **Gutters:** desktop 32px; mobile 24px; below about 400px, 16px only for layout survival.
-- **Shells:** standard max 1200px; wide visual max 1400px.
-- **Reading measure:** 640–700px.
+- **Gutter (owner, 2026-10-25):** one fluid gutter site-wide, header and footer included: 16px on a 320px screen, growing evenly to 48px at 1440px and up (`--layout-gutter`).
+- **Shell (owner, 2026-10-25):** one shell, max 1440px inside the gutters (`--layout-shell`). It is the widest any content or graphic element runs; below that everything is fluid.
+- **Reading measure:** 640–700px; blog articles use a 700px column that shrinks with the screen.
 
 Use centered shells, local grids, named areas, and content-shaped composition. Do not impose a universal 12-column grid. Do not introduce convenience spacing such as 48 / 64 / 96px as a parallel scale.
 

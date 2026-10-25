@@ -37,8 +37,7 @@ Monochrome carries hierarchy. Semantic success/warning/error/info colors are res
 - Interface spacing: 4 / 8 / 12 / 16 / 24 / 32px.
 - Editorial spacing: 52 / 84 / 136px.
 - 220px only for exceptional hero use.
-- Desktop gutter 32px; mobile 24px; 16px below ~400px only for survival.
-- Standard shell 1200px; wide visual shell 1400px; reading measure 640–700px.
+- One fluid gutter site-wide, 16px at 320px up to 48px at 1440px+; one 1440px shell, the widest any content or graphic runs; reading measure 640–700px.
 - One-pixel neutral structure.
 - **Containers are punctuation:** open space, local gridwork, alignment, and structural rules are the default; enclosure is occasional and semantically earned.
 - No universal 12-column grid.

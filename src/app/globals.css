@@ -48,8 +48,6 @@
   --spacing-hero: var(--space-hero-exceptional);
   --spacing-gutter: var(--gutter);
 
-  --container-shell: var(--layout-shell-standard);
-  --container-wide: var(--layout-shell-visual);
   --container-read: var(--layout-reading-max);
 
   /* shadcn substrate, mapped onto Emmaki roles. */
@@ -85,9 +83,9 @@
   --font-mono: var(--nf-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --radius: var(--shape-control-radius);
 
-  /* Side margin scales from 16px on a 320px screen to 48px at 1440px and up; content runs to 1440px (grafit.agency's shell). */
-  --gutter: clamp(16px, calc(100vw * 32 / 1120 + 6.857px), 48px);
-  --shell-max: calc(1440px + 2 * var(--gutter));
+  /* Fluid gutter and 1440px shell from tokens.css (after grafit.agency's shell). */
+  --gutter: var(--layout-gutter);
+  --shell-max: calc(var(--layout-shell) + 2 * var(--gutter));
 
   /* Sparkles: brand yellow on dark; on light, amber-orange at 3:1 or better against white (not brown). */
   --sparkle-first: var(--color-yellow-splash);

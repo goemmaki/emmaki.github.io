@@ -14,11 +14,10 @@
   --space-editorial-136: 136px;
   --space-hero-exceptional: 220px;
 
-  --layout-gutter-desktop: 32px;
-  --layout-gutter-mobile: 24px;
-  --layout-gutter-narrow-survival: 16px;
-  --layout-shell-standard: 1200px;
-  --layout-shell-visual: 1400px;
+  /* Site-wide side margin: 16px on a 320px screen, growing evenly to 48px at 1440px and up. */
+  --layout-gutter: clamp(16px, calc(100vw * 32 / 1120 + 6.857px), 48px);
+  /* The widest any content or graphic runs, inside the gutters. */
+  --layout-shell: 1440px;
   --layout-reading-min: 640px;
   --layout-reading-max: 700px;
 
