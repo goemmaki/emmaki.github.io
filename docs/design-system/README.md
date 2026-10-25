@@ -13,6 +13,8 @@ Use this precedence when sources conflict:
 5. OpenDesign previews/UI-kit material — compositional reference only.
 6. OpenDesign `context/`, `system/`, generated themes, manifests, and artifacts — provenance/reference only. They are not implementation authority.
 
+`blog-post.md` records the blog post page's decisions as input for the next design-system audit. It is not authority until the owner promotes its rules into `DESIGN.md`.
+
 The shadcn Luma preset is implementation substrate only. It may supply accessible component structure, font wiring, menu behavior, and neutral defaults, but it does not define the Emmaki brand. Emmaki rules override Luma/shadcn defaults; framework defaults come last.
 
 ## Current visual thesis
