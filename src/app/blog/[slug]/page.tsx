@@ -58,24 +58,31 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article>
-      {/* With a cover photo, a big copy of the title sits on it, full screen and cinematic, and
-          shrinks into the real title below as the page scrolls (post-cover.tsx). */}
+      {/* With a cover photo, the title goes on it, full screen and cinematic; the breadcrumb, tools
+          and byline follow below it. */}
       {post.cover && (
-        <PostCover src={post.cover} title={post.title} />
+        <PostCover src={post.cover}>
+          <h1 className="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">
+            {post.title}
+          </h1>
+        </PostCover>
       )}
       {/* The headline area has its own grid, matching the body's so the columns line up. */}
       <div className={`pt-e2 pb-e2 ${postGrid}`}>
-        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
-        <header className="post-header relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
+        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
+            With a cover, the title is on the cover instead. */}
+        <header
+          className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 md:gap-x-4 lg:col-start-2 ${
+            post.cover
+              ? "[grid-template-areas:'breadcrumb_breadcrumb'_'author_author'_'date_tools'] md:[grid-template-areas:'breadcrumb_tools'_'meta_meta']"
+              : "[grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta']"
+          }`}
+        >
           {/* Diagonal stripes lit around the title and fading out into the page, kept within the
               headline column and just past the author line: texture, not light (owner, 2026-10-25).
-              Light mode shows them at half strength with a softer fade; dark mode is the priority.
-              Under a cover they appear once the title lands, with one wipe of light across them. */}
-          <div aria-hidden className="post-stripes pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
+              Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
+          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
             <StripedPattern className="stroke-[0.75] text-fg-muted" />
-            <div className="post-stripes-wipe absolute inset-0">
-              <StripedPattern className="stroke-[0.75] text-fg-max" />
-            </div>
           </div>
           <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
             <ol className="flex min-w-0 items-center gap-2">
@@ -97,7 +104,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <PostTools post={post} />
           </div>
 
-          <h1 id="post-title" className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
+          {!post.cover && <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>}
 
           <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
             <div className="flex items-center gap-3 [grid-area:author]">

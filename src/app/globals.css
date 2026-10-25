@@ -636,30 +636,6 @@
   background: linear-gradient(to bottom, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 22%, rgb(255 255 255 / 0) 45%, rgb(255 255 255 / 0.85) 75%, #fff);
   mask-image: none;
 }
-.post-cover-deepen { opacity: 0; }
-/* The header's stripes wait for the cover title to land, then fade in under one wipe of brighter
-   stripes (darker in light mode), left to right. */
-.title-morph .post-stripes > * { opacity: 0; transition: opacity 600ms; }
-.title-morph.title-landed .post-stripes > * { opacity: 1; }
-.post-stripes-wipe {
-  mask-image: linear-gradient(90deg, transparent, #000 50%, transparent);
-  mask-size: 40% 100%;
-  mask-repeat: no-repeat;
-  mask-position: -100% 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .title-landed .post-stripes-wipe { animation: stripes-wipe 1.4s ease-in-out 300ms both; }
-  /* The photo drifts slower than the page and the shade deepens to the page colour as it leaves. */
-  @supports (animation-timeline: view()) {
-    .post-cover-media, .post-cover-deepen { animation-timeline: view(); animation-range: exit 0% exit 100%; animation-fill-mode: both; animation-timing-function: linear; }
-    .post-cover-media { animation-name: cover-parallax; }
-    .post-cover-deepen { animation-name: cover-deepen; }
-  }
-}
-@keyframes stripes-wipe { to { mask-position: 200% 0; } }
-@keyframes cover-parallax { to { translate: 0 30%; } }
-@keyframes cover-deepen { to { opacity: 1; } }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
