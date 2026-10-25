@@ -104,7 +104,8 @@ export function SiteHeader() {
           <Wordmark className="w-[88px] sm:w-[120px]" />
         </Link>
 
-        <div className="flex items-center">
+        {/* -mr-3: the menu glyph, not its 44px target, sits on the gutter */}
+        <div className="-mr-3 flex items-center">
           <ThemeToggle />
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger

@@ -542,12 +542,17 @@
  * A field of dots (white in dark mode, black in light), sparse at the top and dense at the bottom,
  * drifts sideways; the wordmark is the gap in it (page-colour letters). A black bar closes the
  * footer in both themes; the field stops at its top edge and the wordmark is cropped there, partway
- * up the letters' bottom curves. In dark mode a yellow spotlight follows the mouse and the white
- * field dims around it; light mode has none (owner). The wordmark rises into place as it scrolls in.
+ * up the letters' bottom curves. The field's height and dither scale with the wordmark. In dark
+ * mode a yellow spotlight follows the mouse and the white field dims around it; light mode has none
+ * (owner). The wordmark rises into place as it scrolls in.
  */
 .footer {
   --footer-dots: var(--color-fg-max);
   --footer-bar-h: 2.5rem;
+  --footer-mark: clamp(5rem, 21vw, 13rem);
+  --footer-field-h: calc(var(--footer-mark) * 1.15);
+  /* one dither tile, kept to whole dots (4px) so the drift loops seamlessly */
+  --footer-tile: round(calc(var(--footer-field-h) * 1.5), 4px);
 }
 .footer-base { height: var(--footer-bar-h); background: #000; }
 .footer-bar {
@@ -558,32 +563,33 @@
 /* On the black bar, hover and focus go white in both themes (quiet-link would go black in light). */
 .footer-bar a { color: inherit; }
 .footer-bar :is(a:hover, a:focus-visible) { color: #fff; }
-.footer-field { position: absolute; inset: 0; }
-.footer-field--torch { visibility: hidden; }
-.footer-field--ink { transition: opacity 300ms; }
-/* The field dims while the spotlight is on, so the spotlight reads as light. */
-.footer-lit .footer-field--ink {
-  opacity: 0.4;
-  mask-image: radial-gradient(circle 190px at var(--footer-x, 50%) var(--footer-y, 50%), transparent 35%, #000 100%);
-}
-.footer-lit .footer-field--torch {
-  visibility: visible;
+/* 13px, shrinking on phones so the © line stays on one line beside the icons (87px; about 23
+   character widths of line), down to 10px; narrower than about 340px it wraps. */
+.footer-legal { font-size: clamp(10px, (100vw - 2 * var(--gutter) - 87px) / 23, var(--type-meta-default-size)); }
+.footer-field { position: absolute; inset: 0; transition: opacity 300ms, visibility 0s; }
+/* The spotlight fades in and out over the same 300ms as the field dims and brightens. */
+.footer-field--torch {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms, visibility 0s 300ms;
   mask-image: radial-gradient(circle 190px at var(--footer-x, 50%) var(--footer-y, 50%), #000 35%, transparent 100%);
 }
-[data-theme="light"] .footer-field--ink { mask-image: none; opacity: 1; }
+.footer-lit .footer-field--ink { opacity: 0.4; }
+.footer-lit .footer-field--torch { opacity: 1; visibility: visible; transition: opacity 300ms, visibility 0s; }
+[data-theme="light"] .footer-field--ink { opacity: 1; }
 [data-theme="light"] .footer-field--torch { display: none; }
 .footer-dots {
   position: absolute;
   inset-block: 0;
-  inset-inline: 0;
+  left: 0;
+  /* one tile wider than the footer and slid by exactly one tile */
+  width: calc(100% + var(--footer-tile));
   background: var(--footer-dots);
-  /* the dot grid cut by the dither, which ends at the bar. The grid stays put and only the dither
-     slides (one tile per loop, so it is seamless): dots switch on and off instead of moving, which
-     kept flickering on some screens as they resampled between pixels. */
+  /* the dot grid cut by the dither, which ends at the bar */
   mask-image:
     radial-gradient(circle, #000 0.9px, transparent 1.3px),
     url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27360%27%20height%3D%27240%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270.04%27%20stop-color%3D%27%23000%27%2F%3E%3Cstop%20offset%3D%270.96%27%20stop-color%3D%27%23fff%27%2F%3E%3C%2FlinearGradient%3E%3Cfilter%20id%3D%27f%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20color-interpolation-filters%3D%27sRGB%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.45%27%20numOctaves%3D%272%27%20seed%3D%277%27%20stitchTiles%3D%27stitch%27%20result%3D%27n%27%2F%3E%3CfeColorMatrix%20in%3D%27n%27%20type%3D%27matrix%27%20values%3D%271%200%200%200%200%201%200%200%200%200%201%200%200%200%200%200%200%200%200%201%27%20result%3D%27ng%27%2F%3E%3CfeComposite%20in%3D%27SourceGraphic%27%20in2%3D%27ng%27%20operator%3D%27arithmetic%27%20k2%3D%270.5%27%20k3%3D%270.5%27%20result%3D%27s%27%2F%3E%3CfeComponentTransfer%20in%3D%27s%27%20result%3D%27t%27%3E%3CfeFuncR%20type%3D%27discrete%27%20tableValues%3D%270%201%27%2F%3E%3C%2FfeComponentTransfer%3E%3CfeColorMatrix%20in%3D%27t%27%20type%3D%27matrix%27%20values%3D%270%200%200%200%201%200%200%200%200%200.5%200%200%200%200%200%201%200%200%200%200%27%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27%20filter%3D%27url%28%23f%29%27%2F%3E%3C%2Fsvg%3E');
-  mask-size: 4px 4px, 360px 240px;
+  mask-size: 4px 4px, var(--footer-tile) var(--footer-field-h);
   mask-repeat: repeat, repeat-x;
   mask-position: 0 0, left 0 bottom var(--footer-bar-h);
   mask-composite: intersect;
@@ -596,23 +602,15 @@
     url('data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27360%27%20height%3D%27240%27%3E%3Cdefs%3E%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%3Cstop%20offset%3D%270.04%27%20stop-color%3D%27%23000%27%2F%3E%3Cstop%20offset%3D%270.96%27%20stop-color%3D%27%23fff%27%2F%3E%3C%2FlinearGradient%3E%3Cfilter%20id%3D%27f%27%20x%3D%270%27%20y%3D%270%27%20width%3D%27100%25%27%20height%3D%27100%25%27%20color-interpolation-filters%3D%27sRGB%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.45%27%20numOctaves%3D%272%27%20seed%3D%277%27%20stitchTiles%3D%27stitch%27%20result%3D%27n%27%2F%3E%3CfeColorMatrix%20in%3D%27n%27%20type%3D%27matrix%27%20values%3D%271%200%200%200%200%201%200%200%200%200%201%200%200%200%200%200%200%200%200%201%27%20result%3D%27ng%27%2F%3E%3CfeComposite%20in%3D%27SourceGraphic%27%20in2%3D%27ng%27%20operator%3D%27arithmetic%27%20k2%3D%270.5%27%20k3%3D%270.5%27%20result%3D%27s%27%2F%3E%3CfeComponentTransfer%20in%3D%27s%27%20result%3D%27t%27%3E%3CfeFuncR%20type%3D%27discrete%27%20tableValues%3D%270%201%27%2F%3E%3C%2FfeComponentTransfer%3E%3CfeColorMatrix%20in%3D%27t%27%20type%3D%27matrix%27%20values%3D%270%200%200%200%201%200%200%200%200%200.5%200%200%200%200%200%201%200%200%200%200%27%2F%3E%3C%2Ffilter%3E%3C%2Fdefs%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20fill%3D%27url%28%23g%29%27%20filter%3D%27url%28%23f%29%27%2F%3E%3C%2Fsvg%3E');
 }
 @media (prefers-reduced-motion: no-preference) {
-  .footer-dots { animation: footer-drift 40s linear infinite; }
-  /* The letters sway a pixel or two against the still dot grid: the mirage wobble. */
-  .footer-wobble { animation: footer-wobble 6s ease-in-out infinite; }
+  /* Moving in whole device pixels (--footer-steps, set by footer-wordmark.tsx) keeps every dot
+     crisp; sliding smoothly between pixels made the dots flicker on some screens. */
+  .footer-dots { animation: footer-drift 40s steps(var(--footer-steps, 360)) infinite; }
   @supports (animation-timeline: view()) {
     .footer { view-timeline: --footer-band; }
     .footer-mark { animation: footer-rise linear both; animation-timeline: --footer-band; animation-range: entry 20% entry 100%; }
   }
 }
-@keyframes footer-drift {
-  from { mask-position: 0 0, left 0 bottom var(--footer-bar-h); }
-  to { mask-position: 0 0, left -360px bottom var(--footer-bar-h); }
-}
-@keyframes footer-wobble {
-  25% { translate: 1.5px -0.5px; }
-  50% { translate: -0.5px 1px; }
-  75% { translate: -1.5px -0.5px; }
-}
+@keyframes footer-drift { to { translate: calc(-1 * var(--footer-tile)) 0; } }
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 @media (prefers-reduced-motion: reduce) {
