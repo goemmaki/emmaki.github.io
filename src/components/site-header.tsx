@@ -98,6 +98,7 @@ export function SiteHeader() {
 
   return (
     <header
+      data-site-header
       className={cn(
         "sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out focus-within:translate-y-0",
         !overMedia && "bg-bg/70 backdrop-blur-md",

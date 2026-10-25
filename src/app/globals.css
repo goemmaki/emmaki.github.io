@@ -650,18 +650,19 @@
 }
 
 /*
- * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography. Progress is the
- * page's scroll over the first screen height, the cover's own (0% at the top, 100% as it leaves); a
- * view() timeline would count the header's scroll padding and drop the effects as the cover left.
- * - On arrival the whole photo shows under the shade alone (owner, 2026-10-26).
- * - The photo moves at half the page's speed and slowly pushes in (scale 1 to 1.08); it only moves
- *   down within the cover, so no gap opens.
- * - The title leads, rising at 1.5x the page's speed, and is fully transparent as it reaches the
- *   top (by 33%), well before the article's title arrives.
- * - The bottom dissolve, above the spotlight so no edge shows, grows in from 0 to the bottom 60% by
- *   55%. From 30% the whole cover darkens towards the page colour.
- * - The spotlight is untouched until 40%, then weakens, cuts out twice, recovers, and dies by 92%.
+ * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography. The section is two
+ * screens tall and its photo frame stays pinned for the first, then scrolls away. Progress is the
+ * page's scroll over those two screens: 0-50% pinned, 50-100% leaving. (A view() timeline would
+ * count the header's scroll padding and drop the effects as the cover left.)
+ * - On arrival the whole photo shows under the shade alone.
+ * - The title leads: it rises while the photo holds still, and is fully transparent as it reaches
+ *   the top (by 17%), well before the article's title arrives.
+ * - The photo drifts down within its frame and slowly pushes in while pinned, then moves at 60% of
+ *   the page's speed as it leaves. It sits 12svh above the frame, so no gap opens.
+ * - The bottom dissolve grows in from 10% to 50%, and the whole photo darkens from 25%.
+ * - The spotlight is untouched until 18%, then weakens, cuts out twice, recovers, and dies by 70%.
  *   Tied to scroll position, so scrolling back up brings it back.
+ * Without scroll-driven animations, or with reduced motion, the cover stays one static screen.
  */
 .post-cover-dim,
 .post-cover-fade { display: none; }
@@ -670,51 +671,73 @@
   display: block;
   background: linear-gradient(to bottom, transparent, rgb(from var(--color-bg) r g b / 0.6) 55%, var(--color-bg));
 }
-@media (prefers-reduced-motion: no-preference) {
-  [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root);
-    animation-range: 0 100svh;
-  }
-  [data-theme="dark"] .post-cover-media { animation-name: cover-parallax; will-change: translate; }
-  [data-theme="dark"] .post-cover-title { animation-name: cover-title-rise; }
-  [data-theme="dark"] .post-cover-dim { animation-name: cover-dim; }
-  [data-theme="dark"] .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
-  [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
+/* The spotlight clears less towards the photo's bottom edge and nothing at it, so it never shows
+   the edge. */
+[data-theme="dark"] .post-cover-shade {
+  mask-image:
+    radial-gradient(
+      circle calc(var(--cover-spot) * (0.6 + 0.4 * var(--cover-power))) at var(--cover-x, 50%) var(--cover-y, 50%),
+      rgb(0 0 0 / calc(1 - var(--cover-power))) 35%,
+      #000 100%
+    ),
+    linear-gradient(to bottom, transparent 70%, #000 97%);
 }
-@keyframes cover-parallax { to { translate: 0 50%; scale: 1.08; } }
+/* Header buttons go white under a live spotlight, and yellow on hover (owner, 2026-10-26). */
+[data-theme="dark"][data-cover-torch] [data-site-header] .icon-action { color: var(--color-fg-max); }
+[data-theme="dark"][data-cover-torch] [data-site-header] .icon-action:hover { color: var(--color-yellow-splash); }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-theme="dark"] .post-cover { height: 200svh; }
+    [data-theme="dark"] .post-cover-media { top: -12svh; bottom: auto; height: 112svh; }
+    [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 200svh;
+    }
+    [data-theme="dark"] .post-cover-media { animation-name: cover-parallax; will-change: translate; }
+    [data-theme="dark"] .post-cover-title { animation-name: cover-title-rise; }
+    [data-theme="dark"] .post-cover-dim { animation-name: cover-dim; }
+    [data-theme="dark"] .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
+    [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
+  }
+}
+@keyframes cover-parallax {
+  50% { translate: 0 10svh; scale: 1.06; }
+  to { translate: 0 50svh; scale: 1.06; }
+}
 @keyframes cover-title-rise {
-  5% { opacity: 1; }
-  33% { opacity: 0; }
-  to { opacity: 0; translate: 0 -50svh; }
+  2.5% { opacity: 1; }
+  17% { opacity: 0; }
+  25%, to { opacity: 0; translate: 0 -60svh; }
 }
 @keyframes cover-fade {
-  from { opacity: 0; scale: 1 0.4; }
-  55%, to { opacity: 1; scale: 1; }
+  0%, 10% { opacity: 0; scale: 1 0.4; }
+  50%, to { opacity: 1; scale: 1; }
 }
 @keyframes cover-dim {
-  30% { opacity: 0; }
+  25% { opacity: 0; }
+  50% { opacity: 0.5; }
   to { opacity: 0.9; }
 }
 /* Irregular on purpose: a weakening beam, two short cuts of different depth, a longer recovery,
-   then the fade. Each cut lasts a few dozen pixels of scrolling. */
+   then the fade. Each cut lasts 10-20px of scrolling on a 900px screen. */
 @keyframes cover-power-fail {
-  0%, 40% { --cover-power: 1; }
-  48% { --cover-power: 0.85; }
-  50.5% { --cover-power: 0.78; }
-  51.5% { --cover-power: 0.15; }
-  53% { --cover-power: 0.7; }
-  56.5% { --cover-power: 0.62; }
-  57.2% { --cover-power: 0.05; }
-  58.4% { --cover-power: 0.3; }
-  59.5% { --cover-power: 0.82; }
-  68% { --cover-power: 0.7; }
-  80% { --cover-power: 0.3; }
-  86% { --cover-power: 0.22; }
-  87% { --cover-power: 0.02; }
-  88.5% { --cover-power: 0.12; }
-  92%, 100% { --cover-power: 0; }
+  0%, 18% { --cover-power: 1; }
+  26% { --cover-power: 0.85; }
+  28.5% { --cover-power: 0.78; }
+  29.3% { --cover-power: 0.15; }
+  30.5% { --cover-power: 0.7; }
+  34.5% { --cover-power: 0.62; }
+  35.1% { --cover-power: 0.05; }
+  36.2% { --cover-power: 0.3; }
+  37.3% { --cover-power: 0.82; }
+  46% { --cover-power: 0.7; }
+  58% { --cover-power: 0.3; }
+  64% { --cover-power: 0.22; }
+  64.8% { --cover-power: 0.02; }
+  66.3% { --cover-power: 0.12; }
+  70%, 100% { --cover-power: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
