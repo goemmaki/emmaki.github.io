@@ -619,8 +619,9 @@
  * the header, under a white title. Dark mode: the shade also turns the photo grayscale and melts
  * into the black page at the bottom edge; a mouse spotlight clears it and shows the colour, the
  * footer's: a 190px circle, clear to 35%, fading in and out over 300ms. Light mode: the photo keeps
- * its colour, the shade lifts below the title and the photo turns white into the page; the title and
- * the header over the photo take dark mode's light text (WCAG 1.4.3, large text, 3:1); no spotlight.
+ * its colour under a lighter shade that eases off below the header and is gone by the photo's bottom
+ * edge, with no white at rest; the title and the header over the photo take dark mode's light text
+ * (WCAG 1.4.3, large text, 3:1); no spotlight.
  */
 @property --cover-spot {
   syntax: "<length>";
@@ -644,10 +645,13 @@
 }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
 [data-theme="light"] .post-cover-shade {
-  background:
-    linear-gradient(to bottom, transparent 72%, #fff),
-    linear-gradient(to bottom, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.5) 8%, rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 70%, transparent 92%);
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.35) 30%, rgb(0 0 0 / 0.35) 65%, transparent 90%);
   mask-image: none;
+}
+/* Light mode's own text colours, captured where the theme sets them, for the header to return to. */
+[data-theme="light"] {
+  --cover-ink-max: var(--color-text-maximum);
+  --cover-ink-2: var(--color-text-secondary);
 }
 [data-theme="light"] :is(.post-cover-title, [data-site-header][data-over-media]) {
   --color-text-maximum: #fff;
@@ -659,6 +663,8 @@
  * heights scrolled (svh). The section is 230svh tall and its photo frame stays pinned while the
  * article card (.post-card, 100svh of overlap) slides up over it; the card covers the screen at 130.
  *   0-25    the title rises and fades out before it reaches the top
+ *   25-45   light mode: the shade lifts; at 30 the header over the photo takes its usual frosted
+ *           background and dark text
  *   10-60   dark mode: the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
  *   0-30    the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
  *   30-85   the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
@@ -686,9 +692,8 @@
     linear-gradient(to bottom, transparent 70%, #000 97%);
   backdrop-filter: grayscale(1);
 }
-/* Header buttons go white under a live spotlight, and yellow on hover (owner, 2026-10-26). */
+/* Header buttons go white under a live spotlight (owner, 2026-10-26). */
 [data-theme="dark"][data-cover-torch] [data-site-header] .icon-action { color: var(--color-fg-max); }
-[data-theme="dark"][data-cover-torch] [data-site-header] .icon-action:hover { color: var(--color-yellow-splash); }
 
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -711,6 +716,16 @@
     .post-cover-dim { animation-name: cover-dim; }
     .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
     [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
+    /* Light mode: the shade lifts once the title has gone, so the photo washes to white rather than
+       grey, and the header over it returns to its usual look as the shade goes. */
+    [data-theme="light"] .post-cover-shade { animation-name: cover-shade-lift; }
+    [data-theme="light"] [data-site-header][data-over-media] {
+      animation-name: cover-header-ink;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 155svh;
+    }
   }
 }
 @keyframes cover-parallax {
@@ -725,6 +740,21 @@
 @keyframes cover-fade {
   0%, 6.5% { opacity: 0; scale: 1 0.4; }
   32.3%, to { opacity: 1; scale: 1; }
+}
+@keyframes cover-shade-lift {
+  16.1% { opacity: 1; }
+  29%, to { opacity: 0; }
+}
+/* Over a lifting shade no one text colour holds 3:1 against the sky, so the header takes its usual
+   frosted background (site-header.tsx: bg-bg/70 backdrop-blur-md) along with its dark text. */
+@keyframes cover-header-ink {
+  0%, 19.3% { --color-text-maximum: #fff; --color-text-secondary: #ededed; background-color: transparent; backdrop-filter: none; }
+  19.4%, to {
+    --color-text-maximum: var(--cover-ink-max);
+    --color-text-secondary: var(--cover-ink-2);
+    background-color: rgb(from var(--color-bg) r g b / 0.7);
+    backdrop-filter: blur(12px);
+  }
 }
 @keyframes cover-dim {
   19.4% { opacity: 0; }
