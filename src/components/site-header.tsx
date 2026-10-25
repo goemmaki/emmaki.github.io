@@ -8,7 +8,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { FiverrLogo } from "@/components/fiverr-logo";
-import { MenuRollLink } from "@/components/menu-roll-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Wordmark } from "@/components/wordmark";
 
@@ -20,18 +19,6 @@ const nav = [
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
 ];
-
-// Menu opening, in seconds. Yellow, grey and the panel slide in one after another, a beat apart,
-// with a hard-decelerating ease (the reference menu's timings). Closing is instant.
-const REVEAL_EASE = "cubic-bezier(0.65, 0.01, 0.05, 0.99)";
-const REVEAL = {
-  layer: 0.575,
-  stagger: 0.12,
-  backdrop: 0.7,
-};
-const slideIn = (step: number) => ({
-  animation: `menu-slide-in ${REVEAL.layer}s ${REVEAL_EASE} ${step * REVEAL.stagger}s both`,
-});
 
 // Scroll distance, in px, before the header reacts, so small jitters don't toggle it.
 const SCROLL_THRESHOLD = 8;
@@ -116,22 +103,9 @@ export function SiteHeader() {
               <Menu className="size-5" aria-hidden />
             </Dialog.Trigger>
             <Dialog.Portal>
-              <Dialog.Backdrop
-                className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity data-[starting-style]:opacity-0"
-                style={{ transitionDuration: `${REVEAL.backdrop}s`, transitionTimingFunction: REVEAL_EASE }}
-              />
-              {/* Opening: yellow, then grey, then the panel, each filling the menu's space. Closing is instant. */}
+              <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30" />
               <Dialog.Popup ref={menuPanelRef} className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
-                <div
-                  aria-hidden
-                  className="absolute inset-0 bg-[#FFC300] motion-reduce:hidden"
-                  style={slideIn(0)}
-                />
-                <div aria-hidden className="absolute inset-0 bg-fg-muted dark:bg-raised motion-reduce:hidden" style={slideIn(1)} />
-                <div
-                  className="relative flex h-full flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl motion-reduce:[animation:none!important] sm:px-12"
-                  style={slideIn(2)}
-                >
+                <div className="relative flex h-full flex-col overflow-y-auto bg-bg dark:bg-bg-2 px-[var(--gutter)] pb-10 pt-3 shadow-2xl sm:px-12">
                   <div className="flex h-11 items-center justify-between">
                     <Dialog.Title className="sr-only">Site menu</Dialog.Title>
                     <Link href="/" aria-label="emmaki home" onClick={() => setOpen(false)}>
@@ -174,12 +148,17 @@ export function SiteHeader() {
                           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
                           return (
                             <li key={href}>
-                              <MenuRollLink
+                              <Link
                                 href={href}
-                                label={label}
-                                active={active}
-                                onNavigate={() => setOpen(false)}
-                              />
+                                aria-current={active ? "page" : undefined}
+                                onClick={() => setOpen(false)}
+                                className={cn(
+                                  "flex min-h-16 items-center whitespace-nowrap type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max focus-visible:text-fg-max",
+                                  active ? "text-fg-max" : "text-fg-2",
+                                )}
+                              >
+                                {label}
+                              </Link>
                             </li>
                           );
                         })}

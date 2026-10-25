@@ -393,11 +393,6 @@
   to { visibility: visible; }
 }
 
-/* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
-@keyframes menu-slide-in {
-  from { translate: 100% 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
