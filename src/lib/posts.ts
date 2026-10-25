@@ -24,7 +24,7 @@ export const posts: Post[] = [
     slug: "placeholder-post",
     title: "Placeholder post title that runs long enough to wrap onto a second line",
     category: "Category",
-    author: "emmaki",
+    author: "Emma Rawson",
     published: "2026-10-25",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
     intro:
@@ -40,11 +40,11 @@ export const posts: Post[] = [
   },
 ];
 
-/** "25 Oct 2026" from an ISO date, the same on server and client. */
+/** "October 25, 2026" from an ISO date, the same on server and client. */
 export function formatPublished(isoDate: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
+  return new Intl.DateTimeFormat("en-US", {
+    day: "numeric",
+    month: "long",
     year: "numeric",
     timeZone: "UTC",
   }).format(new Date(`${isoDate}T00:00:00Z`));

@@ -1,9 +1,9 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
 /**
  * An outlined link button that floods brand yellow from the left on hover or
- * focus, while its arrow box floods black and the arrow slides through
+ * focus, while its arrow box floods black and the arrow slides out up-right
  * (grafit.agency's button). Styles: "Flood button" in globals.css.
  */
 export function FloodButton({
@@ -19,8 +19,8 @@ export function FloodButton({
     <span className="flood-button__layout">
       <span className="flood-button__label">{children}</span>
       <span className="flood-button__icon" aria-hidden>
-        <ArrowRight className="flood-button__arrow" />
-        <ArrowRight className="flood-button__arrow flood-button__arrow--next" />
+        <ArrowUpRight className="flood-button__arrow" />
+        <ArrowUpRight className="flood-button__arrow flood-button__arrow--next" />
       </span>
     </span>
   );
