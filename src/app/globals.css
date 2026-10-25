@@ -542,13 +542,12 @@
  * A field of dots (white in dark mode, black in light), sparse at the top and dense at the bottom,
  * drifts sideways; the wordmark is the gap in it (page-colour letters). A black bar closes the
  * footer in both themes; the field stops at its top edge and the wordmark is cropped there, partway
- * up the letters' bottom curves. In dark mode a yellow spotlight follows the mouse; light mode has
- * none (owner). The wordmark rises into place as it scrolls in.
+ * up the letters' bottom curves. In dark mode a yellow spotlight follows the mouse and the white
+ * field dims around it; light mode has none (owner). The wordmark rises into place as it scrolls in.
  */
 .footer {
   --footer-dots: var(--color-fg-max);
   --footer-bar-h: 2.5rem;
-  @media (width < 40rem) { --footer-bar-h: 4.5rem; } /* two rows: links, then the © line */
 }
 .footer-base { height: var(--footer-bar-h); background: #000; }
 .footer-bar {
@@ -561,14 +560,17 @@
 .footer-bar :is(a:hover, a:focus-visible) { color: #fff; }
 .footer-field { position: absolute; inset: 0; }
 .footer-field--torch { visibility: hidden; }
+.footer-field--ink { transition: opacity 300ms; }
+/* The field dims while the spotlight is on, so the spotlight reads as light. */
 .footer-lit .footer-field--ink {
+  opacity: 0.4;
   mask-image: radial-gradient(circle 190px at var(--footer-x, 50%) var(--footer-y, 50%), transparent 35%, #000 100%);
 }
 .footer-lit .footer-field--torch {
   visibility: visible;
   mask-image: radial-gradient(circle 190px at var(--footer-x, 50%) var(--footer-y, 50%), #000 35%, transparent 100%);
 }
-[data-theme="light"] .footer-field--ink { mask-image: none; }
+[data-theme="light"] .footer-field--ink { mask-image: none; opacity: 1; }
 [data-theme="light"] .footer-field--torch { display: none; }
 .footer-dots {
   position: absolute;
@@ -595,6 +597,8 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .footer-dots { animation: footer-drift 40s linear infinite; }
+  /* The letters sway a pixel or two against the still dot grid: the mirage wobble. */
+  .footer-wobble { animation: footer-wobble 6s ease-in-out infinite; }
   @supports (animation-timeline: view()) {
     .footer { view-timeline: --footer-band; }
     .footer-mark { animation: footer-rise linear both; animation-timeline: --footer-band; animation-range: entry 20% entry 100%; }
@@ -603,6 +607,11 @@
 @keyframes footer-drift {
   from { mask-position: 0 0, left 0 bottom var(--footer-bar-h); }
   to { mask-position: 0 0, left -360px bottom var(--footer-bar-h); }
+}
+@keyframes footer-wobble {
+  25% { translate: 1.5px -0.5px; }
+  50% { translate: -0.5px 1px; }
+  75% { translate: -1.5px -0.5px; }
 }
 @keyframes footer-rise { from { translate: 0 30%; } }
 

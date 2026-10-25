@@ -8,19 +8,21 @@ export function TooltipLink({
   label,
   className,
   newTab,
+  onClick,
   children,
 }: {
   href: string;
   label: string;
   className?: string;
   newTab?: boolean;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
   children: React.ReactNode;
 }) {
   return (
     <Tooltip.Root>
       <Tooltip.Trigger
         delay={150}
-        render={newTab ? <a href={href} target="_blank" rel="noopener" /> : <a href={href} />}
+        render={newTab ? <a href={href} target="_blank" rel="noopener" /> : <a href={href} onClick={onClick} />}
         aria-label={newTab ? `${label} (opens in a new tab)` : label}
         className={className}
       >
