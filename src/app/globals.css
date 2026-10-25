@@ -95,14 +95,13 @@
   --sparkle-second: #FFE38A;
 }
 /*
- * Unlit TOC notches. Dark: about 3.3:1 on black. Light: black at 10%, as grafit.agency does; deliberately
+ * Unlit TOC notches: the page's strongest ink at 10%, as grafit.agency does, in both themes. Deliberately
  * below 3:1 (owner's call) because the lit notches and the headings carry the position.
  */
 :root {
-  --toc-tick: color-mix(in oklab, var(--color-fg-muted) 75%, var(--color-bg));
+  --toc-tick: color-mix(in oklab, var(--color-fg-max) 10%, var(--color-bg));
 }
 [data-theme="light"] {
-  --toc-tick: color-mix(in oklab, var(--color-fg-max) 10%, var(--color-bg));
   --sparkle-first: #E07B00;
   --sparkle-second: #E86A00;
 }
