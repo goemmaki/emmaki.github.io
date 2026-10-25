@@ -80,6 +80,13 @@ The call to action after the article, built after grafit's button but in emmaki 
 - **Label (owner):** set per post in `cta.label`, worded as the conversion action ("See my X work"), not "Read other articles".
 - Yellow appears only as the flood, a rare splash in `DESIGN.md` terms.
 
+## Text links (owner)
+
+After vercel.com's article links: a link keeps the colour of the text around it and is marked by a 1px underline, 4px below the text, in `fg-muted`. On hover or focus the underline turns `fg-max` (whiter in dark mode, darker in light); the text doesn't change. No blue or purple, and no yellow (`DESIGN.md`).
+
+- One rule: the `text-link` utility in `globals.css`, used through `src/components/text-link.tsx`. Post paragraphs can hold inline links (`PostParagraph` in `posts.ts`); "Copy as .md" writes them as `[text](href)`.
+- **Accessibility:** the underline, not colour, marks the link (WCAG 1.4.1). Underline against the page: 5.85:1 dark, 4.12:1 light. Focus also gets the site's focus ring.
+
 ## FAQs (owner)
 
 After grafit's article FAQs, with the owner's change: **+ opens and − closes**, instead of a rotating arrow. Five placeholder questions for now (`faqs` in `Post`).
@@ -126,4 +133,4 @@ These need the owner's decision before the audit promotes or reverses them:
 
 ## Not designed yet
 
-In-body links (no traditional blue or purple; must work in both themes), the "add me as a preferred information provider" button (same style as the flood button), the `/blog` index, and a TOC for screens below 1024px.
+The "add me as a preferred information provider" button (same style as the flood button), the `/blog` index, and a TOC for screens below 1024px.

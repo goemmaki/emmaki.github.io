@@ -1,6 +1,10 @@
+/** A run of paragraph text, or an inline link. */
+export type PostInline = string | { text: string; href: string };
+/** A paragraph: plain text, or runs with inline links. */
+export type PostParagraph = string | PostInline[];
 /** A paragraph, a subheading inside a section, or an image. */
 export type PostBlock =
-  | string
+  | PostParagraph
   | { level: 3 | 4 | 5 | 6; text: string }
   | { image: string; width: number; height: number; alt: string; caption?: string };
 export type PostSection = { heading: string; blocks: PostBlock[] };
@@ -24,9 +28,13 @@ export type Post = {
   faqs: PostFaq[];
 };
 
-const placeholderParagraphs = [
+const placeholderParagraphs: PostParagraph[] = [
   "This is a placeholder paragraph for the article body. It gives the page enough text to show the reading measure, line spacing and rhythm without adding finished copy.",
-  "This is a second placeholder paragraph. Replace it with owner-written copy when the article is ready, keeping the same paragraph structure for the layout review.",
+  [
+    "This is a second placeholder paragraph with ",
+    { text: "a placeholder link", href: "/work" },
+    " in it. Replace it with owner-written copy when the article is ready, keeping the same paragraph structure for the layout review.",
+  ],
   "This is a third placeholder paragraph to show how the article continues down the page and how the section spacing feels in context.",
 ];
 
@@ -106,6 +114,18 @@ export const posts: Post[] = [
   },
 ];
 
+/** A paragraph as plain text. */
+export function paragraphText(paragraph: PostParagraph) {
+  return typeof paragraph === "string" ? paragraph : paragraph.map((run) => (typeof run === "string" ? run : run.text)).join("");
+}
+
+/** A paragraph as Markdown, links as [text](href). */
+function paragraphMarkdown(paragraph: PostParagraph) {
+  return typeof paragraph === "string"
+    ? paragraph
+    : paragraph.map((run) => (typeof run === "string" ? run : `[${run.text}](${run.href})`)).join("");
+}
+
 /** "October 25, 2026" from an ISO date, the same on server and client. */
 export function formatPublished(isoDate: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -133,8 +153,8 @@ export function postMarkdown(post: Post, url: string) {
     ...post.sections.flatMap(({ heading, blocks }) => [
       `## ${heading}`,
       ...blocks.map((block) =>
-        typeof block === "string"
-          ? block
+        typeof block === "string" || Array.isArray(block)
+          ? paragraphMarkdown(block)
           : "image" in block
             ? `![${block.alt}](${block.image})`
             : `${"#".repeat(block.level)} ${block.text}`,
@@ -153,7 +173,9 @@ export function readingMinutes(post: Post) {
     ...post.tldr,
     ...post.sections.flatMap(({ heading, blocks }) => [
       heading,
-      ...blocks.map((block) => (typeof block === "string" ? block : "image" in block ? (block.caption ?? "") : block.text)),
+      ...blocks.map((block) =>
+        typeof block === "string" || Array.isArray(block) ? paragraphText(block) : "image" in block ? (block.caption ?? "") : block.text,
+      ),
     ]),
     ...post.faqs.flatMap(({ question, answer }) => [question, answer]),
   ].join(" ");

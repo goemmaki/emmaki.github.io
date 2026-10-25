@@ -6,6 +6,7 @@ import { ChevronRight, Clock, House, ListChecks } from "lucide-react";
 import { FloodButton } from "@/components/flood-button";
 import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
+import { TextLink } from "@/components/text-link";
 import { PostTools } from "@/components/blog/post-tools";
 import { formatPublished, getPost, headingId, posts, readingMinutes } from "@/lib/posts";
 
@@ -132,6 +133,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className={`mt-6 space-y-6 ${bodyText}`}>
               {blocks.map((block, index) => {
                 if (typeof block === "string") return <p key={index}>{block}</p>;
+                if (Array.isArray(block)) {
+                  return (
+                    <p key={index}>
+                      {block.map((run, i) =>
+                        typeof run === "string" ? run : <TextLink key={i} href={run.href}>{run.text}</TextLink>,
+                      )}
+                    </p>
+                  );
+                }
                 if ("image" in block) {
                   return (
                     <figure key={index} className="!my-8">
