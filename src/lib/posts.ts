@@ -1,5 +1,8 @@
-/** A paragraph, or a subheading inside a section. */
-export type PostBlock = string | { level: 3 | 4 | 5 | 6; text: string };
+/** A paragraph, a subheading inside a section, or an image. */
+export type PostBlock =
+  | string
+  | { level: 3 | 4 | 5 | 6; text: string }
+  | { image: string; width: number; height: number; alt: string; caption?: string };
 export type PostSection = { heading: string; blocks: PostBlock[] };
 
 export type Post = {
@@ -8,6 +11,8 @@ export type Post = {
   category: string;
   author: string;
   published: string;
+  /** Set only when the post was revised after publishing. */
+  updated?: string;
   /** The question Ask AI opens with, about this page. */
   aiQuestion?: string;
   /** The action after the article. */
@@ -29,7 +34,8 @@ export const posts: Post[] = [
     title: "Placeholder post title that runs long enough to wrap onto a second line",
     category: "Category",
     author: "Emma Rawson",
-    published: "2026-10-25",
+    published: "2026-10-20",
+    updated: "2026-10-25",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
     cta: { label: "See my X work", href: "/work" },
     intro:
@@ -43,12 +49,26 @@ export const posts: Post[] = [
           placeholderParagraphs[0],
           { level: 3, text: "Placeholder subheading (H3)" },
           placeholderParagraphs[1],
+          {
+            image: "/blog/placeholder-art-1.svg",
+            width: 1400,
+            height: 788,
+            alt: "Placeholder art: a yellow square beside a gray circle",
+            caption: "Placeholder caption for the first image.",
+          },
           { level: 4, text: "Placeholder subheading (H4)" },
           placeholderParagraphs[2],
           { level: 5, text: "Placeholder subheading (H5)" },
           placeholderParagraphs[0],
           { level: 6, text: "Placeholder subheading (H6)" },
           placeholderParagraphs[1],
+          {
+            image: "/blog/placeholder-art-2.svg",
+            width: 1400,
+            height: 933,
+            alt: "Placeholder art: a gray mountain shape under a black sun",
+          },
+          placeholderParagraphs[2],
         ],
       },
       ...[
@@ -87,9 +107,29 @@ export function postMarkdown(post: Post, url: string) {
     post.intro,
     ...post.sections.flatMap(({ heading, blocks }) => [
       `## ${heading}`,
-      ...blocks.map((block) => (typeof block === "string" ? block : `${"#".repeat(block.level)} ${block.text}`)),
+      ...blocks.map((block) =>
+        typeof block === "string"
+          ? block
+          : "image" in block
+            ? `![${block.alt}](${block.image})`
+            : `${"#".repeat(block.level)} ${block.text}`,
+      ),
     ]),
   ].join("\n\n");
+}
+
+/** Whole minutes to read the post at 230 words a minute, at least 1. */
+export function readingMinutes(post: Post) {
+  const text = [
+    post.title,
+    post.intro,
+    ...post.tldr,
+    ...post.sections.flatMap(({ heading, blocks }) => [
+      heading,
+      ...blocks.map((block) => (typeof block === "string" ? block : "image" in block ? (block.caption ?? "") : block.text)),
+    ]),
+  ].join(" ");
+  return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 230));
 }
 
 export function getPost(slug: string) {

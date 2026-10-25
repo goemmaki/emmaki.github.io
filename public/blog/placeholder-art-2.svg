@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 933" width="1400" height="933">
+  <rect width="1400" height="933" fill="#ebebeb"/>
+  <path d="M0 933 L520 260 L860 700 L1080 420 L1400 933 Z" fill="#4d4d4d"/>
+  <circle cx="1100" cy="220" r="110" fill="#171717"/>
+  <text x="60" y="90" fill="#4d4d4d" font-family="monospace" font-size="28">PLACEHOLDER ART 2</text>
+</svg>

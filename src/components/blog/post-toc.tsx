@@ -2,8 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-// Notches per gap between two headings. Notch pitch (1px + 4px) × 6 = 30px, the
-// list's pitch (18px line + 12px gap), so every sixth notch sits level with a heading.
+// Notches per gap between two headings. Notch pitch (1px + 5px) × 6 = 36px, the
+// list's pitch (18px line + 18px gap), so every sixth notch sits level with a heading.
+// grafit.agency's measurements.
 const TICKS_PER_SECTION = 6;
 // Where a heading counts as reached, and where a clicked heading lands, in px from the top.
 const OFFSET = 112;
@@ -42,7 +43,7 @@ export function PostToc({ entries }: { entries: TocEntry[] }) {
       const p = progress();
       ticks.forEach((tick, r) => {
         const w = Math.max(0, 1 - Math.abs(r - p * TICKS_PER_SECTION) / 3) ** 3;
-        tick.style.backgroundColor = `color-mix(in oklab, var(--color-fg-max) ${w * 100}%, var(--color-fg-muted))`;
+        tick.style.backgroundColor = `color-mix(in oklab, var(--color-fg-max) ${w * 100}%, var(--toc-tick))`;
         tick.style.transform = `scaleX(${1 + w})`;
       });
       links.forEach((link, k) => {
@@ -80,12 +81,12 @@ export function PostToc({ entries }: { entries: TocEntry[] }) {
 
   return (
     <nav aria-label="On this page" className="relative pl-10">
-      <div ref={railRef} aria-hidden className="absolute left-0 top-[8.5px] flex flex-col gap-1">
+      <div ref={railRef} aria-hidden className="absolute left-0 top-[8.5px] flex flex-col gap-[5px]">
         {Array.from({ length: (entries.length - 1) * TICKS_PER_SECTION + 1 }, (_, r) => (
-          <div key={r} className="h-px w-3 origin-left bg-fg-muted" />
+          <div key={r} className="h-px w-3 origin-left bg-(--toc-tick)" />
         ))}
       </div>
-      <ol ref={listRef} className="flex flex-col gap-3 font-sans text-sm leading-[18px]">
+      <ol ref={listRef} className="flex flex-col gap-[18px] font-sans text-sm leading-[18px]">
         {entries.map(({ id, text }) => (
           <li key={id}>
             <a

@@ -94,7 +94,12 @@
   --sparkle-first: #FFC300;
   --sparkle-second: #FFE38A;
 }
+/* Unlit TOC notches: the faintest gray that keeps 3:1 against the page (WCAG 1.4.11), about 3.2:1 here and 4.1:1 in light mode. */
+:root {
+  --toc-tick: color-mix(in oklab, var(--color-fg-muted) 75%, var(--color-bg));
+}
 [data-theme="light"] {
+  --toc-tick: var(--color-fg-muted);
   --sparkle-first: #E07B00;
   --sparkle-second: #E86A00;
 }
