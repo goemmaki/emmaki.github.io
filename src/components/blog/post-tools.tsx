@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Menu } from "@base-ui/react/menu";
 import { Bot, Copy, FileText, Link2, Share2 } from "lucide-react";
 import { postMarkdown, type Post } from "@/lib/posts";
+import { AI_LOGO_PATHS } from "@/components/blog/ai-logos";
 
 const itemClass =
   "flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none data-[highlighted]:bg-surface";
@@ -30,6 +31,14 @@ function brandMark(label: string) {
   }
   if (label === "Share on X") {
     return <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-fg-2" aria-hidden="true" fill="currentColor"><path d="M12.6 1.5H15l-5.3 6.1L15.9 14h-4.8l-3.8-4.9L3 14H.6l5.7-6.6L.2 1.5h4.9l3.4 4.5 4.1-4.5Zm-.8 11.2h1.3L4.3 2.7H3L11.8 12.7Z" /></svg>;
+  }
+  const logo = AI_LOGO_PATHS[label];
+  if (logo) {
+    return (
+      <svg viewBox="0 0 24 24" className="size-4 shrink-0 text-fg-2" aria-hidden="true" fill="currentColor" fillRule={label === "Grok" ? "evenodd" : undefined}>
+        <path d={logo} />
+      </svg>
+    );
   }
   return null;
 }
