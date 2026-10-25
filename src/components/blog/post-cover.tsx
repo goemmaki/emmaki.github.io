@@ -9,11 +9,11 @@ import { useEffect, useRef, type ReactNode } from "react";
 // spotlight, using the footer's settings, and the photo's colour shows there. In dark mode,
 // scrolling plays a parallax, the title rises and fades, and the spotlight splutters and dies as the
 // photo pixelates and dissolves into the page. Styles: the "Post cover" block in globals.css.
-// The photo's pixelation as it leaves, in dark mode: block sizes in CSS px, stepped like a
-// censor's mosaic, over this stretch of the cover's scroll progress (see globals.css).
+// The photo's pixelation in dark mode: block sizes in CSS px, stepped like a censor's mosaic, over
+// this stretch of scrolling, in screen heights (the timings in globals.css, "Post cover").
 const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
-const PIXEL_FROM = 0.3;
-const PIXEL_TO = 0.72;
+const PIXEL_FROM = 0.45;
+const PIXEL_TO = 1.1;
 
 // How far down the screen, in px, a spotlight reaches the header's buttons: the header (64) plus
 // most of the spotlight's 190px radius.
@@ -45,7 +45,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const active = supported && motion.matches && document.documentElement.dataset.theme === "dark";
-        const progress = window.scrollY / (2 * view.offsetHeight);
+        const progress = window.scrollY / view.offsetHeight;
         const at = (progress - PIXEL_FROM) / (PIXEL_TO - PIXEL_FROM);
         const step = !active || at <= 0 || !img.complete ? 0 : Math.min(PIXEL_STEPS.length - 1, 1 + Math.floor(at * (PIXEL_STEPS.length - 1)));
         if (step === drawn) return;
@@ -152,7 +152,8 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
 
   return (
     // In dark mode the section is taller than the screen and the photo frame stays pinned for the
-    // extra length, so the choreography has room to play (globals.css).
+    // extra length, so the choreography has room to play, until the article card covers it
+    // (globals.css).
     <section ref={cover} data-under-header className="post-cover relative -mt-16 h-svh min-h-[32rem] bg-bg">
       <div ref={photo} className="sticky top-0 h-svh min-h-[32rem] overflow-hidden">
         <div className="post-cover-media absolute inset-0">
@@ -164,6 +165,13 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
         <div aria-hidden className="post-cover-fade absolute inset-x-0 bottom-0 h-3/5" />
         <div ref={content} className="post-cover-title shell relative flex h-full items-center justify-center pt-16 text-left">
           {children}
+        </div>
+      </div>
+      {/* The lamp that comes on once the photo is black, above the article card sliding up under it. */}
+      <div aria-hidden className="post-lamp pointer-events-none absolute inset-0 z-20">
+        <div className="sticky top-0 h-svh">
+          <div className="post-lamp-glow absolute inset-x-0 top-[calc(var(--lamp-top)-3rem)] h-[70svh]" />
+          <div className="post-lamp-bar absolute top-(--lamp-top) left-1/2 h-0.5 w-[min(28rem,70vw)] -translate-x-1/2 rounded-full" />
         </div>
       </div>
     </section>

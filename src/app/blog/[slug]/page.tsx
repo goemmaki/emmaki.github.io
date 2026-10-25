@@ -68,159 +68,156 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </h1>
         </PostCover>
       )}
-      {/* The headline area has its own grid, matching the body's so the columns line up. */}
-      <div className={`pt-e2 pb-e2 ${postGrid}`}>
-        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
-            Light mode with a cover has no title here yet (dark-mode experiment, owner 2026-10-26). */}
-        <header
-          className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2 ${
-            post.cover
-              ? "light:[grid-template-areas:'breadcrumb_breadcrumb'_'author_author'_'date_tools'] md:light:[grid-template-areas:'breadcrumb_tools'_'meta_meta']"
-              : ""
-          }`}
-        >
-          {/* Diagonal stripes lit around the title and fading out into the page, kept within the
-              headline column and just past the author line: texture, not light (owner, 2026-10-25).
-              Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
-          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
-            <StripedPattern className="stroke-[0.75] text-fg-muted" />
-          </div>
-          <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
-            <ol className="flex min-w-0 items-center gap-2">
-              <li className="flex shrink-0">
-                <Link href="/" aria-label="Home" className="quiet-link">
-                  <House className="size-3.5" aria-hidden />
-                </Link>
-              </li>
-              <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-              <li className="shrink-0">
-                <Link href="/blog" className="quiet-link">Blog</Link>
-              </li>
-              <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-              <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
-            </ol>
-          </nav>
+      {/* The article as one card. In dark mode under a cover it swings up over the pinned, blacked-out
+          cover, under the cover's lamp (globals.css, "Post cover"); data-covers-media tells the site
+          header when it has covered the photo. */}
+      <div data-covers-media className="post-card relative z-10 bg-bg">
+        {/* The headline area has its own grid, matching the body's so the columns line up. */}
+        <div className={`post-card-head pt-e2 pb-e2 ${postGrid}`}>
+          {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
+              Light mode with a cover has no title here yet (dark-mode experiment, owner 2026-10-26). */}
+          <header
+            className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2 ${
+              post.cover
+                ? "light:[grid-template-areas:'breadcrumb_breadcrumb'_'author_author'_'date_tools'] md:light:[grid-template-areas:'breadcrumb_tools'_'meta_meta']"
+                : ""
+            }`}
+          >
+            {/* Diagonal stripes lit around the title and fading out into the page, kept within the
+                headline column and just past the author line: texture, not light (owner, 2026-10-25).
+                Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
+            <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
+              <StripedPattern className="stroke-[0.75] text-fg-muted" />
+            </div>
+            <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
+              <ol className="flex min-w-0 items-center gap-2">
+                <li className="flex shrink-0">
+                  <Link href="/" aria-label="Home" className="quiet-link">
+                    <House className="size-3.5" aria-hidden />
+                  </Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+                <li className="shrink-0">
+                  <Link href="/blog" className="quiet-link">Blog</Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+                <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
+              </ol>
+            </nav>
 
-          <div className="justify-self-end [grid-area:tools]">
-            <PostTools post={post} />
-          </div>
+            <div className="justify-self-end [grid-area:tools]">
+              <PostTools post={post} />
+            </div>
 
-          {post.cover ? (
-            // The H1 is on the cover; this repeat is visual only, so screen readers skip it. It
-            // scrambles once, when it first scrolls into view.
-            <HyperText
-              as="p"
-              aria-hidden
-              startOnView
-              animateOnHover={false}
-              duration={700}
-              className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title] light:hidden`}
-            >
-              {post.title}
-            </HyperText>
-          ) : (
-            <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
-          )}
+            {post.cover ? (
+              // The H1 is on the cover; this repeat is visual only, so screen readers skip it. It
+              // scrambles once, when it first scrolls into view.
+              <HyperText
+                as="p"
+                aria-hidden
+                startOnView
+                animateOnHover={false}
+                duration={700}
+                className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title] light:hidden`}
+              >
+                {post.title}
+              </HyperText>
+            ) : (
+              <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
+            )}
 
-          <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
-            <div className="flex items-center gap-3 [grid-area:author]">
-              <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
-                ER
+            <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
+              <div className="flex items-center gap-3 [grid-area:author]">
+                <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
+                  ER
+                </div>
+                <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
               </div>
-              <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
-            </div>
-            <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
-              <time dateTime={post.published}>
-                <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
-              </time>
-              {post.updated && (
-                <span>
-                  Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
-                </span>
-              )}
-              {/* From lg the read time sits above the TOC instead. */}
-              <span className="lg:hidden">{minutes} min read</span>
-            </div>
-          </div>
-
-          {/* Dark mode with a cover: the lamp that comes on over the headline as the cover goes black. */}
-          {post.cover && (
-            <div aria-hidden className="post-lamp pointer-events-none absolute -inset-x-e2 -top-e1 -bottom-e1 z-10">
-              <div className="post-lamp-glow absolute inset-0" />
-              <div className="post-lamp-bar absolute top-0 left-1/2 h-0.5 w-[min(28rem,80%)] -translate-x-1/2 rounded-full" />
-            </div>
-          )}
-        </header>
-      </div>
-
-      <div className={`pb-e3 ${postGrid}`}>
-        {/* pt-1 centres the read time on the intro's first line. */}
-        <aside aria-labelledby="toc-title" className="hidden pt-1 lg:col-start-1 lg:row-start-1 lg:block">
-          <div className="sticky top-24">
-            <p className="mb-8 flex items-center gap-2 type-meta text-fg-2">
-              <Clock className="size-3.5" aria-hidden />
-              {minutes} min read
-            </p>
-            <h2 id="toc-title" className="sr-only">On this page</h2>
-            <PostToc entries={toc} />
-          </div>
-        </aside>
-
-        <div className="max-w-[700px] lg:col-start-2 lg:row-start-1">
-          <p className={bodyText}>{post.intro}</p>
-
-          <section aria-labelledby={POST_TLDR_ID} className="mt-e1 rounded-sm border border-line bg-surface p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <ListChecks className="size-4 text-fg-2" aria-hidden />
-              <h2 id={POST_TLDR_ID} tabIndex={-1} className={`${headingStyle[5]} text-fg-max ${tocTarget}`}>{POST_TLDR_LABEL}</h2>
-            </div>
-            <ul className="list-disc space-y-2 pl-5 font-sans text-sm leading-normal text-fg-2">
-              {post.tldr.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </section>
-
-          {post.sections.map(({ heading, blocks }) => (
-            <section key={heading} aria-labelledby={headingId(heading)} className="mt-e1">
-              <h2 id={headingId(heading)} tabIndex={-1} className={sectionHeadingClass}>{heading}</h2>
-              <div className={`mt-6 space-y-6 ${bodyText}`}>
-                {blocks.map((block, index) => {
-                  if (typeof block === "string") return <p key={index}>{block}</p>;
-                  if (Array.isArray(block)) {
-                    return (
-                      <p key={index}>
-                        {block.map((run, i) =>
-                          typeof run === "string" ? run : <TextLink key={i} href={run.href}>{run.text}</TextLink>,
-                        )}
-                      </p>
-                    );
-                  }
-                  if ("image" in block) {
-                    return (
-                      <figure key={index} className="!my-8">
-                        <Image src={block.image} width={block.width} height={block.height} alt={block.alt} className="w-full rounded-sm" />
-                        {block.caption && <figcaption className="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}
-                      </figure>
-                    );
-                  }
-                  const Heading = `h${block.level}` as const;
-                  return (
-                    <Heading key={index} className={`!mt-8 ${headingStyle[block.level]} text-fg-max`}>
-                      {block.text}
-                    </Heading>
-                  );
-                })}
+              <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
+                <time dateTime={post.published}>
+                  <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
+                </time>
+                {post.updated && (
+                  <span>
+                    Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
+                  </span>
+                )}
+                {/* From lg the read time sits above the TOC instead. */}
+                <span className="lg:hidden">{minutes} min read</span>
               </div>
+            </div>
+          </header>
+        </div>
+
+        <div className={`pb-e3 ${postGrid}`}>
+          {/* pt-1 centres the read time on the intro's first line. */}
+          <aside aria-labelledby="toc-title" className="hidden pt-1 lg:col-start-1 lg:row-start-1 lg:block">
+            <div className="sticky top-24">
+              <p className="mb-8 flex items-center gap-2 type-meta text-fg-2">
+                <Clock className="size-3.5" aria-hidden />
+                {minutes} min read
+              </p>
+              <h2 id="toc-title" className="sr-only">On this page</h2>
+              <PostToc entries={toc} />
+            </div>
+          </aside>
+
+          <div className="max-w-[700px] lg:col-start-2 lg:row-start-1">
+            <p className={bodyText}>{post.intro}</p>
+
+            <section aria-labelledby={POST_TLDR_ID} className="mt-e1 rounded-sm border border-line bg-surface p-6">
+              <div className="mb-4 flex items-center gap-2">
+                <ListChecks className="size-4 text-fg-2" aria-hidden />
+                <h2 id={POST_TLDR_ID} tabIndex={-1} className={`${headingStyle[5]} text-fg-max ${tocTarget}`}>{POST_TLDR_LABEL}</h2>
+              </div>
+              <ul className="list-disc space-y-2 pl-5 font-sans text-sm leading-normal text-fg-2">
+                {post.tldr.map((item) => <li key={item}>{item}</li>)}
+              </ul>
             </section>
-          ))}
 
-          <div className="mt-e2">
-            <FloodButton href={post.cta.href}>{post.cta.label}</FloodButton>
+            {post.sections.map(({ heading, blocks }) => (
+              <section key={heading} aria-labelledby={headingId(heading)} className="mt-e1">
+                <h2 id={headingId(heading)} tabIndex={-1} className={sectionHeadingClass}>{heading}</h2>
+                <div className={`mt-6 space-y-6 ${bodyText}`}>
+                  {blocks.map((block, index) => {
+                    if (typeof block === "string") return <p key={index}>{block}</p>;
+                    if (Array.isArray(block)) {
+                      return (
+                        <p key={index}>
+                          {block.map((run, i) =>
+                            typeof run === "string" ? run : <TextLink key={i} href={run.href}>{run.text}</TextLink>,
+                          )}
+                        </p>
+                      );
+                    }
+                    if ("image" in block) {
+                      return (
+                        <figure key={index} className="!my-8">
+                          <Image src={block.image} width={block.width} height={block.height} alt={block.alt} className="w-full rounded-sm" />
+                          {block.caption && <figcaption className="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}
+                        </figure>
+                      );
+                    }
+                    const Heading = `h${block.level}` as const;
+                    return (
+                      <Heading key={index} className={`!mt-8 ${headingStyle[block.level]} text-fg-max`}>
+                        {block.text}
+                      </Heading>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+
+            <div className="mt-e2">
+              <FloodButton href={post.cta.href}>{post.cta.label}</FloodButton>
+            </div>
+
+            <section aria-labelledby={headingId(POST_FAQ_LABEL)} className="mt-e2">
+              <h2 id={headingId(POST_FAQ_LABEL)} tabIndex={-1} className={sectionHeadingClass}>{POST_FAQ_LABEL}</h2>
+              <PostFaqs faqs={post.faqs} bodyText={bodyText} />
+            </section>
           </div>
-
-          <section aria-labelledby={headingId(POST_FAQ_LABEL)} className="mt-e2">
-            <h2 id={headingId(POST_FAQ_LABEL)} tabIndex={-1} className={sectionHeadingClass}>{POST_FAQ_LABEL}</h2>
-            <PostFaqs faqs={post.faqs} bodyText={bodyText} />
-          </section>
         </div>
       </div>
     </article>

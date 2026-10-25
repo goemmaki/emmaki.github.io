@@ -650,25 +650,26 @@
 }
 
 /*
- * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography. The section is two
- * screens tall and its photo frame stays pinned for the first, then scrolls away. Progress is the
- * page's scroll over those two screens: 0-50% pinned, 50-100% leaving. (A view() timeline would
- * count the header's scroll padding and drop the effects as the cover left.)
- * - On arrival the whole photo shows under the shade alone.
- * - The title leads: it rises while the photo holds still, and is fully transparent as it reaches
- *   the top (by 17%), well before the article's title arrives.
- * - The photo drifts down within its frame while pinned, then moves at 60% of the page's speed as
- *   it leaves. It sits 12svh above the frame, so no gap opens.
- * - The spotlight is untouched until 18%, then fails like a flashlight on a dying battery: a
- *   stutter, a brown-out and cut with a gasp back, fluttering, last gasps, dead by 52%. Tied to
- *   scroll position, so scrolling back up brings it back.
- * - From 30% to 72% the photo pixelates in growing steps (post-cover.tsx), while the bottom
- *   dissolve grows in (10-50%) and the whole cover darkens to black (30-78%).
- * - Then the lamp over the article's headline comes on (78-96%; "Post lamp" below).
- * Without scroll-driven animations, or with reduced motion, the cover stays one static screen.
+ * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography, measured in screen
+ * heights scrolled (svh). The section is 300svh tall and its photo frame stays pinned while the
+ * article card (.post-card, 100svh of overlap) swings up over it; the card covers the screen at 200.
+ *   0-30    the title rises and fades out before it reaches the top
+ *   15-80   the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
+ *   0-115   the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
+ *   45-110  the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
+ *           (10-60) and the cover darkens to black (45-115)
+ *   112-135 the lamp sparks and comes on, near the top of the black screen
+ *   100-175 the card swings up from below, pivoting on its first screen's bottom-left corner
+ *           (after story-scroll's FlowArt: 30 degrees to level); the tilt keeps its headline
+ *           below the screen until about 150, so it rises into the lamp's light just after
+ *           the lamp is fully on
+ * Keyframe percentages are of 225svh, the card's own of its 75svh. All of it is tied to scroll position, so scrolling back up
+ * plays it backwards. Without scroll-driven animations, or with reduced motion, the cover stays one
+ * static screen and there is no lamp.
  */
 .post-cover-dim,
-.post-cover-fade { display: none; }
+.post-cover-fade,
+.post-lamp { display: none; }
 [data-theme="dark"] .post-cover-dim { display: block; opacity: 0; }
 [data-theme="dark"] .post-cover-fade {
   display: block;
@@ -688,117 +689,120 @@
 /* Header buttons go white under a live spotlight, and yellow on hover (owner, 2026-10-26). */
 [data-theme="dark"][data-cover-torch] [data-site-header] .icon-action { color: var(--color-fg-max); }
 [data-theme="dark"][data-cover-torch] [data-site-header] .icon-action:hover { color: var(--color-yellow-splash); }
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    [data-theme="dark"] .post-cover { height: 200svh; }
-    [data-theme="dark"] .post-cover-media { top: -12svh; bottom: auto; height: 112svh; }
-    [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: scroll(root);
-      animation-range: 0 200svh;
-    }
-    [data-theme="dark"] .post-cover-media { animation-name: cover-parallax; will-change: translate; }
-    [data-theme="dark"] .post-cover-title { animation-name: cover-title-rise; }
-    [data-theme="dark"] .post-cover-dim { animation-name: cover-dim; }
-    [data-theme="dark"] .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
-    [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
-  }
-}
-@keyframes cover-parallax {
-  50% { translate: 0 10svh; }
-  to { translate: 0 50svh; }
-}
-@keyframes cover-title-rise {
-  2.5% { opacity: 1; }
-  17% { opacity: 0; }
-  25%, to { opacity: 0; translate: 0 -60svh; }
-}
-@keyframes cover-fade {
-  0%, 10% { opacity: 0; scale: 1 0.4; }
-  50%, to { opacity: 1; scale: 1; }
-}
-@keyframes cover-dim {
-  30% { opacity: 0; }
-  55% { opacity: 0.5; }
-  78%, to { opacity: 1; }
-}
-/* Irregular on purpose, nothing repeats: at 1800px of progress, 0.4% is about 7px of scrolling. */
-@keyframes cover-power-fail {
-  0%, 18% { --cover-power: 1; }
-  23% { --cover-power: 0.88; }
-  /* first stutter: three quick dips */
-  24% { --cover-power: 0.3; }
-  24.4% { --cover-power: 0.8; }
-  24.8% { --cover-power: 0.45; }
-  25.3% { --cover-power: 0.85; }
-  28% { --cover-power: 0.7; }
-  /* brown-out, then a hard cut and a gasp back */
-  30.5% { --cover-power: 0.4; }
-  31% { --cover-power: 0.05; }
-  32.2% { --cover-power: 0.08; }
-  32.6% { --cover-power: 0.9; }
-  35% { --cover-power: 0.6; }
-  /* fluttering on low battery */
-  37% { --cover-power: 0.35; }
-  37.3% { --cover-power: 0.6; }
-  37.6% { --cover-power: 0.2; }
-  38% { --cover-power: 0.55; }
-  38.3% { --cover-power: 0.1; }
-  38.9% { --cover-power: 0.5; }
-  42% { --cover-power: 0.38; }
-  /* last gasps */
-  45% { --cover-power: 0.15; }
-  45.4% { --cover-power: 0.45; }
-  46% { --cover-power: 0.05; }
-  47.5% { --cover-power: 0.25; }
-  48% { --cover-power: 0; }
-  48.6% { --cover-power: 0.12; }
-  52%, 100% { --cover-power: 0; }
-}
 
-/*
- * Post lamp (blog/[slug]/page.tsx), dark mode with a cover only: a #FFC300 bar above the article's
- * headline and a soft cone of its light laid over the headline area (screen blend, so grey text
- * warms and white stays white). It comes on as the cover goes black; without scroll-driven
- * animations, or with reduced motion, it is simply on. Our own take on Aceternity's lamp.
- */
-.post-lamp { display: none; }
-[data-theme="dark"] .post-lamp { display: block; }
+/* The lamp: a #FFC300 bar and a soft cone of its light over whatever passes beneath; our own
+   take on Aceternity's lamp. --lamp-top places it; the card's headline settles well below it. The
+   glow starts 3rem above the bar so it has no hard top edge. */
+.post-cover, .post-card { --lamp-top: max(12svh, 5.5rem); }
 .post-lamp-glow {
   background:
-    radial-gradient(ellipse 24% 60% at 50% 0%, rgb(255 195 0 / 0.3), transparent 70%),
-    radial-gradient(ellipse 50% 100% at 50% 0%, rgb(255 195 0 / 0.16), rgb(255 195 0 / 0.06) 50%, transparent 80%);
-  mix-blend-mode: screen;
+    radial-gradient(ellipse min(14rem, 30vw) 55% at 50% 3rem, rgb(255 195 0 / 0.2), transparent 70%),
+    radial-gradient(ellipse min(36rem, 60vw) 100% at 50% 3rem, rgb(255 195 0 / 0.1), rgb(255 195 0 / 0.035) 50%, transparent 80%);
+  mask-image: linear-gradient(to bottom, transparent, #000 3rem);
   transform-origin: top;
 }
 .post-lamp-bar {
   background: var(--color-yellow-splash);
   box-shadow: 0 0 10px 1px rgb(255 195 0 / 0.7), 0 0 40px 6px rgb(255 195 0 / 0.3);
 }
+
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    [data-theme="dark"] :is(.post-lamp-glow, .post-lamp-bar) {
-      animation-timing-function: ease-out;
+    [data-theme="dark"] .post-cover { height: 300svh; }
+    [data-theme="dark"] .post-cover-media { top: -16svh; bottom: auto; height: 116svh; }
+    [data-theme="dark"] .post-lamp { display: block; }
+    [data-theme="dark"] .post-cover + .post-card {
+      margin-top: -100svh;
+      transform-origin: 0 100svh;
+      animation-name: card-swing;
+      animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: scroll(root);
-      animation-range: 0 200svh;
+      animation-range: 100svh 175svh;
     }
+    /* Room between the lamp and the card's headline once it settles. */
+    [data-theme="dark"] .post-cover + .post-card .post-card-head { padding-top: calc(var(--lamp-top) + var(--spacing-e3)); }
+    [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade, .post-lamp-glow, .post-lamp-bar) {
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 225svh;
+    }
+    [data-theme="dark"] .post-cover-media { animation-name: cover-parallax; will-change: translate; }
+    [data-theme="dark"] .post-cover-title { animation-name: cover-title-rise; }
+    [data-theme="dark"] .post-cover-dim { animation-name: cover-dim; }
+    [data-theme="dark"] .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
+    [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
     [data-theme="dark"] .post-lamp-bar { animation-name: lamp-bar; }
     [data-theme="dark"] .post-lamp-glow { animation-name: lamp-glow; }
   }
 }
+@keyframes cover-parallax {
+  51%, to { translate: 0 15svh; }
+}
+@keyframes cover-title-rise {
+  1% { opacity: 1; }
+  12% { opacity: 0; }
+  14%, to { opacity: 0; translate: 0 -60svh; }
+}
+@keyframes cover-fade {
+  0%, 4.4% { opacity: 0; scale: 1 0.4; }
+  26.7%, to { opacity: 1; scale: 1; }
+}
+@keyframes cover-dim {
+  20% { opacity: 0; }
+  35.6% { opacity: 0.5; }
+  51%, to { opacity: 1; }
+}
 /* A faint first spark, then the bar grows out from the middle and its light spreads. */
 @keyframes lamp-bar {
-  0%, 78% { opacity: 0; scale: 0 1; }
-  79% { opacity: 1; scale: 0.08 1; }
-  80% { opacity: 0.3; scale: 0.08 1; }
-  81% { opacity: 1; scale: 0.12 1; }
-  96%, to { opacity: 1; scale: 1; }
+  0%, 49.8% { opacity: 0; scale: 0 1; }
+  50.4% { opacity: 1; scale: 0.08 1; }
+  51% { opacity: 0.25; scale: 0.08 1; }
+  51.6% { opacity: 1; scale: 0.12 1; }
+  57.8%, to { opacity: 1; scale: 1; }
 }
 @keyframes lamp-glow {
-  0%, 80% { opacity: 0; scale: 0.3 0.6; }
-  96%, to { opacity: 1; scale: 1; }
+  0%, 51.6% { opacity: 0; scale: 0.3 0.6; }
+  60%, to { opacity: 1; scale: 1; }
+}
+@keyframes card-swing {
+  from { rotate: 30deg; }
+  to { rotate: 0deg; }
+}
+/* Irregular on purpose, nothing repeats: at 225svh of progress, 0.2% is about 4px of scrolling on a
+   900px screen. */
+@keyframes cover-power-fail {
+  0%, 6.7% { --cover-power: 1; }
+  10.9% { --cover-power: 0.88; }
+  /* first stutter: three quick dips */
+  11.8% { --cover-power: 0.3; }
+  12.1% { --cover-power: 0.8; }
+  12.4% { --cover-power: 0.45; }
+  12.9% { --cover-power: 0.85; }
+  15.2% { --cover-power: 0.7; }
+  /* brown-out, then a hard cut and a gasp back */
+  17.3% { --cover-power: 0.4; }
+  17.7% { --cover-power: 0.05; }
+  18.7% { --cover-power: 0.08; }
+  19.1% { --cover-power: 0.9; }
+  21.1% { --cover-power: 0.6; }
+  /* fluttering on low battery */
+  22.8% { --cover-power: 0.35; }
+  23.1% { --cover-power: 0.6; }
+  23.3% { --cover-power: 0.2; }
+  23.7% { --cover-power: 0.55; }
+  23.9% { --cover-power: 0.1; }
+  24.4% { --cover-power: 0.5; }
+  27.1% { --cover-power: 0.38; }
+  /* last gasps */
+  29.6% { --cover-power: 0.15; }
+  29.9% { --cover-power: 0.45; }
+  30.5% { --cover-power: 0.05; }
+  31.7% { --cover-power: 0.25; }
+  32.2% { --cover-power: 0; }
+  32.7% { --cover-power: 0.12; }
+  35.6%, 100% { --cover-power: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -46,17 +46,21 @@ export function SiteHeader() {
   const [closePosition, setClosePosition] = useState<{ top: number; right: number } | null>(null);
   // Hidden while scrolling down, back on any scroll up.
   const [hidden, setHidden] = useState(false);
-  // Transparent while it sits over a page's full-screen photo (an element marked data-under-header).
+  // Transparent while it sits over a page's full-screen photo (an element marked data-under-header),
+  // until the photo ends or something marked data-covers-media slides over it.
   const [overMedia, setOverMedia] = useState(false);
 
   useEffect(() => {
     let last = window.scrollY;
     let frame = 0;
     const media = document.querySelector("[data-under-header]");
+    const cover = document.querySelector("[data-covers-media]");
     const onScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        setOverMedia(!!media && media.getBoundingClientRect().bottom > 64);
+        setOverMedia(
+          !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64),
+        );
         const y = window.scrollY;
         if (Math.abs(y - last) < SCROLL_THRESHOLD) return;
         setHidden(y > last && y > 64); // never while the header (h-16) still covers its own spot
