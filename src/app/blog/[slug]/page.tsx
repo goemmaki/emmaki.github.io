@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   ];
 
   return (
-    <article>
+    <article className="overflow-x-clip">
       {/* With a cover photo, the title (the page's one H1) goes on it, full screen and cinematic; the
           breadcrumb, tools and byline follow below it, with a scrambling visual repeat of the title. */}
       {post.cover && (
@@ -142,6 +142,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <span className="lg:hidden">{minutes} min read</span>
             </div>
           </div>
+
+          {/* Dark mode with a cover: the lamp that comes on over the headline as the cover goes black. */}
+          {post.cover && (
+            <div aria-hidden className="post-lamp pointer-events-none absolute -inset-x-e2 -top-e1 -bottom-e1 z-10">
+              <div className="post-lamp-glow absolute inset-0" />
+              <div className="post-lamp-bar absolute top-0 left-1/2 h-0.5 w-[min(28rem,80%)] -translate-x-1/2 rounded-full" />
+            </div>
+          )}
         </header>
       </div>
 

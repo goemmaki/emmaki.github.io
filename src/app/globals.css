@@ -657,11 +657,14 @@
  * - On arrival the whole photo shows under the shade alone.
  * - The title leads: it rises while the photo holds still, and is fully transparent as it reaches
  *   the top (by 17%), well before the article's title arrives.
- * - The photo drifts down within its frame and slowly pushes in while pinned, then moves at 60% of
- *   the page's speed as it leaves. It sits 12svh above the frame, so no gap opens.
- * - The bottom dissolve grows in from 10% to 50%, and the whole photo darkens from 25%.
- * - The spotlight is untouched until 18%, then weakens, cuts out twice, recovers, and dies by 70%.
- *   Tied to scroll position, so scrolling back up brings it back.
+ * - The photo drifts down within its frame while pinned, then moves at 60% of the page's speed as
+ *   it leaves. It sits 12svh above the frame, so no gap opens.
+ * - The spotlight is untouched until 18%, then fails like a flashlight on a dying battery: a
+ *   stutter, a brown-out and cut with a gasp back, fluttering, last gasps, dead by 52%. Tied to
+ *   scroll position, so scrolling back up brings it back.
+ * - From 30% to 72% the photo pixelates in growing steps (post-cover.tsx), while the bottom
+ *   dissolve grows in (10-50%) and the whole cover darkens to black (30-78%).
+ * - Then the lamp over the article's headline comes on (78-96%; "Post lamp" below).
  * Without scroll-driven animations, or with reduced motion, the cover stays one static screen.
  */
 .post-cover-dim,
@@ -703,8 +706,8 @@
   }
 }
 @keyframes cover-parallax {
-  50% { translate: 0 10svh; scale: 1.06; }
-  to { translate: 0 50svh; scale: 1.06; }
+  50% { translate: 0 10svh; }
+  to { translate: 0 50svh; }
 }
 @keyframes cover-title-rise {
   2.5% { opacity: 1; }
@@ -716,29 +719,88 @@
   50%, to { opacity: 1; scale: 1; }
 }
 @keyframes cover-dim {
-  25% { opacity: 0; }
-  50% { opacity: 0.5; }
-  to { opacity: 0.9; }
+  30% { opacity: 0; }
+  55% { opacity: 0.5; }
+  78%, to { opacity: 1; }
 }
-/* Irregular on purpose: a weakening beam, two short cuts of different depth, a longer recovery,
-   then the fade. Each cut lasts 10-20px of scrolling on a 900px screen. */
+/* Irregular on purpose, nothing repeats: at 1800px of progress, 0.4% is about 7px of scrolling. */
 @keyframes cover-power-fail {
   0%, 18% { --cover-power: 1; }
-  26% { --cover-power: 0.85; }
-  28.5% { --cover-power: 0.78; }
-  29.3% { --cover-power: 0.15; }
-  30.5% { --cover-power: 0.7; }
-  34.5% { --cover-power: 0.62; }
-  35.1% { --cover-power: 0.05; }
-  36.2% { --cover-power: 0.3; }
-  37.3% { --cover-power: 0.82; }
-  46% { --cover-power: 0.7; }
-  58% { --cover-power: 0.3; }
-  64% { --cover-power: 0.22; }
-  64.8% { --cover-power: 0.02; }
-  66.3% { --cover-power: 0.12; }
-  70%, 100% { --cover-power: 0; }
+  23% { --cover-power: 0.88; }
+  /* first stutter: three quick dips */
+  24% { --cover-power: 0.3; }
+  24.4% { --cover-power: 0.8; }
+  24.8% { --cover-power: 0.45; }
+  25.3% { --cover-power: 0.85; }
+  28% { --cover-power: 0.7; }
+  /* brown-out, then a hard cut and a gasp back */
+  30.5% { --cover-power: 0.4; }
+  31% { --cover-power: 0.05; }
+  32.2% { --cover-power: 0.08; }
+  32.6% { --cover-power: 0.9; }
+  35% { --cover-power: 0.6; }
+  /* fluttering on low battery */
+  37% { --cover-power: 0.35; }
+  37.3% { --cover-power: 0.6; }
+  37.6% { --cover-power: 0.2; }
+  38% { --cover-power: 0.55; }
+  38.3% { --cover-power: 0.1; }
+  38.9% { --cover-power: 0.5; }
+  42% { --cover-power: 0.38; }
+  /* last gasps */
+  45% { --cover-power: 0.15; }
+  45.4% { --cover-power: 0.45; }
+  46% { --cover-power: 0.05; }
+  47.5% { --cover-power: 0.25; }
+  48% { --cover-power: 0; }
+  48.6% { --cover-power: 0.12; }
+  52%, 100% { --cover-power: 0; }
 }
+
+/*
+ * Post lamp (blog/[slug]/page.tsx), dark mode with a cover only: a #FFC300 bar above the article's
+ * headline and a soft cone of its light laid over the headline area (screen blend, so grey text
+ * warms and white stays white). It comes on as the cover goes black; without scroll-driven
+ * animations, or with reduced motion, it is simply on. Our own take on Aceternity's lamp.
+ */
+.post-lamp { display: none; }
+[data-theme="dark"] .post-lamp { display: block; }
+.post-lamp-glow {
+  background:
+    radial-gradient(ellipse 24% 60% at 50% 0%, rgb(255 195 0 / 0.3), transparent 70%),
+    radial-gradient(ellipse 50% 100% at 50% 0%, rgb(255 195 0 / 0.16), rgb(255 195 0 / 0.06) 50%, transparent 80%);
+  mix-blend-mode: screen;
+  transform-origin: top;
+}
+.post-lamp-bar {
+  background: var(--color-yellow-splash);
+  box-shadow: 0 0 10px 1px rgb(255 195 0 / 0.7), 0 0 40px 6px rgb(255 195 0 / 0.3);
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-theme="dark"] :is(.post-lamp-glow, .post-lamp-bar) {
+      animation-timing-function: ease-out;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 200svh;
+    }
+    [data-theme="dark"] .post-lamp-bar { animation-name: lamp-bar; }
+    [data-theme="dark"] .post-lamp-glow { animation-name: lamp-glow; }
+  }
+}
+/* A faint first spark, then the bar grows out from the middle and its light spreads. */
+@keyframes lamp-bar {
+  0%, 78% { opacity: 0; scale: 0 1; }
+  79% { opacity: 1; scale: 0.08 1; }
+  80% { opacity: 0.3; scale: 0.08 1; }
+  81% { opacity: 1; scale: 0.12 1; }
+  96%, to { opacity: 1; scale: 1; }
+}
+@keyframes lamp-glow {
+  0%, 80% { opacity: 0; scale: 0.3 0.6; }
+  96%, to { opacity: 1; scale: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
