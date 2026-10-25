@@ -561,9 +561,12 @@
   mask-repeat: repeat, repeat-x;
   mask-position: 0 0, left bottom;
   mask-composite: intersect;
+  will-change: translate;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .footer-dots { animation: footer-drift 40s linear infinite; }
+  /* Steps of one dot pitch (4px, 90 per 360px tile): every dot lands on whole pixels at any
+     display scale. A smooth drift left the dots between pixels and made them flicker. */
+  .footer-dots { animation: footer-drift 40s steps(90) infinite; }
   @supports (animation-timeline: view()) {
     .footer-band { view-timeline: --footer-band; }
     .footer-mark { animation: footer-rise linear both; animation-timeline: --footer-band; animation-range: entry 20% entry 100%; }
