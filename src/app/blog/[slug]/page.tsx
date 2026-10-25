@@ -62,8 +62,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
         <header className="relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
           {/* Diagonal stripes lit around the title and fading out into the page, kept within the
-              headline column and just past the author line: texture, not light (owner, 2026-10-25). */}
-          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)]">
+              headline column and just past the author line: texture, not light (owner, 2026-10-25).
+              Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
+          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
             <StripedPattern className="stroke-[0.75] text-fg-muted" />
           </div>
           <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
