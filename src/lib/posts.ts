@@ -1,4 +1,6 @@
-export type PostSection = { heading: string; paragraphs: string[] };
+/** A paragraph, or a subheading inside a section. */
+export type PostBlock = string | { level: 3 | 4 | 5 | 6; text: string };
+export type PostSection = { heading: string; blocks: PostBlock[] };
 
 export type Post = {
   slug: string;
@@ -34,12 +36,28 @@ export const posts: Post[] = [
       "This is the placeholder intro paragraph. It sits level with the top of the table of contents and runs ahead of the TL;DR.",
     tldr: ["Placeholder takeaway one…", "Placeholder takeaway two…", "Placeholder takeaway three…"],
     sections: [
-      "Placeholder section heading one",
+      {
+        // Every heading level, for reviewing the hierarchy.
+        heading: "Placeholder section heading one (H2)",
+        blocks: [
+          placeholderParagraphs[0],
+          { level: 3, text: "Placeholder subheading (H3)" },
+          placeholderParagraphs[1],
+          { level: 4, text: "Placeholder subheading (H4)" },
+          placeholderParagraphs[2],
+          { level: 5, text: "Placeholder subheading (H5)" },
+          placeholderParagraphs[0],
+          { level: 6, text: "Placeholder subheading (H6)" },
+          placeholderParagraphs[1],
+        ],
+      },
+      ...[
       "Placeholder section heading two",
       "Placeholder section heading three",
       "Placeholder section heading four that runs much longer than the others",
       "Placeholder section heading five",
-    ].map((heading) => ({ heading, paragraphs: placeholderParagraphs })),
+      ].map((heading) => ({ heading, blocks: placeholderParagraphs })),
+    ],
   },
 ];
 
@@ -67,7 +85,10 @@ export function postMarkdown(post: Post, url: string) {
     "## TL;DR",
     post.tldr.map((item) => `- ${item}`).join("\n"),
     post.intro,
-    ...post.sections.flatMap(({ heading, paragraphs }) => [`## ${heading}`, ...paragraphs]),
+    ...post.sections.flatMap(({ heading, blocks }) => [
+      `## ${heading}`,
+      ...blocks.map((block) => (typeof block === "string" ? block : `${"#".repeat(block.level)} ${block.text}`)),
+    ]),
   ].join("\n\n");
 }
 

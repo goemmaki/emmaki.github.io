@@ -21,8 +21,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const FAQ_HEADING = "FAQs";
 
+// Heading levels on posts. One weight step lighter than the shared type roles (h1 600,
+// h3 500): white already carries them in dark mode. H4-H6 aren't in DESIGN.md yet.
+const headingStyle = {
+  1: "font-heading font-medium text-(length:--type-heading-h1-size) leading-(--type-heading-h1-leading) tracking-(--type-heading-h1-tracking)",
+  2: "font-heading font-normal text-(length:--type-heading-h3-size) leading-(--type-heading-h3-leading) tracking-(--type-heading-h3-tracking)",
+  3: "font-heading font-normal text-xl leading-[1.3] tracking-[-0.01em]",
+  4: "font-heading font-normal text-lg leading-[1.35]",
+  5: "font-heading font-normal text-base leading-[1.4]",
+  6: "font-heading font-normal text-sm leading-[1.43] uppercase tracking-[0.04em]",
+} as const;
+
 // Section headings: targets for the TOC, which lands them 112px from the top.
-const headingClass = "type-h3 text-fg-max scroll-mt-28";
+const sectionHeadingClass = `${headingStyle[2]} text-fg-max scroll-mt-28`;
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -59,7 +70,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <PostTools post={post} />
         </div>
 
-        <h1 className="type-h1 text-fg-max text-pretty [grid-area:title]">{post.title}</h1>
+        <h1 className={`${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
 
         <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:border-t md:border-line md:pt-6 md:[grid-area:meta]">
           <div className="flex items-center gap-3 border-t border-line pt-6 [grid-area:author] md:border-0 md:pt-0">
@@ -75,8 +86,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </header>
 
       {/* pt-1 centres the TOC's first line on the intro's first line. */}
-      <aside className="mt-[52px] hidden pt-1 lg:col-start-1 lg:row-start-2 lg:block">
+      <aside aria-labelledby="toc-title" className="mt-[52px] hidden pt-1 lg:col-start-1 lg:row-start-2 lg:block">
         <div className="sticky top-24">
+          <h2 id="toc-title" className={`mb-4 ${headingStyle[5]} text-fg-max`}>On this page</h2>
           <PostToc entries={toc} />
         </div>
       </aside>
@@ -87,18 +99,26 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <section aria-labelledby="tldr-title" className="mt-[52px] rounded-sm border border-line bg-surface p-6">
           <div className="mb-4 flex items-center gap-2">
             <ListChecks className="size-4 text-fg-2" aria-hidden />
-            <h2 id="tldr-title" className="type-meta uppercase text-fg-2">TL;DR</h2>
+            <h2 id="tldr-title" className={`${headingStyle[5]} text-fg-max`}>TL;DR</h2>
           </div>
           <ul className="list-disc space-y-2 pl-5 type-editorial text-fg-2">
             {post.tldr.map((item) => <li key={item}>{item}</li>)}
           </ul>
         </section>
 
-        {post.sections.map(({ heading, paragraphs }) => (
+        {post.sections.map(({ heading, blocks }) => (
           <section key={heading} aria-labelledby={headingId(heading)} className="mt-[52px]">
-            <h2 id={headingId(heading)} tabIndex={-1} className={headingClass}>{heading}</h2>
+            <h2 id={headingId(heading)} tabIndex={-1} className={sectionHeadingClass}>{heading}</h2>
             <div className="mt-6 space-y-6 type-editorial text-fg-2">
-              {paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              {blocks.map((block, index) => {
+                if (typeof block === "string") return <p key={index}>{block}</p>;
+                const Heading = `h${block.level}` as const;
+                return (
+                  <Heading key={index} className={`!mt-8 ${headingStyle[block.level]} text-fg-max`}>
+                    {block.text}
+                  </Heading>
+                );
+              })}
             </div>
           </section>
         ))}
@@ -108,7 +128,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
 
         <section aria-labelledby={headingId(FAQ_HEADING)} className="mt-[84px]">
-          <h2 id={headingId(FAQ_HEADING)} tabIndex={-1} className={headingClass}>{FAQ_HEADING}</h2>
+          <h2 id={headingId(FAQ_HEADING)} tabIndex={-1} className={sectionHeadingClass}>{FAQ_HEADING}</h2>
         </section>
       </div>
     </article>
