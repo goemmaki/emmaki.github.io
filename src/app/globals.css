@@ -193,7 +193,7 @@
 }
 
 /*
- * Temporary hero at /hero-lab. Sizes are solved in CSS from Geist metrics
+ * Home hero (also at /hero-lab, above the nib section). Sizes are solved in CSS from Geist metrics
  * (measured per em at the tracking used; Hello by its ink, not its advance), so
  * the headline's widest line fills the column and the rotated Hello runs exactly
  * from the headline's cap height to the question's last baseline. cqw is the
@@ -209,13 +209,13 @@
  * width is the largest that still fits the first screen under the header (h-16)
  * with 52px above and below.
  */
-.hero-lab-frame {
+.hero-frame {
   container-type: inline-size;
   /* the hero runs under the header and stops --peek short of the fold, so the next section shows */
   max-width: calc((100svh - var(--peek) - 4rem - 2 * var(--space-editorial-52) - 36px) / 0.383);
 }
 :root { --peek: clamp(72px, 14svh, 160px); }
-.hero-lab-poster {
+.hero-poster {
   --cap: 0.72;
   --lead: 0.92;
   --track: var(--type-heading-h1-tracking); /* capitals collide at the mega -0.045em */
@@ -240,10 +240,10 @@
   row-gap: var(--row-gap);
   align-items: start;
 }
-.hero-lab-poster :is(.hero-lab-hello, .hero-lab-headline, .hero-lab-question, .hero-lab-copy) {
+.hero-poster :is(.hero-hello, .hero-headline, .hero-question, .hero-copy) {
   text-box: trim-both cap alphabetic;
 }
-.hero-lab-hello {
+.hero-hello {
   grid-row: 1 / span 2;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -255,7 +255,7 @@
   /* The H's side bearing overhangs the baseline end; keep it out of the row height. */
   margin-bottom: calc(var(--hello-lsb) * -1em);
 }
-.hero-lab-headline {
+.hero-headline {
   grid-column: 2;
   font-size: var(--size);
   line-height: var(--lead);
@@ -264,14 +264,14 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-.hero-lab-bottom {
+.hero-bottom {
   grid-column: 2;
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   align-items: start;
   column-gap: var(--space-interface-32);
 }
-.hero-lab-question {
+.hero-question {
   font-size: calc(var(--size) * var(--r));
   line-height: var(--lead);
   font-weight: var(--font-weight-announce);
@@ -280,24 +280,24 @@
   white-space: nowrap;
   margin-left: -0.08em; /* optical: the H's side bearing, so the stem sits on the axis */
 }
-.hero-lab-copy {
+.hero-copy {
   font-family: var(--font-display);
   font-weight: var(--font-weight-emphasize);
   letter-spacing: var(--type-heading-h3-tracking);
   text-align: justify; /* a solid block whose lines meet the rectangle's edge; the last line may stop short */
 }
-.hero-lab-poster[data-stacked] { --r: 0.985; }
-.hero-lab-poster[data-stacked] .hero-lab-bottom {
+.hero-poster[data-stacked] { --r: 0.985; }
+.hero-poster[data-stacked] .hero-bottom {
   grid-template-columns: minmax(0, 1fr);
   row-gap: var(--space-interface-32);
 }
-.hero-lab-poster[data-stacked] .hero-lab-copy {
+.hero-poster[data-stacked] .hero-copy {
   font-size: var(--type-body-lead-size);
   line-height: var(--type-body-lead-leading);
 }
 
 @media (max-width: 600px) {
-  .hero-lab-poster {
+  .hero-poster {
     --gap: var(--space-interface-12);
     --row-gap: var(--space-interface-24);
   }

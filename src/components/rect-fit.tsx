@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-// Lab only. Closes the hero's rectangle on the headline's own letters: the question's H stems sit on
+// Closes the hero's rectangle on the headline's own letters: the question's H stems sit on
 // the A's foot and the question ends under the S of OPS; the justified H1 starts under the H of HERE,
 // with its cap height and last baseline on the question's, at the size that stretches its word spaces
 // least (best fit). Below MIN_SIZE the H1 drops under the rectangle instead (data-stacked).
@@ -64,7 +64,7 @@ function inkEdges(node: Node, index: number) {
 // Puts the question's H stems on the left axis, the ink of the headline's first letter (the A's foot),
 // replacing the CSS optical margin with a measured one.
 function alignLeft(poster: HTMLElement, question: HTMLElement) {
-  const headline = poster.querySelector<HTMLElement>(".hero-lab-headline")!;
+  const headline = poster.querySelector<HTMLElement>(".hero-headline")!;
   const axis = inkEdges(headline.firstElementChild!.firstChild!, 0).left;
   const starts = [...question.children].map((el) => inkEdges(el.firstChild!, 0).left);
   const margin = parseFloat(getComputedStyle(question).marginLeft);
@@ -75,8 +75,8 @@ function alignLeft(poster: HTMLElement, question: HTMLElement) {
 // first letter starts under the H of HERE: the gap becomes the headline's word space. --r also moves
 // Hello and so the headline, so it iterates.
 function alignToOps(poster: HTMLElement, question: HTMLElement, copy: HTMLElement) {
-  const bottom = poster.querySelector<HTMLElement>(".hero-lab-bottom")!;
-  const line = poster.querySelector<HTMLElement>(".hero-lab-headline")!.lastElementChild!.firstChild!;
+  const bottom = poster.querySelector<HTMLElement>(".hero-bottom")!;
+  const line = poster.querySelector<HTMLElement>(".hero-headline")!.lastElementChild!.firstChild!;
   const text = (line.textContent ?? "").toLowerCase();
   const h = text.indexOf("here");
   const s = text.indexOf("ops") + 2;
@@ -101,13 +101,13 @@ function alignToOps(poster: HTMLElement, question: HTMLElement, copy: HTMLElemen
 }
 
 function fit(poster: HTMLElement) {
-  const question = poster.querySelector<HTMLElement>(".hero-lab-question");
-  const copy = poster.querySelector<HTMLElement>(".hero-lab-copy");
+  const question = poster.querySelector<HTMLElement>(".hero-question");
+  const copy = poster.querySelector<HTMLElement>(".hero-copy");
   if (!question || !copy) return;
 
   delete poster.dataset.stacked;
   poster.style.removeProperty("--r");
-  poster.querySelector<HTMLElement>(".hero-lab-bottom")!.style.columnGap = "";
+  poster.querySelector<HTMLElement>(".hero-bottom")!.style.columnGap = "";
   question.style.marginLeft = "";
   alignToOps(poster, question, copy);
   const cap = cssNumber(poster, "--cap");
@@ -132,7 +132,7 @@ function fit(poster: HTMLElement) {
     copy.style.fontSize = "";
     copy.style.lineHeight = "";
     poster.style.removeProperty("--r");
-    poster.querySelector<HTMLElement>(".hero-lab-bottom")!.style.columnGap = "";
+    poster.querySelector<HTMLElement>(".hero-bottom")!.style.columnGap = "";
     poster.dataset.stacked = "";
     const base = parseFloat(getComputedStyle(copy).fontSize);
     let best = base;
@@ -172,7 +172,7 @@ function fit(poster: HTMLElement) {
 
 export function RectFit() {
   useEffect(() => {
-    const posters = [...document.querySelectorAll<HTMLElement>(".hero-lab-poster")];
+    const posters = [...document.querySelectorAll<HTMLElement>(".hero-poster")];
     const widths = new Map<Element, number>();
     const observer = new ResizeObserver((entries) => {
       for (const { target, contentRect } of entries) {
