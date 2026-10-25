@@ -615,12 +615,12 @@
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 /*
- * Post cover (post-cover.tsx). Dark mode: the shade also turns the photo grayscale, so the
- * spotlight, where the shade clears, shows its colour; light mode keeps the photo in colour. Dark mode: a black shade over the photo, heavier along the top for
- * the header and along the bottom for the white title, melting into the page at the bottom edge;
- * a mouse spotlight clears it, the footer's: a 190px circle, clear to 35%, fading in and out over
- * 300ms. Light mode: the photo stays clear except a light wash under the header, and turns white
- * from below the middle, under the black title; no spotlight (owner).
+ * Post cover (post-cover.tsx). Both modes: a black shade over the photo, heaviest along the top for
+ * the header, under a white title. Dark mode: the shade also turns the photo grayscale and melts
+ * into the black page at the bottom edge; a mouse spotlight clears it and shows the colour, the
+ * footer's: a 190px circle, clear to 35%, fading in and out over 300ms. Light mode: the photo keeps
+ * its colour, the shade lifts below the title and the photo turns white into the page; the title and
+ * the header over the photo take dark mode's light text (WCAG 1.4.3, large text, 3:1); no spotlight.
  */
 @property --cover-spot {
   syntax: "<length>";
@@ -634,7 +634,7 @@
   initial-value: 1;
 }
 .post-cover-shade {
-  background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.85) 88%, #000);
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.8), rgb(0 0 0 / 0.7) 8%, rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.85) 88%, #000);
   mask-image: radial-gradient(
     circle calc(var(--cover-spot) * (0.6 + 0.4 * var(--cover-power))) at var(--cover-x, 50%) var(--cover-y, 50%),
     rgb(0 0 0 / calc(1 - var(--cover-power))) 35%,
@@ -644,8 +644,14 @@
 }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
 [data-theme="light"] .post-cover-shade {
-  background: linear-gradient(to bottom, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 22%, rgb(255 255 255 / 0) 45%, rgb(255 255 255 / 0.85) 75%, #fff);
+  background:
+    linear-gradient(to bottom, transparent 72%, #fff),
+    linear-gradient(to bottom, rgb(0 0 0 / 0.65), rgb(0 0 0 / 0.5) 8%, rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 70%, transparent 92%);
   mask-image: none;
+}
+[data-theme="light"] :is(.post-cover-title, [data-site-header][data-over-media]) {
+  --color-text-maximum: #fff;
+  --color-text-secondary: #ededed;
 }
 
 /*
