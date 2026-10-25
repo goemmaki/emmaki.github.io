@@ -393,6 +393,19 @@
   to { visibility: visible; }
 }
 
+/*
+ * Theme switch (theme-toggle.tsx): the new theme grows out of the button as a
+ * circle. The clip variable holds the circle shut until the animation starts.
+ */
+:root[data-theme-vt]::view-transition-old(root),
+:root[data-theme-vt]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-theme-vt]::view-transition-new(root) {
+  clip-path: var(--theme-vt-clip-from);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
