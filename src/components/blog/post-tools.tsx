@@ -55,7 +55,7 @@ function ToolMenu({
   children: React.ReactNode;
 }) {
   return (
-    <Menu.Root onOpenChange={(open) => open && onOpen()}>
+    <Menu.Root modal={false} onOpenChange={(open) => open && onOpen()}>
       <Menu.Trigger className="flex size-11 items-center justify-center gap-2 rounded-sm border border-line bg-transparent px-2.5 text-fg hover:bg-surface aria-expanded:bg-surface md:h-8 md:w-auto">
         <Icon className="size-4 shrink-0" aria-hidden />
         <span className="sr-only md:not-sr-only font-sans text-sm font-medium">{label}</span>
