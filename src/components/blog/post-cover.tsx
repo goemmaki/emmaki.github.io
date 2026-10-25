@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, type PointerEvent, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 // A post's full-screen cover: the photo, in grayscale, under a shade of the page colour (black, or
 // white in light mode), with the title centred on it, left-aligned. The site header sits over it,
@@ -36,50 +36,56 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     return () => observer.disconnect();
   }, []);
 
-  // The spotlight is placed in the cover's coordinates, so it is placed again on scroll to stay
-  // under a mouse that isn't moving.
-  const place = () => {
-    const el = cover.current;
-    if (!el || !pointer.current) return;
-    const { x, y } = pointer.current;
-    cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => {
-      const box = el.getBoundingClientRect();
-      el.style.setProperty("--cover-x", `${x - box.left}px`);
-      el.style.setProperty("--cover-y", `${y - box.top}px`);
-      el.classList.add("cover-lit");
-    });
-  };
-  const onMove = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== "mouse") return;
-    pointer.current = { x: event.clientX, y: event.clientY };
-    place();
-  };
-  const onLeave = () => {
-    pointer.current = null;
-    cancelAnimationFrame(frame.current);
-    cover.current?.classList.remove("cover-lit");
-  };
-
+  // The mouse is followed on the whole window, not the cover, so the spotlight keeps working under
+  // the site header, which overlaps the cover's top and takes its pointer events. It is placed in
+  // the cover's coordinates, so it is placed again on scroll to stay under a mouse that isn't moving.
   useEffect(() => {
+    const el = cover.current;
+    if (!el) return;
+    const place = () => {
+      cancelAnimationFrame(frame.current);
+      frame.current = requestAnimationFrame(() => {
+        const box = el.getBoundingClientRect();
+        const p = pointer.current;
+        const inside = p && p.x >= box.left && p.x < box.right && p.y >= box.top && p.y < box.bottom;
+        el.classList.toggle("cover-lit", !!inside);
+        if (!inside) return;
+        el.style.setProperty("--cover-x", `${p.x - box.left}px`);
+        el.style.setProperty("--cover-y", `${p.y - box.top}px`);
+      });
+    };
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      pointer.current = { x: event.clientX, y: event.clientY };
+      place();
+    };
+    const onLeave = () => {
+      pointer.current = null;
+      place();
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("scroll", place, { passive: true });
-    return () => window.removeEventListener("scroll", place);
-  });
+    document.documentElement.addEventListener("pointerleave", onLeave);
+    return () => {
+      cancelAnimationFrame(frame.current);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", place);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
 
   return (
     <section
       ref={cover}
       data-under-header
       className="post-cover relative -mt-16 h-svh min-h-[32rem] overflow-hidden bg-bg"
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
     >
       <div className="post-cover-media absolute inset-0">
         <Image src={src} alt="" fill priority sizes="100vw" className="object-cover" />
       </div>
       <div aria-hidden className="post-cover-shade absolute inset-0" />
       <div aria-hidden className="post-cover-dim absolute inset-0 bg-bg" />
-      <div aria-hidden className="post-cover-fade absolute inset-x-0 bottom-0 h-2/5" />
+      <div aria-hidden className="post-cover-fade absolute inset-x-0 bottom-0 h-3/5" />
       <div ref={content} className="post-cover-title shell relative flex h-full items-center justify-center pt-16 text-left">
         {children}
       </div>
