@@ -394,6 +394,97 @@
 }
 
 /*
+ * Flood button (flood-button.tsx): on hover or focus, yellow floods the button
+ * from the left, the arrow box floods black and the arrow slides through.
+ * Leaving snaps back.
+ */
+.flood-button {
+  --flood-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  position: relative;
+  display: inline-flex;
+  height: 40px;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--shape-control-radius);
+  color: var(--color-fg);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1;
+  transition: border-color 0.35s var(--flood-ease);
+}
+.flood-button__layout {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 4px 4px 16px;
+}
+.flood-button__layout::before,
+.flood-button__icon::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0;
+  transition: width 0.35s var(--flood-ease);
+}
+.flood-button__layout::before {
+  inset-block: -1px;
+  left: -1px;
+  background: var(--color-yellow-splash);
+}
+.flood-button__label {
+  position: relative;
+  transition: color 0.35s var(--flood-ease);
+}
+.flood-button__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: var(--shape-control-radius);
+  background: var(--color-raised);
+  transition: color 0.35s var(--flood-ease);
+}
+.flood-button__icon::before {
+  background: #000;
+}
+.flood-button__arrow {
+  position: relative;
+  grid-area: 1 / 1;
+  width: 16px;
+  height: 16px;
+}
+.flood-button__arrow--next {
+  translate: -200% 0;
+}
+.flood-button:is(:hover, :focus-visible) {
+  border-color: var(--color-yellow-splash);
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__layout::before {
+  width: calc(100% + 2px);
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__icon::before {
+  width: 100%;
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__label {
+  color: #000;
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__icon {
+  color: var(--color-yellow-splash);
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__arrow {
+  translate: 200% 0;
+  transition: translate 0.525s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.flood-button:is(:hover, :focus-visible) .flood-button__arrow--next {
+  translate: 0 0;
+}
+
+/*
  * Theme switch (theme-toggle.tsx): the new theme grows out of the button as a
  * circle. The clip variable holds the circle shut until the animation starts.
  */

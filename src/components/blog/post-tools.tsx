@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Menu } from "@base-ui/react/menu";
 import { Bot, Copy, FileText, Link2, Share2 } from "lucide-react";
-import { formatPublished, type Post } from "@/lib/posts";
+import { postMarkdown, type Post } from "@/lib/posts";
 
 const itemClass =
   "flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none data-[highlighted]:bg-surface";
@@ -81,18 +81,12 @@ export function PostTools({ post }: { post: Post }) {
     }
   }
 
-  function markdown() {
-    return [
-      `# ${post.title}`,
-      `${post.author} · ${formatPublished(post.published)} · ${post.category}`,
-      pageUrl,
-      "## TL;DR",
-      ...post.tldr.map((item) => `- ${item}`),
-      ...post.body,
-    ].join("\n\n");
-  }
-
-  const prompt = pageUrl ? `Read from ${pageUrl} so I can ask questions about it` : "";
+  // Each page can open the assistant on its own question; otherwise a general one.
+  const prompt = !pageUrl
+    ? ""
+    : post.aiQuestion
+      ? `Read ${pageUrl}, then answer: ${post.aiQuestion}`
+      : `Read from ${pageUrl} so I can ask questions about it`;
   const aiLinks: ToolLink[] = prompt ? [
     { label: "ChatGPT", href: `https://chatgpt.com/?q=${encodeURIComponent(prompt)}` },
     { label: "Google AI", href: `https://www.google.com/search?q=${encodeURIComponent(prompt)}&udm=50` },
@@ -113,7 +107,7 @@ export function PostTools({ post }: { post: Post }) {
             <Link2 className="size-4 shrink-0 text-fg-2" aria-hidden />
             Copy link
           </Menu.Item>
-          <Menu.Item onClick={() => void copyText(markdown(), "Markdown copied")} className={itemClass}>
+          <Menu.Item onClick={() => void copyText(postMarkdown(post, window.location.href), "Markdown copied")} className={itemClass}>
             <FileText className="size-4 shrink-0 text-fg-2" aria-hidden />
             Copy as .md
           </Menu.Item>
