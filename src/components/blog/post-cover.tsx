@@ -152,7 +152,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
 
   return (
     // In dark mode the section is taller than the screen and the photo frame stays pinned for the
-    // extra length, so the choreography has room to play, until the article card swings up over it
+    // extra length, so the choreography has room to play, until the article card slides up over it
     // (globals.css).
     <section ref={cover} data-under-header className="post-cover relative -mt-16 h-svh min-h-[32rem] bg-bg">
       <div ref={photo} className="sticky top-0 h-svh min-h-[32rem] overflow-hidden">

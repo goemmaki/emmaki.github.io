@@ -68,7 +68,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </h1>
         </PostCover>
       )}
-      {/* The article as one card. In dark mode under a cover it swings up over the pinned, blacked-out
+      {/* The article as one card. In dark mode under a cover it slides up over the pinned, darkening
           cover (globals.css, "Post cover"); data-covers-media tells the site header when it has
           covered the photo. */}
       <div data-covers-media className="post-card relative z-10 bg-bg">
