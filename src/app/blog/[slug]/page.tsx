@@ -135,7 +135,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   return (
                     <figure key={index} className="!my-8">
                       <Image src={block.image} width={block.width} height={block.height} alt={block.alt} className="w-full rounded-sm" />
-                      {block.caption && <figcaption className="mt-3 font-sans text-sm text-fg-2">{block.caption}</figcaption>}
+                      {block.caption && <figcaption className="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}
                     </figure>
                   );
                 }
