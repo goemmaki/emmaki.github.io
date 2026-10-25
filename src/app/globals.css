@@ -615,10 +615,11 @@
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 /*
- * Post cover (post-cover.tsx). A shade of the page colour (black, or white in light mode) veils the
- * photo: more along the top for the header and along the bottom for the title, which keeps the
- * title at 4.5:1 or more over the brightest photo, until it melts into the page at the bottom edge. Under a mouse the shade clears in a spotlight,
- * the footer's: a 190px circle, clear to 35%, fading in and out over 300ms.
+ * Post cover (post-cover.tsx). Dark mode: a black shade over the photo, heavier along the top for
+ * the header and along the bottom for the white title, melting into the page at the bottom edge;
+ * a mouse spotlight clears it, the footer's: a 190px circle, clear to 35%, fading in and out over
+ * 300ms. Light mode: the photo stays clear except a light wash under the header, and turns white
+ * from below the middle, under the black title; no spotlight (owner).
  */
 @property --cover-spot {
   syntax: "<length>";
@@ -626,13 +627,38 @@
   initial-value: 0px;
 }
 .post-cover-shade {
-  --shade: 0 0 0;
-  background: linear-gradient(to bottom, rgb(var(--shade) / 0.7), rgb(var(--shade) / 0.45) 25%, rgb(var(--shade) / 0.45) 50%, rgb(var(--shade) / 0.85) 88%, rgb(var(--shade)));
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.85) 88%, #000);
   mask-image: radial-gradient(circle var(--cover-spot) at var(--cover-x, 50%) var(--cover-y, 50%), transparent 35%, #000 100%);
   transition: --cover-spot 300ms;
 }
-[data-theme="light"] .post-cover-shade { --shade: 255 255 255; }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
+[data-theme="light"] .post-cover-shade {
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 22%, rgb(255 255 255 / 0) 45%, rgb(255 255 255 / 0.85) 75%, #fff);
+  mask-image: none;
+}
+.post-cover-deepen { opacity: 0; }
+/* The header's stripes wait for the cover title to land, then fade in under one wipe of brighter
+   stripes (darker in light mode), left to right. */
+.title-morph .post-stripes > * { opacity: 0; transition: opacity 600ms; }
+.title-morph.title-landed .post-stripes > * { opacity: 1; }
+.post-stripes-wipe {
+  mask-image: linear-gradient(90deg, transparent, #000 50%, transparent);
+  mask-size: 40% 100%;
+  mask-repeat: no-repeat;
+  mask-position: -100% 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .title-landed .post-stripes-wipe { animation: stripes-wipe 1.4s ease-in-out 300ms both; }
+  /* The photo drifts slower than the page and the shade deepens to the page colour as it leaves. */
+  @supports (animation-timeline: view()) {
+    .post-cover-media, .post-cover-deepen { animation-timeline: view(); animation-range: exit 0% exit 100%; animation-fill-mode: both; animation-timing-function: linear; }
+    .post-cover-media { animation-name: cover-parallax; }
+    .post-cover-deepen { animation-name: cover-deepen; }
+  }
+}
+@keyframes stripes-wipe { to { mask-position: 200% 0; } }
+@keyframes cover-parallax { to { translate: 0 30%; } }
+@keyframes cover-deepen { to { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
