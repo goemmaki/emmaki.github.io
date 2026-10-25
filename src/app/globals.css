@@ -615,7 +615,8 @@
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 /*
- * Post cover (post-cover.tsx). Dark mode: a black shade over the photo, heavier along the top for
+ * Post cover (post-cover.tsx). The shade also turns the photo grayscale, so the spotlight, where
+ * the shade clears, shows its colour. Dark mode: a black shade over the photo, heavier along the top for
  * the header and along the bottom for the white title, melting into the page at the bottom edge;
  * a mouse spotlight clears it, the footer's: a 190px circle, clear to 35%, fading in and out over
  * 300ms. Light mode: the photo stays clear except a light wash under the header, and turns white
@@ -629,6 +630,7 @@
 .post-cover-shade {
   background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), rgb(0 0 0 / 0.45) 25%, rgb(0 0 0 / 0.45) 50%, rgb(0 0 0 / 0.85) 88%, #000);
   mask-image: radial-gradient(circle var(--cover-spot) at var(--cover-x, 50%) var(--cover-y, 50%), transparent 35%, #000 100%);
+  backdrop-filter: grayscale(1);
   transition: --cover-spot 300ms;
 }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
