@@ -26,6 +26,26 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
   const content = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const mosaic = useRef<HTMLCanvasElement>(null);
+  const lamp = useRef<HTMLDivElement>(null);
+
+  // The lamp spans the article's text column (the card's header). Measured from layout offsets,
+  // which ignore the card's swing, so it is right wherever the card is.
+  useEffect(() => {
+    const el = lamp.current;
+    const column = document.querySelector<HTMLElement>(".post-card-head header");
+    if (!el || !column) return;
+    const fit = () => {
+      let left = 0;
+      for (let node: HTMLElement | null = column; node; node = node.offsetParent as HTMLElement | null) left += node.offsetLeft;
+      el.style.setProperty("--lamp-left", `${left}px`);
+      el.style.setProperty("--lamp-width", `${column.offsetWidth}px`);
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(column);
+    observer.observe(document.documentElement);
+    return () => observer.disconnect();
+  }, []);
 
   // Pixelation: the photo is drawn into a canvas one cell per block, and the browser scales it up
   // without smoothing (image-rendering: pixelated). Redrawn only when the block size steps. Runs
@@ -167,11 +187,17 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
           {children}
         </div>
       </div>
-      {/* The lamp that comes on once the photo is black, above the article card sliding up under it. */}
-      <div aria-hidden className="post-lamp pointer-events-none absolute inset-0 z-20">
+      {/* A banker's lamp that comes on once the photo is black, above the article card sliding up
+          under it: a green glass shade as wide as the article's column, its light falling from the
+          shade's open bottom (globals.css, "The lamp"). */}
+      <div ref={lamp} aria-hidden className="post-lamp pointer-events-none absolute inset-0 z-20">
         <div className="sticky top-0 h-svh">
-          <div className="post-lamp-glow absolute inset-x-0 top-[calc(var(--lamp-top)-3rem)] h-[70svh]" />
-          <div className="post-lamp-bar absolute top-(--lamp-top) left-1/2 h-0.5 w-[min(28rem,70vw)] -translate-x-1/2 rounded-full" />
+          <div className="post-lamp-light absolute top-[calc(var(--lamp-top)+var(--lamp-h))] left-[calc(var(--lamp-left)-var(--lamp-width)*0.5)] h-[70svh] w-[calc(var(--lamp-width)*2)]">
+            <div className="post-lamp-cone size-full" />
+          </div>
+          <div className="post-lamp-shade absolute top-(--lamp-top) left-(--lamp-left) h-(--lamp-h) w-(--lamp-width)">
+            <div className="post-lamp-lit absolute inset-0" />
+          </div>
         </div>
       </div>
     </section>
