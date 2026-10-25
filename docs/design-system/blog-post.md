@@ -4,7 +4,7 @@ Status: a record of the decisions made while building `/blog/[slug]` (2026-10-25
 
 Reference: grafit.agency's article page, studied for structure, tools, TOC behaviour and the flood button. Nothing was copied from it (code, text or assets); the brand comes from `DESIGN.md`.
 
-Code: `src/app/blog/[slug]/page.tsx`, `src/components/blog/` (`post-tools.tsx`, `post-toc.tsx`, `post-faqs.tsx`, `ai-logos.ts`), `src/components/flood-button.tsx`, `src/lib/posts.ts`, and the "Flood button" and TOC tick blocks in `src/app/globals.css`.
+Code: `src/app/blog/[slug]/page.tsx`, `src/components/blog/` (`post-cover.tsx`, `post-tools.tsx`, `post-toc.tsx`, `post-faqs.tsx`, `ai-logos.ts`), `src/components/flood-button.tsx`, `src/lib/posts.ts`, and the "Post cover", "Flood button" and TOC tick blocks in `src/app/globals.css`.
 
 "Owner" marks a decision the owner asked for or approved; the rest are implementation choices made to fit those decisions.
 
@@ -32,6 +32,17 @@ Vertical rhythm uses the editorial scale only: 84px above the header and between
 - **Author (owner):** "Emma Rawson" beside a 36px placeholder avatar ("ER"). A photo comes later.
 - **Dates (owner):** US style with full month names ("October 20, 2026"). "Published" loses its label below 640px. "Updated <date>" appears under it only if the post was revised (`updated` is optional in `Post`).
 - **Read time (owner):** "N min read" at 230 words a minute. It sits above the TOC from 1024px, with a clock icon, and in the dates stack below that.
+
+## Cover (owner, 2026-10-26)
+
+A post with a cover photo opens on it, full screen, with the title (the page's one H1) centred and left-aligned on it, and the site header transparent over it. The article follows as one card; its title is a visual repeat (`aria-hidden`), so there is still one H1.
+
+- **Scroll choreography, both themes (owner):** tied to scroll position, so scrolling up plays it backwards. Over 230svh the photo stays pinned. The title rises and fades by 25svh. The photo drifts, then pixelates in growing steps (30-85svh) and fades to the page colour. From 30svh the article card slides up over it, its top see-through (solid 35svh down), and covers the screen at 130svh. Timings are in the comment above the "Post cover" block in `globals.css`.
+- **Dark mode: grayscale with a flashlight (owner):** the photo is grayscale under a black shade; a 190px spotlight under the mouse, or a finger on touch screens, clears the shade and shows the colour. The owner's reading: a person bringing colour to a monochrome world, and a nod to the dark. The spotlight splutters out like a dying battery as the page scrolls (10-60svh); the irregular flicker is deliberate (owner: "artistic"). Header buttons turn white under a live spotlight.
+- **Light mode: colour, no flashlight (owner):** the photo keeps its colour under a lighter black shade that eases off below the header and is gone by the photo's bottom edge. There is no white wash at rest (owner). The shade lifts once the title has gone (25-45svh), so the photo washes to white, not grey. The title and the header over the photo use light text.
+- **Not identical on purpose (owner):** the two themes share structure, timing and contrast, and differ in mood: colour by day, monochrome with a torch at night.
+- **Stripes behind the card title:** unchanged, but at 70% in dark mode so they don't compete with the title (owner).
+- **Fallbacks:** without scroll-driven animations, or with reduced motion, the cover is one static screen with no pixelation.
 
 ## Page tools: Copy page, Share, Ask AI
 
@@ -111,6 +122,7 @@ After grafit's article FAQs, with the owner's change: **+ opens and − closes**
 - **Accepted exception:** unlit TOC notches, as above.
 - **Focus order:** on phones the tools come before the title in DOM and screen-reader order but sit beside the dates visually. This was kept: WCAG 2.4.3 asks for an order that preserves meaning and operability, not one that mirrors the layout, and grafit uses the same order.
 - **Codex audit:** a read-only source audit (2026-10-25) found no other failures.
+- **Cover contrast (2026-10-26):** measured pixel by pixel behind the text on screenshots at 1440×900 and 390×844, against 3:1 (large text, icons). Light-mode black text on the colour photo measured about 1.5:1, so light mode took the white title on a black shade. Light-mode title, desktop, at rest: worst pixel 3.77:1. Header icons: 3.57:1 or better. While the light-mode shade lifts, no single icon colour holds 3:1 against the sky, so at 30svh the header takes its usual frosted background and dark text. A Codex read-only audit found no other failures.
 
 ## Rejected or dropped
 
@@ -119,6 +131,7 @@ After grafit's article FAQs, with the owner's change: **+ opens and − closes**
 - Menu open and close animations (the tool menus; the header menu's opening slide-in was restored).
 - A yellow arrow box on hover.
 - A TL;DR heading on the TOC itself (a misread). TL;DR is a TOC entry instead.
+- **Cover, 2026-10-25 and 26:** the title shrinking into the header on scroll; an outlined, see-through title ("ugly af"); a HyperText scramble on the card title ("too much"); a yellow, then green banker's, lamp over the article; the card swinging up on a 30° pivot; a white glow at the foot of the light-mode photo.
 
 ## Open against DESIGN.md
 
@@ -129,6 +142,7 @@ These need the owner's decision before the audit promotes or reverses them:
 - **Unlit notches:** below 3:1 non-text contrast.
 - **Yellow:** a full-button yellow flood on hover, a larger splash than usual.
 - **From the hero session:** the serif italic "vituperative".
+- **Cover choreography:** `DESIGN.md` warns against gratuitous parallax and motion that competes with the writing. The cover's motion is confined to the first screen and a bit, and ends before the article starts.
 
 ## Not designed yet
 
