@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useEffect, useRef, type ReactNode } from "react";
 
-// A post's full-screen cover: the photo, in grayscale, under a shade of the page colour (black, or
-// white in light mode), with the title centred on it, left-aligned. The site header sits over it,
-// transparent (data-under-header, read by site-header.tsx). Under a mouse the shade clears in a
-// spotlight, using the footer's settings, and the photo's colour shows there. In dark mode,
-// scrolling plays a parallax, the title rises and fades, and the spotlight splutters and dies as the
-// photo pixelates and dissolves into the page. Styles: the "Post cover" block in globals.css.
-// The photo's pixelation in dark mode: block sizes in CSS px, stepped like a censor's mosaic, over
+// A post's full-screen cover: the photo under a shade of the page colour (black, or white in light
+// mode), with the title centred on it, left-aligned. The site header sits over it, transparent
+// (data-under-header, read by site-header.tsx). In dark mode the photo is grayscale and under a
+// mouse the shade clears in a spotlight, using the footer's settings, showing its colour. Scrolling
+// plays a parallax, the title rises and fades, and the photo pixelates and dissolves into the page
+// (in dark mode as the spotlight splutters and dies). Styles: the "Post cover" block in globals.css.
+// The photo's pixelation: block sizes in CSS px, stepped like a censor's mosaic, over
 // this stretch of scrolling, in screen heights (the timings in globals.css, "Post cover").
 const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
 const PIXEL_FROM = 0.3;
@@ -29,7 +29,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
 
   // Pixelation: the photo is drawn into a canvas one cell per block, and the browser scales it up
   // without smoothing (image-rendering: pixelated). Redrawn only when the block size steps. Runs
-  // only where the scroll choreography does: dark mode, motion allowed, scroll-driven animations.
+  // only where the scroll choreography does: motion allowed, scroll-driven animations.
   useEffect(() => {
     const view = photo.current;
     const canvas = mosaic.current;
@@ -44,7 +44,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     const draw = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        const active = supported && motion.matches && document.documentElement.dataset.theme === "dark";
+        const active = supported && motion.matches;
         const progress = window.scrollY / view.offsetHeight;
         const at = (progress - PIXEL_FROM) / (PIXEL_TO - PIXEL_FROM);
         const step = !active || at <= 0 || !img.complete ? 0 : Math.min(PIXEL_STEPS.length - 1, 1 + Math.floor(at * (PIXEL_STEPS.length - 1)));
@@ -151,7 +151,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
   }, []);
 
   return (
-    // In dark mode the section is taller than the screen and the photo frame stays pinned for the
+    // With motion the section is taller than the screen and the photo frame stays pinned for the
     // extra length, so the choreography has room to play, until the article card slides up over it
     // (globals.css).
     <section ref={cover} data-under-header className="post-cover relative -mt-16 h-svh min-h-[32rem] bg-bg">

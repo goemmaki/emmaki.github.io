@@ -8,7 +8,6 @@ import { PostCover } from "@/components/blog/post-cover";
 import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
 import { TextLink } from "@/components/text-link";
-import { HyperText } from "@/components/ui/hyper-text";
 import { StripedPattern } from "@/components/ui/striped-pattern";
 import { PostTools } from "@/components/blog/post-tools";
 import { formatPublished, getPost, headingId, posts, readingMinutes, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from "@/lib/posts";
@@ -60,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <article className="overflow-x-clip">
       {/* With a cover photo, the title (the page's one H1) goes on it, full screen and cinematic; the
-          breadcrumb, tools and byline follow below it, with a scrambling visual repeat of the title. */}
+          breadcrumb, tools and byline follow below it, with a visual repeat of the title. */}
       {post.cover && (
         <PostCover src={post.cover}>
           <h1 className="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">
@@ -68,20 +67,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </h1>
         </PostCover>
       )}
-      {/* The article as one card. In dark mode under a cover it slides up over the pinned, darkening
+      {/* The article as one card. Under a cover it slides up over the pinned, darkening
           cover (globals.css, "Post cover"); data-covers-media tells the site header when it has
           covered the photo. */}
       <div data-covers-media className="post-card relative z-10 bg-bg">
         {/* The headline area has its own grid, matching the body's so the columns line up. */}
         <div className={`pt-e2 pb-e2 ${postGrid}`}>
-          {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
-              Light mode with a cover has no title here yet (dark-mode experiment, owner 2026-10-26). */}
+          {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
           <header
-            className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2 ${
-              post.cover
-                ? "light:[grid-template-areas:'breadcrumb_breadcrumb'_'author_author'_'date_tools'] md:light:[grid-template-areas:'breadcrumb_tools'_'meta_meta']"
-                : ""
-            }`}
+            className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2`}
           >
             {/* Diagonal stripes lit around the title and fading out into the page, kept within the
                 headline column and just past the author line: texture, not light (owner, 2026-10-25).
@@ -110,18 +104,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
 
             {post.cover ? (
-              // The H1 is on the cover; this repeat is visual only, so screen readers skip it. It
-              // scrambles once, when it first scrolls into view.
-              <HyperText
-                as="p"
-                aria-hidden
-                startOnView
-                animateOnHover={false}
-                duration={700}
-                className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title] light:hidden`}
-              >
+              // The H1 is on the cover; this repeat is visual only, so screen readers skip it.
+              <p aria-hidden className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>
                 {post.title}
-              </HyperText>
+              </p>
             ) : (
               <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
             )}

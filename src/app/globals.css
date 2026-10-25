@@ -615,8 +615,8 @@
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 /*
- * Post cover (post-cover.tsx). The shade also turns the photo grayscale, so the spotlight, where
- * the shade clears, shows its colour. Dark mode: a black shade over the photo, heavier along the top for
+ * Post cover (post-cover.tsx). Dark mode: the shade also turns the photo grayscale, so the
+ * spotlight, where the shade clears, shows its colour; light mode keeps the photo in colour. Dark mode: a black shade over the photo, heavier along the top for
  * the header and along the bottom for the white title, melting into the page at the bottom edge;
  * a mouse spotlight clears it, the footer's: a 190px circle, clear to 35%, fading in and out over
  * 300ms. Light mode: the photo stays clear except a light wash under the header, and turns white
@@ -640,7 +640,6 @@
     rgb(0 0 0 / calc(1 - var(--cover-power))) 35%,
     #000 100%
   );
-  backdrop-filter: grayscale(1);
   transition: --cover-spot 300ms;
 }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
@@ -650,14 +649,14 @@
 }
 
 /*
- * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography, measured in screen
+ * The cover's scroll choreography, both modes (owner, 2026-10-26), measured in screen
  * heights scrolled (svh). The section is 230svh tall and its photo frame stays pinned while the
  * article card (.post-card, 100svh of overlap) slides up over it; the card covers the screen at 130.
  *   0-25    the title rises and fades out before it reaches the top
- *   10-60   the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
+ *   10-60   dark mode: the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
  *   0-30    the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
  *   30-85   the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
- *           (10-50) and the cover darkens to black (30-100)
+ *           (10-50) and the cover fades to the page colour, black or white (30-100)
  *   30-130  as the pixelation starts the article card slides up from below at the
  *           page's speed, its see-through top showing the photo; the photo drifts back up as it
  *           goes, as if pushed (never above where it started, so no gap opens under the card)
@@ -665,11 +664,8 @@
  * position, so scrolling back up plays it backwards. Without scroll-driven animations, or with
  * reduced motion, the cover stays one static screen.
  */
-.post-cover-dim,
-.post-cover-fade { display: none; }
-[data-theme="dark"] .post-cover-dim { display: block; opacity: 0; }
-[data-theme="dark"] .post-cover-fade {
-  display: block;
+.post-cover-dim { opacity: 0; }
+.post-cover-fade {
   background: linear-gradient(to bottom, transparent, rgb(from var(--color-bg) r g b / 0.6) 55%, var(--color-bg));
 }
 /* The spotlight clears less towards the photo's bottom edge and nothing at it, so it never shows
@@ -682,6 +678,7 @@
       #000 100%
     ),
     linear-gradient(to bottom, transparent 70%, #000 97%);
+  backdrop-filter: grayscale(1);
 }
 /* Header buttons go white under a live spotlight, and yellow on hover (owner, 2026-10-26). */
 [data-theme="dark"][data-cover-torch] [data-site-header] .icon-action { color: var(--color-fg-max); }
@@ -689,24 +686,24 @@
 
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    [data-theme="dark"] .post-cover { height: 230svh; }
-    [data-theme="dark"] .post-cover-media { top: -16svh; bottom: auto; height: 116svh; }
+    .post-cover { height: 230svh; }
+    .post-cover-media { top: -16svh; bottom: auto; height: 116svh; }
     /* The card's top is see-through, turning solid 35svh down, so the photo shows through it
        as it arrives. */
-    [data-theme="dark"] .post-cover + .post-card {
+    .post-cover + .post-card {
       margin-top: -100svh;
       background: linear-gradient(to bottom, transparent, var(--color-bg) 35svh);
     }
-    [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
+    :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: scroll(root);
       animation-range: 0 155svh;
     }
-    [data-theme="dark"] .post-cover-media { animation-name: cover-parallax; will-change: translate; }
-    [data-theme="dark"] .post-cover-title { animation-name: cover-title-rise; }
-    [data-theme="dark"] .post-cover-dim { animation-name: cover-dim; }
-    [data-theme="dark"] .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
+    .post-cover-media { animation-name: cover-parallax; will-change: translate; }
+    .post-cover-title { animation-name: cover-title-rise; }
+    .post-cover-dim { animation-name: cover-dim; }
+    .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
     [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
   }
 }
