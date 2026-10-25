@@ -42,7 +42,7 @@ export function PostToc({ entries }: { entries: TocEntry[] }) {
       const p = progress();
       ticks.forEach((tick, r) => {
         const w = Math.max(0, 1 - Math.abs(r - p * TICKS_PER_SECTION) / 3) ** 3;
-        tick.style.opacity = String(0.1 + 0.4 * w);
+        tick.style.backgroundColor = `color-mix(in oklab, var(--color-fg-max) ${w * 100}%, var(--color-fg-muted))`;
         tick.style.transform = `scaleX(${1 + w})`;
       });
       links.forEach((link, k) => {
@@ -82,7 +82,7 @@ export function PostToc({ entries }: { entries: TocEntry[] }) {
     <nav aria-label="On this page" className="relative pl-10">
       <div ref={railRef} aria-hidden className="absolute left-0 top-[8.5px] flex flex-col gap-1">
         {Array.from({ length: (entries.length - 1) * TICKS_PER_SECTION + 1 }, (_, r) => (
-          <div key={r} className="h-px w-3 origin-left bg-fg opacity-10" />
+          <div key={r} className="h-px w-3 origin-left bg-fg-muted" />
         ))}
       </div>
       <ol ref={listRef} className="flex flex-col gap-3 font-sans text-sm leading-[18px]">
@@ -91,7 +91,7 @@ export function PostToc({ entries }: { entries: TocEntry[] }) {
             <a
               href={`#${id}`}
               onClick={(event) => jump(event, id)}
-              className="block truncate [color:color-mix(in_oklab,var(--color-fg-max)_calc(var(--near,0)*100%),var(--color-fg-muted))] hover:text-fg-max focus-visible:text-fg-max"
+              className="block truncate [color:color-mix(in_oklab,var(--color-fg-max)_calc(var(--near,0)*100%),var(--color-fg-2))] hover:text-fg-max focus-visible:text-fg-max"
             >
               {text}
             </a>

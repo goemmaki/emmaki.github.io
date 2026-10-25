@@ -110,6 +110,8 @@
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Keeps keyboard focus clear of the sticky header (WCAG 2.4.11). */
+    scroll-padding-top: 80px;
   }
   body {
     background: var(--color-canvas);

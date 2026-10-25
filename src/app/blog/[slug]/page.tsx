@@ -48,8 +48,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     // From lg a TOC track sits left of the article (240px, then 288px at xl); below lg the TOC is hidden.
     <article className="shell pt-[84px] pb-[136px] lg:grid lg:grid-cols-[240px_minmax(0,700px)] lg:gap-x-[52px] xl:grid-cols-[288px_minmax(0,700px)] xl:gap-x-[84px]">
-      {/* Phones: breadcrumb, title, author, then date and tools on one row. md+: tools share the breadcrumb row. */}
-      <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-6 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
+      {/* Phones: breadcrumb, title, author, then date and tools on one row. md+: tools share the breadcrumb row. 52px above the title, 32px elsewhere. */}
+      <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
         <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
           <ol className="flex min-w-0 items-center gap-2">
             <li className="flex shrink-0">
@@ -70,11 +70,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <PostTools post={post} />
         </div>
 
-        <h1 className={`${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
+        <h1 className={`mt-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
 
-        <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:border-t md:border-line md:pt-6 md:[grid-area:meta]">
-          <div className="flex items-center gap-3 border-t border-line pt-6 [grid-area:author] md:border-0 md:pt-0">
-            <div aria-label="Author avatar placeholder" className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
+        <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
+          <div className="flex items-center gap-3 [grid-area:author]">
+            <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
               ER
             </div>
             <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
