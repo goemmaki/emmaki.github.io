@@ -4,6 +4,7 @@ export type PostBlock =
   | { level: 3 | 4 | 5 | 6; text: string }
   | { image: string; width: number; height: number; alt: string; caption?: string };
 export type PostSection = { heading: string; blocks: PostBlock[] };
+export type PostFaq = { question: string; answer: string };
 
 export type Post = {
   slug: string;
@@ -20,6 +21,7 @@ export type Post = {
   intro: string;
   tldr: string[];
   sections: PostSection[];
+  faqs: PostFaq[];
 };
 
 const placeholderParagraphs = [
@@ -78,6 +80,29 @@ export const posts: Post[] = [
       "Placeholder section heading five",
       ].map((heading) => ({ heading, blocks: placeholderParagraphs })),
     ],
+    faqs: [
+      {
+        question: "Placeholder question one?",
+        answer: "Placeholder answer one. It runs to two sentences so the open panel shows a real paragraph.",
+      },
+      {
+        question: "Placeholder question two that runs long enough to wrap onto a second line on narrow screens?",
+        answer: "Placeholder answer two.",
+      },
+      {
+        question: "Placeholder question three?",
+        answer:
+          "Placeholder answer three. This one is longer, to show how a fuller answer sits under its question and how the panel opens to fit it. Replace it with owner-written copy.",
+      },
+      {
+        question: "Placeholder question four?",
+        answer: "Placeholder answer four. It runs to two sentences so the open panel shows a real paragraph.",
+      },
+      {
+        question: "Placeholder question five?",
+        answer: "Placeholder answer five.",
+      },
+    ],
   },
 ];
 
@@ -115,6 +140,8 @@ export function postMarkdown(post: Post, url: string) {
             : `${"#".repeat(block.level)} ${block.text}`,
       ),
     ]),
+    "## FAQs",
+    ...post.faqs.flatMap(({ question, answer }) => [`### ${question}`, answer]),
   ].join("\n\n");
 }
 
@@ -128,6 +155,7 @@ export function readingMinutes(post: Post) {
       heading,
       ...blocks.map((block) => (typeof block === "string" ? block : "image" in block ? (block.caption ?? "") : block.text)),
     ]),
+    ...post.faqs.flatMap(({ question, answer }) => [question, answer]),
   ].join(" ");
   return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 230));
 }

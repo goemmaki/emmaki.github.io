@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight, Clock, House, ListChecks } from "lucide-react";
 import { FloodButton } from "@/components/flood-button";
+import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
 import { PostTools } from "@/components/blog/post-tools";
 import { formatPublished, getPost, headingId, posts, readingMinutes } from "@/lib/posts";
@@ -156,6 +157,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
         <section aria-labelledby={headingId(FAQ_HEADING)} className="mt-[84px]">
           <h2 id={headingId(FAQ_HEADING)} tabIndex={-1} className={sectionHeadingClass}>{FAQ_HEADING}</h2>
+          <PostFaqs faqs={post.faqs} bodyText={bodyText} />
         </section>
       </div>
     </article>

@@ -4,7 +4,7 @@ Status: a record of the decisions made while building `/blog/[slug]` (2026-10-25
 
 Reference: grafit.agency's article page, studied for structure, tools, TOC behaviour and the flood button. Nothing was copied from it (code, text or assets); the brand comes from `DESIGN.md`.
 
-Code: `src/app/blog/[slug]/page.tsx`, `src/components/blog/` (`post-tools.tsx`, `post-toc.tsx`, `ai-logos.ts`), `src/components/flood-button.tsx`, `src/lib/posts.ts`, and the "Flood button" and TOC tick blocks in `src/app/globals.css`.
+Code: `src/app/blog/[slug]/page.tsx`, `src/components/blog/` (`post-tools.tsx`, `post-toc.tsx`, `post-faqs.tsx`, `ai-logos.ts`), `src/components/flood-button.tsx`, `src/lib/posts.ts`, and the "Flood button" and TOC tick blocks in `src/app/globals.css`.
 
 "Owner" marks a decision the owner asked for or approved; the rest are implementation choices made to fit those decisions.
 
@@ -19,7 +19,7 @@ Top to bottom, in one 700px reading column:
 5. TL;DR box.
 6. Article sections.
 7. Flood button (the post's call to action).
-8. FAQs heading (FAQs not designed yet).
+8. FAQs.
 
 From 1024px (lg) a TOC column sits to the left of the article: a 240px track with a 52px gap, then 288px and 84px from 1280px (xl). Below 1024px there is no TOC and the read time moves into the dates stack. The TOC used to start at xl and vanished on a half-width 32-inch window (about 1265px), so it starts at lg (owner).
 
@@ -80,11 +80,20 @@ The call to action after the article, built after grafit's button but in emmaki 
 - **Label (owner):** set per post in `cta.label`, worded as the conversion action ("See my X work"), not "Read other articles".
 - Yellow appears only as the flood, a rare splash in `DESIGN.md` terms.
 
+## FAQs (owner)
+
+After grafit's article FAQs, with the owner's change: **+ opens and − closes**, instead of a rotating arrow. Five placeholder questions for now (`faqs` in `Post`).
+
+- **Rows:** a Base UI accordion. Each question is an h3 holding a full-width button: Geist 400, 18px, leading 1.4, `fg-max`, 24px above and below, with a 24px lucide plus or minus at the right. A 1px `line` hairline divides the rows. The answer is body text with 24px under it.
+- **Behaviour:** any number of answers can be open at once. Answers open and close to their height over 300ms, ease-out (cut under reduced motion). Closed answers stay in the page as `hidden="until-found"`, so find-in-page opens them.
+- **Accessibility:** question and icon 21:1 in both themes, answers at body contrast, 73px rows. The button carries `aria-expanded` and, while open, `aria-controls`; the answer is a region labelled by its question. The hairlines are decorative: the question and icon identify each control.
+- The FAQs are in "Copy as .md" and count towards the read time.
+
 ## Site-wide changes made alongside
 
 - **Gutter (owner: "copy grafit's"):** fluid, `clamp(16px, 100vw × 32/1120 + 6.857px, 48px)`, replacing the stepped 1600/960/400 media queries. The shell is 1440px plus gutters. The hero still fits.
 - **Theme toggle (owner):** the new theme grows out of the button as a circle, a View Transition with a 400ms clip-path reveal after Magic UI's animated theme toggler. Skipped under reduced motion.
-- **Header menu (owner):** slide-in layers and the hover roll removed.
+- **Header menu (owner):** the hover roll removed. The slide-in layers were removed too, then restored the same day on opening only (owner: it opened too abruptly).
 - **Skip link:** its target (`main#content`) is focusable.
 
 ## Accessibility (2026-10-25)
@@ -100,7 +109,7 @@ The call to action after the article, built after grafit's button but in emmaki 
 
 - A blurred page with a circular scroll selector for the menu (a Jitter template). Too fussy for a menu.
 - Full-screen colourful page transitions (geniusdivision.com). Dropped; plain page transitions for now.
-- Menu open and close animations.
+- Menu open and close animations (the tool menus; the header menu's opening slide-in was restored).
 - A yellow arrow box on hover.
 - A TL;DR heading on the TOC itself (a misread). TL;DR is a TOC entry instead.
 
@@ -117,4 +126,4 @@ These need the owner's decision before the audit promotes or reverses them:
 
 ## Not designed yet
 
-In-body links (no traditional blue or purple; must work in both themes), FAQs, the "add me as a preferred information provider" button (same style as the flood button), the `/blog` index, and a TOC for screens below 1024px.
+In-body links (no traditional blue or purple; must work in both themes), the "add me as a preferred information provider" button (same style as the flood button), the `/blog` index, and a TOC for screens below 1024px.
