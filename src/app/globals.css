@@ -85,9 +85,10 @@
   --font-mono: var(--nf-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --radius: var(--shape-control-radius);
 
-  --gutter: var(--layout-gutter-desktop);
+  /* Side margin scales from 16px on a 320px screen to 48px at 1440px and up; content runs to 1440px (grafit.agency's shell). */
+  --gutter: clamp(16px, calc(100vw * 32 / 1120 + 6.857px), 48px);
   --header-h: 52px;
-  --shell-max: var(--layout-shell-standard);
+  --shell-max: calc(1440px + 2 * var(--gutter));
 
   /* Sparkles: brand yellow on dark; on light, amber-orange at 3:1 or better against white (not brown). */
   --sparkle-first: #FFC300;
@@ -98,17 +99,6 @@
   --sparkle-second: #E86A00;
 }
 
-/* Large screens step up to the wide shell so the page doesn't sit as a small block in the middle. */
-@media (min-width: 1600px) {
-  :root { --shell-max: var(--layout-shell-visual); }
-}
-
-@media (max-width: 960px) {
-  :root { --gutter: var(--layout-gutter-mobile); }
-}
-@media (max-width: 400px) {
-  :root { --gutter: var(--layout-gutter-narrow-survival); }
-}
 
 @layer base {
   * {
