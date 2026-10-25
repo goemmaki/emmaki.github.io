@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useRef, type PointerEvent, type ReactNode } from "react";
 
-// A post's full-screen cover: the photo under a dark shade, with the title and byline along the
-// bottom. The site header sits over it, transparent (data-under-header, read by site-header.tsx).
+// A post's full-screen cover: the photo under a shade of the page colour (black, or white in light
+// mode), with the title along the bottom. The site header sits over it, transparent (data-under-header, read by site-header.tsx).
 // Under a mouse the shade clears in a spotlight, using the footer's settings. Styles: the "Post
 // cover" block in globals.css.
 export function PostCover({ src, children }: { src: string; children: ReactNode }) {
@@ -33,7 +33,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     <section
       ref={cover}
       data-under-header
-      className="post-cover relative -mt-16 h-svh min-h-[32rem] overflow-hidden bg-black text-white"
+      className="post-cover relative -mt-16 h-svh min-h-[32rem] overflow-hidden bg-bg"
       onPointerMove={onMove}
       onPointerLeave={onLeave}
     >

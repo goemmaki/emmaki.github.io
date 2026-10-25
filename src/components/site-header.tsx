@@ -100,7 +100,7 @@ export function SiteHeader() {
     <header
       className={cn(
         "sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out focus-within:translate-y-0",
-        overMedia ? "header-on-media" : "bg-bg/70 backdrop-blur-md",
+        !overMedia && "bg-bg/70 backdrop-blur-md",
         hidden && !open && "-translate-y-full",
       )}
     >
