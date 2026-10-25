@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ListChecks } from "lucide-react";
+import { ChevronRight, House, ListChecks } from "lucide-react";
 import { FloodButton } from "@/components/flood-button";
 import { PostToc } from "@/components/blog/post-toc";
 import { PostTools } from "@/components/blog/post-tools";
@@ -41,10 +41,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-6 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
         <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
           <ol className="flex min-w-0 items-center gap-2">
+            <li className="flex shrink-0">
+              <Link href="/" aria-label="Home" className="hover:text-fg-max focus-visible:text-fg-max">
+                <House className="size-3.5" aria-hidden />
+              </Link>
+            </li>
+            <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
             <li className="shrink-0">
               <Link href="/blog" className="hover:text-fg-max focus-visible:text-fg-max">Blog</Link>
             </li>
-            <li aria-hidden="true">/</li>
+            <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
             <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
           </ol>
         </nav>
@@ -53,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <PostTools post={post} />
         </div>
 
-        <h1 className="type-h1 text-fg-max text-balance [grid-area:title]">{post.title}</h1>
+        <h1 className="type-h1 text-fg-max text-pretty [grid-area:title]">{post.title}</h1>
 
         <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:border-t md:border-line md:pt-6 md:[grid-area:meta]">
           <div className="flex items-center gap-3 border-t border-line pt-6 [grid-area:author] md:border-0 md:pt-0">
@@ -98,7 +104,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         ))}
 
         <div className="mt-[84px]">
-          <FloodButton href="/blog">Read other articles</FloodButton>
+          <FloodButton href={post.cta.href}>{post.cta.label}</FloodButton>
         </div>
 
         <section aria-labelledby={headingId(FAQ_HEADING)} className="mt-[84px]">

@@ -8,6 +8,8 @@ export type Post = {
   published: string;
   /** The question Ask AI opens with, about this page. */
   aiQuestion?: string;
+  /** The action after the article. */
+  cta: { label: string; href: string };
   intro: string;
   tldr: string[];
   sections: PostSection[];
@@ -27,6 +29,7 @@ export const posts: Post[] = [
     author: "Emma Rawson",
     published: "2026-10-25",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
+    cta: { label: "See my X work", href: "/work" },
     intro:
       "This is the placeholder intro paragraph. It sits level with the top of the table of contents and runs ahead of the TL;DR.",
     tldr: ["Placeholder takeaway one…", "Placeholder takeaway two…", "Placeholder takeaway three…"],

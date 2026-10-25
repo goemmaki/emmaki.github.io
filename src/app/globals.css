@@ -396,12 +396,14 @@
 /*
  * Flood button (flood-button.tsx): the arrow box is inverse ink (white in dark
  * mode, black in light). On hover or focus, yellow floods the button from the
- * left, the arrow box floods black and the arrow leaves up-right as another
- * arrives from the bottom left.
+ * left, the arrow box swaps to the page colours (black box and white arrow in
+ * dark mode) and the arrow leaves up-right as another arrives from the bottom
+ * left. Yellow is only the flood.
  * Leaving snaps back.
  */
 .flood-button {
   --flood-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --flood-duration: 0.6s;
   position: relative;
   display: inline-flex;
   height: 40px;
@@ -412,7 +414,7 @@
   font-family: var(--font-body);
   font-size: 1rem;
   line-height: 1;
-  transition: border-color 0.35s var(--flood-ease);
+  transition: border-color var(--flood-duration) var(--flood-ease);
 }
 .flood-button__layout {
   position: relative;
@@ -429,7 +431,7 @@
   inset-block: 0;
   left: 0;
   width: 0;
-  transition: width 0.35s var(--flood-ease);
+  transition: width var(--flood-duration) var(--flood-ease);
 }
 .flood-button__layout::before {
   inset-block: -1px;
@@ -438,7 +440,7 @@
 }
 .flood-button__label {
   position: relative;
-  transition: color 0.35s var(--flood-ease);
+  transition: color var(--flood-duration) var(--flood-ease);
 }
 .flood-button__icon {
   position: relative;
@@ -450,10 +452,10 @@
   border-radius: var(--shape-control-radius);
   background: var(--color-fg-max);
   color: var(--color-bg);
-  transition: color 0.35s var(--flood-ease);
+  transition: color var(--flood-duration) var(--flood-ease);
 }
 .flood-button__icon::before {
-  background: #000;
+  background: var(--color-bg);
 }
 .flood-button__arrow {
   position: relative;
@@ -477,7 +479,7 @@
   color: #000;
 }
 .flood-button:is(:hover, :focus-visible) .flood-button__icon {
-  color: var(--color-yellow-splash);
+  color: var(--color-fg-max);
 }
 .flood-button:is(:hover, :focus-visible) .flood-button__arrow {
   translate: 200% -200%;
