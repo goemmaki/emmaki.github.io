@@ -57,57 +57,58 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article>
-      {/* The headline area runs full width over faint diagonal stripes (texture, not light: owner
-          2026-10-25) that fade out towards the body. Its grid matches the body's so the columns line up. */}
-      <div className="relative">
-        <StripedPattern className="text-line-faint stroke-1 [mask-image:linear-gradient(to_bottom,#000_40%,transparent)]" />
-        <div className={`relative pt-e2 pb-e2 ${postGrid}`}>
-          {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
-          <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
-            <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
-              <ol className="flex min-w-0 items-center gap-2">
-                <li className="flex shrink-0">
-                  <Link href="/" aria-label="Home" className="quiet-link">
-                    <House className="size-3.5" aria-hidden />
-                  </Link>
-                </li>
-                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-                <li className="shrink-0">
-                  <Link href="/blog" className="quiet-link">Blog</Link>
-                </li>
-                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-                <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
-              </ol>
-            </nav>
+      {/* The headline area has its own grid, matching the body's so the columns line up. */}
+      <div className={`pt-e2 pb-e2 ${postGrid}`}>
+        {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
+        <header className="relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
+          {/* Diagonal stripes lit around the title and fading out into the page, kept within the
+              headline column and just past the author line: texture, not light (owner, 2026-10-25). */}
+          <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)]">
+            <StripedPattern className="stroke-[0.75] text-fg-muted" />
+          </div>
+          <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
+            <ol className="flex min-w-0 items-center gap-2">
+              <li className="flex shrink-0">
+                <Link href="/" aria-label="Home" className="quiet-link">
+                  <House className="size-3.5" aria-hidden />
+                </Link>
+              </li>
+              <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+              <li className="shrink-0">
+                <Link href="/blog" className="quiet-link">Blog</Link>
+              </li>
+              <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+              <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
+            </ol>
+          </nav>
 
-            <div className="justify-self-end [grid-area:tools]">
-              <PostTools post={post} />
-            </div>
+          <div className="justify-self-end [grid-area:tools]">
+            <PostTools post={post} />
+          </div>
 
-            <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
+          <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
 
-            <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
-              <div className="flex items-center gap-3 [grid-area:author]">
-                <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
-                  ER
-                </div>
-                <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
+          <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
+            <div className="flex items-center gap-3 [grid-area:author]">
+              <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
+                ER
               </div>
-              <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
-                <time dateTime={post.published}>
-                  <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
-                </time>
-                {post.updated && (
-                  <span>
-                    Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
-                  </span>
-                )}
-                {/* From lg the read time sits above the TOC instead. */}
-                <span className="lg:hidden">{minutes} min read</span>
-              </div>
+              <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
             </div>
-          </header>
-        </div>
+            <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
+              <time dateTime={post.published}>
+                <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
+              </time>
+              {post.updated && (
+                <span>
+                  Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
+                </span>
+              )}
+              {/* From lg the read time sits above the TOC instead. */}
+              <span className="lg:hidden">{minutes} min read</span>
+            </div>
+          </div>
+        </header>
       </div>
 
       <div className={`pb-e3 ${postGrid}`}>
