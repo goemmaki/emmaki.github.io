@@ -651,14 +651,14 @@
 
 /*
  * Dark mode only, for now (owner, 2026-10-26): the cover's scroll choreography, measured in screen
- * heights scrolled (svh). The section is 255svh tall and its photo frame stays pinned while the
- * article card (.post-card, 100svh of overlap) swings up over it; the card covers the screen at 155.
+ * heights scrolled (svh). The section is 260svh tall and its photo frame stays pinned while the
+ * article card (.post-card, 100svh of overlap) swings up over it; the card covers the screen at 160.
  *   0-25    the title rises and fades out before it reaches the top
  *   10-60   the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
  *   0-100   the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
  *   30-85   the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
  *           (10-50) and the cover darkens to black (30-100)
- *   55-130  once the photo is well broken up, the card swings up from below, pivoting on its first
+ *   60-135  the moment the spotlight dies, the card swings up from below, pivoting on its first
  *           screen's bottom-left corner (after story-scroll's FlowArt: 30 degrees to level)
  * Keyframe percentages are of 155svh, the card's own of its 75svh. All of it is tied to scroll
  * position, so scrolling back up plays it backwards. Without scroll-driven animations, or with
@@ -688,7 +688,7 @@
 
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    [data-theme="dark"] .post-cover { height: 255svh; }
+    [data-theme="dark"] .post-cover { height: 260svh; }
     [data-theme="dark"] .post-cover-media { top: -16svh; bottom: auto; height: 116svh; }
     [data-theme="dark"] .post-cover + .post-card {
       margin-top: -100svh;
@@ -697,7 +697,7 @@
       animation-timing-function: linear;
       animation-fill-mode: both;
       animation-timeline: scroll(root);
-      animation-range: 55svh 130svh;
+      animation-range: 60svh 135svh;
     }
     [data-theme="dark"] :is(.post-cover-media, .post-cover-title, .post-cover-dim, .post-cover-fade, .post-cover-shade) {
       animation-timing-function: linear;
