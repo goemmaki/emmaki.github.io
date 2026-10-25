@@ -7,6 +7,7 @@ import { FloodButton } from "@/components/flood-button";
 import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
 import { TextLink } from "@/components/text-link";
+import { StripedPattern } from "@/components/ui/striped-pattern";
 import { PostTools } from "@/components/blog/post-tools";
 import { formatPublished, getPost, headingId, posts, readingMinutes, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from "@/lib/posts";
 
@@ -36,6 +37,10 @@ const headingStyle = {
 // Headings the TOC links to land 112px from the top.
 const tocTarget = "scroll-mt-28";
 const sectionHeadingClass = `${headingStyle[2]} text-fg-max ${tocTarget}`;
+// From lg a TOC track sits left of the article (240px, then 288px at xl); below lg the TOC is hidden.
+// The headline area and the body share it.
+const postGrid =
+  "shell lg:grid lg:grid-cols-[240px_minmax(0,700px)] lg:gap-x-e1 xl:grid-cols-[288px_minmax(0,700px)] xl:gap-x-e2";
 // Plex Sans reads larger than grafit's Aeonik at the same size, so 16px matches their 18px.
 const bodyText = "font-sans text-base leading-[1.625] text-fg-2";
 
@@ -51,121 +56,129 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   ];
 
   return (
-    // From lg a TOC track sits left of the article (240px, then 288px at xl); below lg the TOC is hidden.
-    <article className="shell pt-e2 pb-e3 lg:grid lg:grid-cols-[240px_minmax(0,700px)] lg:gap-x-e1 xl:grid-cols-[288px_minmax(0,700px)] xl:gap-x-e2">
-      {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
-      <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
-        <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
-          <ol className="flex min-w-0 items-center gap-2">
-            <li className="flex shrink-0">
-              <Link href="/" aria-label="Home" className="quiet-link">
-                <House className="size-3.5" aria-hidden />
-              </Link>
-            </li>
-            <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-            <li className="shrink-0">
-              <Link href="/blog" className="quiet-link">Blog</Link>
-            </li>
-            <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-            <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
-          </ol>
-        </nav>
+    <article>
+      {/* The headline area runs full width over faint diagonal stripes (texture, not light: owner
+          2026-10-25) that fade out towards the body. Its grid matches the body's so the columns line up. */}
+      <div className="relative">
+        <StripedPattern className="text-line-faint stroke-1 [mask-image:linear-gradient(to_bottom,#000_40%,transparent)]" />
+        <div className={`relative pt-e2 pb-e2 ${postGrid}`}>
+          {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title. */}
+          <header className="grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2">
+            <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
+              <ol className="flex min-w-0 items-center gap-2">
+                <li className="flex shrink-0">
+                  <Link href="/" aria-label="Home" className="quiet-link">
+                    <House className="size-3.5" aria-hidden />
+                  </Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+                <li className="shrink-0">
+                  <Link href="/blog" className="quiet-link">Blog</Link>
+                </li>
+                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
+                <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
+              </ol>
+            </nav>
 
-        <div className="justify-self-end [grid-area:tools]">
-          <PostTools post={post} />
-        </div>
-
-        <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
-
-        <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
-          <div className="flex items-center gap-3 [grid-area:author]">
-            <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
-              ER
+            <div className="justify-self-end [grid-area:tools]">
+              <PostTools post={post} />
             </div>
-            <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
-          </div>
-          <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
-            <time dateTime={post.published}>
-              <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
-            </time>
-            {post.updated && (
-              <span>
-                Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
-              </span>
-            )}
-            {/* From lg the read time sits above the TOC instead. */}
-            <span className="lg:hidden">{minutes} min read</span>
-          </div>
-        </div>
-      </header>
 
-      {/* pt-1 centres the read time on the intro's first line. */}
-      <aside aria-labelledby="toc-title" className="mt-e2 hidden pt-1 lg:col-start-1 lg:row-start-2 lg:block">
-        <div className="sticky top-24">
-          <p className="mb-8 flex items-center gap-2 type-meta text-fg-2">
-            <Clock className="size-3.5" aria-hidden />
-            {minutes} min read
-          </p>
-          <h2 id="toc-title" className="sr-only">On this page</h2>
-          <PostToc entries={toc} />
-        </div>
-      </aside>
+            <h1 className={`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`}>{post.title}</h1>
 
-      <div className="mt-e2 max-w-[700px] lg:col-start-2 lg:row-start-2">
-        <p className={bodyText}>{post.intro}</p>
-
-        <section aria-labelledby={POST_TLDR_ID} className="mt-e1 rounded-sm border border-line bg-surface p-6">
-          <div className="mb-4 flex items-center gap-2">
-            <ListChecks className="size-4 text-fg-2" aria-hidden />
-            <h2 id={POST_TLDR_ID} tabIndex={-1} className={`${headingStyle[5]} text-fg-max ${tocTarget}`}>{POST_TLDR_LABEL}</h2>
-          </div>
-          <ul className="list-disc space-y-2 pl-5 font-sans text-sm leading-normal text-fg-2">
-            {post.tldr.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-        </section>
-
-        {post.sections.map(({ heading, blocks }) => (
-          <section key={heading} aria-labelledby={headingId(heading)} className="mt-e1">
-            <h2 id={headingId(heading)} tabIndex={-1} className={sectionHeadingClass}>{heading}</h2>
-            <div className={`mt-6 space-y-6 ${bodyText}`}>
-              {blocks.map((block, index) => {
-                if (typeof block === "string") return <p key={index}>{block}</p>;
-                if (Array.isArray(block)) {
-                  return (
-                    <p key={index}>
-                      {block.map((run, i) =>
-                        typeof run === "string" ? run : <TextLink key={i} href={run.href}>{run.text}</TextLink>,
-                      )}
-                    </p>
-                  );
-                }
-                if ("image" in block) {
-                  return (
-                    <figure key={index} className="!my-8">
-                      <Image src={block.image} width={block.width} height={block.height} alt={block.alt} className="w-full rounded-sm" />
-                      {block.caption && <figcaption className="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}
-                    </figure>
-                  );
-                }
-                const Heading = `h${block.level}` as const;
-                return (
-                  <Heading key={index} className={`!mt-8 ${headingStyle[block.level]} text-fg-max`}>
-                    {block.text}
-                  </Heading>
-                );
-              })}
+            <div className="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]">
+              <div className="flex items-center gap-3 [grid-area:author]">
+                <div aria-hidden className="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">
+                  ER
+                </div>
+                <span className="font-sans text-sm font-medium text-fg-max">{post.author}</span>
+              </div>
+              <div className="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end">
+                <time dateTime={post.published}>
+                  <span className="hidden sm:inline">Published </span>{formatPublished(post.published)}
+                </time>
+                {post.updated && (
+                  <span>
+                    Updated <time dateTime={post.updated}>{formatPublished(post.updated)}</time>
+                  </span>
+                )}
+                {/* From lg the read time sits above the TOC instead. */}
+                <span className="lg:hidden">{minutes} min read</span>
+              </div>
             </div>
+          </header>
+        </div>
+      </div>
+
+      <div className={`pb-e3 ${postGrid}`}>
+        {/* pt-1 centres the read time on the intro's first line. */}
+        <aside aria-labelledby="toc-title" className="hidden pt-1 lg:col-start-1 lg:row-start-1 lg:block">
+          <div className="sticky top-24">
+            <p className="mb-8 flex items-center gap-2 type-meta text-fg-2">
+              <Clock className="size-3.5" aria-hidden />
+              {minutes} min read
+            </p>
+            <h2 id="toc-title" className="sr-only">On this page</h2>
+            <PostToc entries={toc} />
+          </div>
+        </aside>
+
+        <div className="max-w-[700px] lg:col-start-2 lg:row-start-1">
+          <p className={bodyText}>{post.intro}</p>
+
+          <section aria-labelledby={POST_TLDR_ID} className="mt-e1 rounded-sm border border-line bg-surface p-6">
+            <div className="mb-4 flex items-center gap-2">
+              <ListChecks className="size-4 text-fg-2" aria-hidden />
+              <h2 id={POST_TLDR_ID} tabIndex={-1} className={`${headingStyle[5]} text-fg-max ${tocTarget}`}>{POST_TLDR_LABEL}</h2>
+            </div>
+            <ul className="list-disc space-y-2 pl-5 font-sans text-sm leading-normal text-fg-2">
+              {post.tldr.map((item) => <li key={item}>{item}</li>)}
+            </ul>
           </section>
-        ))}
 
-        <div className="mt-e2">
-          <FloodButton href={post.cta.href}>{post.cta.label}</FloodButton>
+          {post.sections.map(({ heading, blocks }) => (
+            <section key={heading} aria-labelledby={headingId(heading)} className="mt-e1">
+              <h2 id={headingId(heading)} tabIndex={-1} className={sectionHeadingClass}>{heading}</h2>
+              <div className={`mt-6 space-y-6 ${bodyText}`}>
+                {blocks.map((block, index) => {
+                  if (typeof block === "string") return <p key={index}>{block}</p>;
+                  if (Array.isArray(block)) {
+                    return (
+                      <p key={index}>
+                        {block.map((run, i) =>
+                          typeof run === "string" ? run : <TextLink key={i} href={run.href}>{run.text}</TextLink>,
+                        )}
+                      </p>
+                    );
+                  }
+                  if ("image" in block) {
+                    return (
+                      <figure key={index} className="!my-8">
+                        <Image src={block.image} width={block.width} height={block.height} alt={block.alt} className="w-full rounded-sm" />
+                        {block.caption && <figcaption className="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}
+                      </figure>
+                    );
+                  }
+                  const Heading = `h${block.level}` as const;
+                  return (
+                    <Heading key={index} className={`!mt-8 ${headingStyle[block.level]} text-fg-max`}>
+                      {block.text}
+                    </Heading>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+
+          <div className="mt-e2">
+            <FloodButton href={post.cta.href}>{post.cta.label}</FloodButton>
+          </div>
+
+          <section aria-labelledby={headingId(POST_FAQ_LABEL)} className="mt-e2">
+            <h2 id={headingId(POST_FAQ_LABEL)} tabIndex={-1} className={sectionHeadingClass}>{POST_FAQ_LABEL}</h2>
+            <PostFaqs faqs={post.faqs} bodyText={bodyText} />
+          </section>
         </div>
-
-        <section aria-labelledby={headingId(POST_FAQ_LABEL)} className="mt-e2">
-          <h2 id={headingId(POST_FAQ_LABEL)} tabIndex={-1} className={sectionHeadingClass}>{POST_FAQ_LABEL}</h2>
-          <PostFaqs faqs={post.faqs} bodyText={bodyText} />
-        </section>
       </div>
     </article>
   );
