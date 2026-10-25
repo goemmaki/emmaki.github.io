@@ -14,4 +14,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Next action
 
-- Home hero and site shell: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md).
+- Blog post page and current branch state: resume from [docs/handoffs/20261025-blog-post.md](docs/handoffs/20261025-blog-post.md).
+- Home hero and nib section: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md).
