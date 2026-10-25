@@ -110,7 +110,7 @@ export function SiteHeader() {
             <Dialog.Trigger
               ref={menuTriggerRef}
               aria-label="Open menu"
-              className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+              className="icon-action"
             >
               <Menu className="size-5" aria-hidden />
             </Dialog.Trigger>
@@ -138,7 +138,7 @@ export function SiteHeader() {
                     </Link>
                     <Dialog.Close
                       aria-label="Close menu"
-                      className="absolute grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+                      className="icon-action absolute"
                       style={closePosition ?? undefined}
                     >
                       <X className="size-5" aria-hidden />
@@ -153,7 +153,7 @@ export function SiteHeader() {
                         target="_blank"
                         rel="noopener"
                         aria-label="Message emmaki on Fiverr (opens in a new tab)"
-                        className="text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+                        className="text-fg-2 quiet-link"
                       >
                         <MessageCircle className="size-(--menu-icon)" aria-hidden />
                       </a>
@@ -178,7 +178,7 @@ export function SiteHeader() {
                                 aria-current={active ? "page" : undefined}
                                 onClick={() => setOpen(false)}
                                 className={cn(
-                                  "flex min-h-16 items-center whitespace-nowrap type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] transition-colors hover:text-fg-max focus-visible:text-fg-max",
+                                  "flex min-h-16 items-center whitespace-nowrap type-mega [font-size:min(var(--type-display-mega-size),10.5dvh)] quiet-link",
                                   active ? "text-fg-max" : "text-fg-2",
                                 )}
                               >

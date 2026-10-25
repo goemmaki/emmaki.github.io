@@ -87,7 +87,6 @@
 
   /* Side margin scales from 16px on a 320px screen to 48px at 1440px and up; content runs to 1440px (grafit.agency's shell). */
   --gutter: clamp(16px, calc(100vw * 32 / 1120 + 6.857px), 48px);
-  --header-h: 52px;
   --shell-max: calc(1440px + 2 * var(--gutter));
 
   /* Sparkles: brand yellow on dark; on light, amber-orange at 3:1 or better against white (not brown). */
@@ -152,6 +151,21 @@
   &:focus-visible {
     text-decoration-color: var(--color-fg-max);
   }
+}
+
+/* Muted links brighten on hover and keyboard focus; used on quiet links site-wide. */
+@utility quiet-link {
+  @apply transition-colors hover:text-fg-max focus-visible:text-fg-max;
+}
+
+/* Centred 44px icon controls; used by the header, theme toggle and footer. */
+@utility icon-action {
+  @apply grid size-11 place-items-center text-fg-2 quiet-link;
+}
+
+/* Small muted glyphs in post tool menus; used by share and copy items. */
+@utility icon-muted {
+  @apply size-4 shrink-0 text-fg-2;
 }
 
 @utility type-mega {

@@ -27,15 +27,15 @@ function MenuItemLink({ label, href }: ToolLink) {
 
 function brandMark(label: string) {
   if (label === "Share on LinkedIn") {
-    return <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-fg-2" aria-hidden="true" fill="currentColor"><path d="M3.4 5.8H1V15h2.4V5.8ZM2.2 4.6a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8ZM15 9.7c0-2.8-1.5-4.1-3.5-4.1-1.6 0-2.3.9-2.7 1.5V5.8H6.4V15h2.4v-5c0-1.3.3-2.5 1.8-2.5s1.6 1.4 1.6 2.6V15H15V9.7Z" /></svg>;
+    return <svg viewBox="0 0 16 16" className="icon-muted" aria-hidden="true" fill="currentColor"><path d="M3.4 5.8H1V15h2.4V5.8ZM2.2 4.6a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8ZM15 9.7c0-2.8-1.5-4.1-3.5-4.1-1.6 0-2.3.9-2.7 1.5V5.8H6.4V15h2.4v-5c0-1.3.3-2.5 1.8-2.5s1.6 1.4 1.6 2.6V15H15V9.7Z" /></svg>;
   }
   if (label === "Share on X") {
-    return <svg viewBox="0 0 16 16" className="size-4 shrink-0 text-fg-2" aria-hidden="true" fill="currentColor"><path d="M12.6 1.5H15l-5.3 6.1L15.9 14h-4.8l-3.8-4.9L3 14H.6l5.7-6.6L.2 1.5h4.9l3.4 4.5 4.1-4.5Zm-.8 11.2h1.3L4.3 2.7H3L11.8 12.7Z" /></svg>;
+    return <svg viewBox="0 0 16 16" className="icon-muted" aria-hidden="true" fill="currentColor"><path d="M12.6 1.5H15l-5.3 6.1L15.9 14h-4.8l-3.8-4.9L3 14H.6l5.7-6.6L.2 1.5h4.9l3.4 4.5 4.1-4.5Zm-.8 11.2h1.3L4.3 2.7H3L11.8 12.7Z" /></svg>;
   }
   const logo = AI_LOGO_PATHS[label];
   if (logo) {
     return (
-      <svg viewBox="0 0 24 24" className="size-4 shrink-0 text-fg-2" aria-hidden="true" fill="currentColor" fillRule={label === "Grok" ? "evenodd" : undefined}>
+      <svg viewBox="0 0 24 24" className="icon-muted" aria-hidden="true" fill="currentColor" fillRule={label === "Grok" ? "evenodd" : undefined}>
         <path d={logo} />
       </svg>
     );
@@ -113,11 +113,11 @@ export function PostTools({ post }: { post: Post }) {
       <div className="flex items-center gap-2">
         <ToolMenu label="Copy page" icon={Copy} onOpen={() => setPageUrl(window.location.href)}>
           <Menu.Item onClick={() => void copyText(window.location.href, "Link copied")} className={itemClass}>
-            <Link2 className="size-4 shrink-0 text-fg-2" aria-hidden />
+            <Link2 className="icon-muted" aria-hidden />
             Copy link
           </Menu.Item>
           <Menu.Item onClick={() => void copyText(postMarkdown(post, window.location.href), "Markdown copied")} className={itemClass}>
-            <FileText className="size-4 shrink-0 text-fg-2" aria-hidden />
+            <FileText className="icon-muted" aria-hidden />
             Copy as .md
           </Menu.Item>
         </ToolMenu>

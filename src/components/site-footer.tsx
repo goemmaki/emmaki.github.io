@@ -9,7 +9,7 @@ export function SiteFooter() {
         <TooltipLink
           href="/agents.md"
           label="View as agent"
-          className="grid size-11 place-items-center text-fg-2 transition-colors hover:text-fg-max focus-visible:text-fg-max"
+          className="icon-action"
         >
           <Bot className="size-[18px]" aria-hidden />
         </TooltipLink>

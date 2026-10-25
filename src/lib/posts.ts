@@ -10,6 +10,10 @@ export type PostBlock =
 export type PostSection = { heading: string; blocks: PostBlock[] };
 export type PostFaq = { question: string; answer: string };
 
+export const POST_TLDR_ID = "tldr";
+export const POST_TLDR_LABEL = "TL;DR";
+export const POST_FAQ_LABEL = "FAQs";
+
 export type Post = {
   slug: string;
   title: string;
@@ -147,7 +151,7 @@ export function postMarkdown(post: Post, url: string) {
     `# ${post.title}`,
     `${post.author} · ${formatPublished(post.published)} · ${post.category}`,
     url,
-    "## TL;DR",
+    `## ${POST_TLDR_LABEL}`,
     post.tldr.map((item) => `- ${item}`).join("\n"),
     post.intro,
     ...post.sections.flatMap(({ heading, blocks }) => [
@@ -160,7 +164,7 @@ export function postMarkdown(post: Post, url: string) {
             : `${"#".repeat(block.level)} ${block.text}`,
       ),
     ]),
-    "## FAQs",
+    `## ${POST_FAQ_LABEL}`,
     ...post.faqs.flatMap(({ question, answer }) => [`### ${question}`, answer]),
   ].join("\n\n");
 }
