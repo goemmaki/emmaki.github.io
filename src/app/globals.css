@@ -394,6 +394,11 @@
   to { visibility: visible; }
 }
 
+/* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
+@keyframes menu-slide-in {
+  from { translate: 100% 0; }
+}
+
 /*
  * Flood button (flood-button.tsx): the arrow box is inverse ink (white in dark
  * mode, black in light). On hover or focus, yellow floods the button from the
