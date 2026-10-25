@@ -4,7 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight, Clock, House, ListChecks } from "lucide-react";
 import { FloodButton } from "@/components/flood-button";
-import { OutlineText } from "@/components/ui/outline-text";
 import { PostCover } from "@/components/blog/post-cover";
 import { PostFaqs } from "@/components/blog/post-faqs";
 import { PostToc } from "@/components/blog/post-toc";
@@ -63,10 +62,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           and byline follow below it. */}
       {post.cover && (
         <PostCover src={post.cover}>
-          <h1>
-            <OutlineText className="max-w-[18ch] font-heading text-[length:clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-balance select-text md:text-[length:clamp(2.75rem,7vw,7.5rem)]">
-              {post.title}
-            </OutlineText>
+          <h1 className="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">
+            {post.title}
           </h1>
         </PostCover>
       )}
