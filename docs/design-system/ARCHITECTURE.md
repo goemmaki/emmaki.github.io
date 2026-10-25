@@ -36,7 +36,7 @@ Do not use SSR, Server Actions, runtime API routes/route handlers, runtime datab
 `colors_and_type.css` and `tokens.css` are the reusable implementation foundations. Tailwind/shadcn must consume these roles rather than establishing a competing theme.
 
 - Neutral canvas, surface, text, and structural-alpha tokens are the default hierarchy.
-- Yellow is authored/brand activity with `8 / 14 / 24%` ghost/motif/active tiers and rare solid `#FCC300` splash. It is not generic `primary`.
+- Yellow is authored/brand activity with `8 / 14 / 24%` ghost/motif/active tiers and rare solid `#FFC300` splash. It is not generic `primary`.
 - Green is machine/system activity with `8 / 14 / 24%` tiers and theme-specific crisp values. It is not semantic success.
 - Semantic success/warning/error/info remain separate.
 - Focus is neutral/high-contrast. Do not rely on yellow or green as the sole focus indicator.

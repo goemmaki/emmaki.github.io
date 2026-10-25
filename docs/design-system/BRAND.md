@@ -8,11 +8,11 @@ The neutral system carries hierarchy. Yellow and green are ambient signal famili
 
 ### Yellow — authored/brand activity
 
-- Canonical hue: `#FCC300`.
+- Canonical hue: `#FFC300`.
 - Ghost: `8%` alpha.
 - Motif: `14%` alpha.
 - Active: `24%` alpha.
-- Splash: solid `#FCC300`, used rarely.
+- Splash: solid `#FFC300`, used rarely.
 
 Yellow is not a generic primary UI color. Do not use it by default for CTA fills, ordinary links, focus rings, body text, headings, selected text, badges, or status. Do not create a dark brown substitute to force yellow into foreground text.
 

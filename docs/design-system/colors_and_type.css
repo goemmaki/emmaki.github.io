@@ -18,10 +18,10 @@
   --color-border-solid: #454545;
 
   /* Authored/brand activity: same tier logic as system green. */
-  --color-brand-yellow-ghost: rgb(252 195 0 / 8%);
-  --color-brand-yellow-motif: rgb(252 195 0 / 14%);
-  --color-brand-yellow-active: rgb(252 195 0 / 24%);
-  --color-brand-yellow-splash: #FCC300;
+  --color-brand-yellow-ghost: rgb(255 195 0 / 8%);
+  --color-brand-yellow-motif: rgb(255 195 0 / 14%);
+  --color-brand-yellow-active: rgb(255 195 0 / 24%);
+  --color-brand-yellow-splash: #FFC300;
 
   /* Machine/system activity only; never semantic success. */
   --color-system-green-ghost: rgb(72 205 57 / 8%);
@@ -55,10 +55,10 @@
   --color-border-emphasized: rgb(0 0 0 / 14%);
   --color-border-solid: #C9C9C9;
 
-  --color-brand-yellow-ghost: rgb(252 195 0 / 8%);
-  --color-brand-yellow-motif: rgb(252 195 0 / 14%);
-  --color-brand-yellow-active: rgb(252 195 0 / 24%);
-  --color-brand-yellow-splash: #FCC300;
+  --color-brand-yellow-ghost: rgb(255 195 0 / 8%);
+  --color-brand-yellow-motif: rgb(255 195 0 / 14%);
+  --color-brand-yellow-active: rgb(255 195 0 / 24%);
+  --color-brand-yellow-splash: #FFC300;
 
   --color-system-green-ghost: rgb(26 159 11 / 8%);
   --color-system-green-motif: rgb(26 159 11 / 14%);

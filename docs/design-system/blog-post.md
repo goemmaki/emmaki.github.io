@@ -76,7 +76,7 @@ The call to action after the article, built after grafit's button but in emmaki 
 
 - **Shape:** 40px high, 1px `line` border, 2px radius, 16px label, and a 32px arrow box at the right.
 - **Arrow box:** inverse ink, so a white box with a black arrow in dark mode and black with white in light. The owner's rule: the arrow is never the page colour.
-- **Hover or focus:** yellow (`#FCC300`) floods the button from the left over 0.6s (`cubic-bezier(0.22, 0.61, 0.36, 1)`; grafit-slow, by owner request), the border turns yellow and the label turns black. At the same time the arrow box floods with the page colour, so box and arrow swap colours. **No yellow on the arrow box** (owner). The up-right arrow (owner) leaves up-right as a second arrives from the lower left. Leaving snaps back.
+- **Hover or focus:** yellow (`#FFC300`) floods the button from the left over 0.6s (`cubic-bezier(0.22, 0.61, 0.36, 1)`; grafit-slow, by owner request), the border turns yellow and the label turns black. At the same time the arrow box floods with the page colour, so box and arrow swap colours. **No yellow on the arrow box** (owner). The up-right arrow (owner) leaves up-right as a second arrives from the lower left. Leaving snaps back.
 - **Label (owner):** set per post in `cta.label`, worded as the conversion action ("See my X work"), not "Read other articles".
 - Yellow appears only as the flood, a rare splash in `DESIGN.md` terms.
 

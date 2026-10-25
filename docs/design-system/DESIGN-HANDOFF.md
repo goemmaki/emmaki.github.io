@@ -15,7 +15,7 @@ This directory — not the generated OpenDesign `system/` export — is the acti
 
 - Emmaki design rules override Luma/shadcn defaults. Luma is substrate, not identity.
 - Monochrome carries hierarchy.
-- Yellow = authored/brand activity: `#FCC300` at 8% / 14% / 24%, with solid `#FCC300` reserved for rare splash.
+- Yellow = authored/brand activity: `#FFC300` at 8% / 14% / 24%, with solid `#FFC300` reserved for rare splash.
 - Green = machine/system activity: theme-specific green at 8% / 14% / 24%, with crisp value only where genuinely useful.
 - Neither yellow nor green is a semantic-state substitute.
 - Yellow is not generic primary, link, CTA, text-emphasis, or focus color.

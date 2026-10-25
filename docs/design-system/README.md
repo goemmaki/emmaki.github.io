@@ -23,7 +23,7 @@ Emmaki is a premium, human-led B2B writing and strategy brand with technical flu
 
 Two ambient color registers sit on top of the neutral foundation:
 
-- **Yellow** = authored/brand activity. Use `#FCC300` through ghost/motif/active tiers at 8% / 14% / 24%; use solid `#FCC300` only as a rare splash. Yellow is not a generic primary UI color.
+- **Yellow** = authored/brand activity. Use `#FFC300` through ghost/motif/active tiers at 8% / 14% / 24%; use solid `#FFC300` only as a rare splash. Yellow is not a generic primary UI color.
 - **Green** = machine/system activity. Use its theme-specific ghost/motif/active tiers at 8% / 14% / 24%; use its crisp value only when the system signal genuinely needs to resolve clearly. Green is not semantic success.
 
 Monochrome carries hierarchy. Semantic success/warning/error/info colors are reserved for genuine UI state.

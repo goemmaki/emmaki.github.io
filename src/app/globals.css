@@ -91,7 +91,7 @@
   --shell-max: calc(1440px + 2 * var(--gutter));
 
   /* Sparkles: brand yellow on dark; on light, amber-orange at 3:1 or better against white (not brown). */
-  --sparkle-first: #FFC300;
+  --sparkle-first: var(--color-yellow-splash);
   --sparkle-second: #FFE38A;
 }
 /*

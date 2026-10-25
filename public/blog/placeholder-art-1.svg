@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 788" width="1400" height="788">
   <rect width="1400" height="788" fill="#1a1a1a"/>
   <circle cx="420" cy="394" r="240" fill="#2e2e2e"/>
-  <rect x="640" y="154" width="560" height="480" fill="#fcc300"/>
+  <rect x="640" y="154" width="560" height="480" fill="#ffc300"/>
   <rect x="760" y="274" width="320" height="240" fill="#1a1a1a"/>
   <text x="60" y="740" fill="#878787" font-family="monospace" font-size="28">PLACEHOLDER ART 1</text>
 </svg>

@@ -123,7 +123,7 @@ export function SiteHeader() {
               <Dialog.Popup ref={menuPanelRef} className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
                 <div
                   aria-hidden
-                  className="absolute inset-0 bg-[#FFC300] motion-reduce:hidden"
+                  className="absolute inset-0 bg-yellow-splash motion-reduce:hidden"
                   style={slideIn(0)}
                 />
                 <div aria-hidden className="absolute inset-0 bg-fg-muted dark:bg-raised motion-reduce:hidden" style={slideIn(1)} />

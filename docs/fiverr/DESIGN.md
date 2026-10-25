@@ -9,7 +9,7 @@ colors:
   raised-surface: "#1a1a1a"
   primary-text: "#ededed"
   secondary-text: "#a0a0a0"
-  brand-yellow: "#fcc300"
+  brand-yellow: "#ffc300"
   system-green-light: "#1a9f0b"
   system-green-dark: "#48cd39"
 ---
@@ -58,7 +58,7 @@ Keep the existing Emmaki palette.
 - Raised black: `#1A1A1A`
 - Primary light: `#EDEDED`
 - Secondary light: `#A0A0A0`
-- Emmaki yellow: `#FCC300`
+- Emmaki yellow: `#FFC300`
 
 ### System green
 
@@ -71,7 +71,7 @@ Green remains part of the wider brand system, but it is **not** a default Fiverr
 
 Website rules that treat solid yellow as a rare tiny splash do not apply here.
 
-On Fiverr, solid `#FCC300` may be:
+On Fiverr, solid `#FFC300` may be:
 
 - a large geometric field,
 - a major typographic element,

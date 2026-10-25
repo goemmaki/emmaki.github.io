@@ -7,7 +7,7 @@ colors:
   raised-surface: "#1a1a1a"
   primary-text: "#ededed"
   secondary-text: "#a0a0a0"
-  brand-yellow: "#fcc300"
+  brand-yellow: "#ffc300"
 ---
 
 # Emmaki
@@ -23,14 +23,14 @@ Neutral canvas, surfaces, text, and one-pixel structure do almost all hierarchy.
 | Role | Token family | Usage |
 | --- | --- | --- |
 | Neutral foundation | canvas / surfaces / text / borders | Default hierarchy, structure, controls, reading, and layout. |
-| Authored activity | yellow ghost / motif / active / splash | Emmaki brand presence and human/authored activity. 8% / 14% / 24% tiers; solid `#FCC300` only as a rare splash. |
+| Authored activity | yellow ghost / motif / active / splash | Emmaki brand presence and human/authored activity. 8% / 14% / 24% tiers; solid `#FFC300` only as a rare splash. |
 | Machine activity | system green ghost / motif / active / crisp | Ambient machine/system activity and instrumentation only. Never semantic success. |
 | Semantic state | success / warning / error / info | Actual UI state only, with text/icon support where needed. |
 
 ### Yellow rules
 
-- Canonical hue: `#FCC300`.
-- Tiers mirror the green system structurally: ghost `8%`, motif `14%`, active `24%`, plus solid `#FCC300` as the rare splash value.
+- Canonical hue: `#FFC300`.
+- Tiers mirror the green system structurally: ghost `8%`, motif `14%`, active `24%`, plus solid `#FFC300` as the rare splash value.
 - Yellow is **not** the generic primary color for buttons, links, focus rings, selected text, badges, or headings.
 - Do not use yellow as body/foreground text on light surfaces.
 - Do not create a darker brown/yellow text workaround such as `#765B00`.
@@ -113,7 +113,7 @@ Each mark does its grammatical job in the layout. This is what keeps the idea ar
 | `:` colon | introduces what follows | Sections that open onto a list (services, principles). Its two counters can double as the authored/machine legend. |
 | `—` em dash | interrupts, sets something aside | Index rows (the work list leader), section headings that lead into content. |
 | `¶` pilcrow | opens a paragraph | About/bio: a portrait or texture seen through the mark. |
-| `.` full stop | ends | Closing statements. The only sanctioned solid `#FCC300` splash on a page. |
+| `.` full stop | ends | Closing statements. The only sanctioned solid `#FFC300` splash on a page. |
 
 - **Mask:** a mark can clip content (texture, portrait, project imagery) so the reader sees it *through* the punctuation.
 - **Layout:** a mark can be structure, such as a divider, leader, or legend.

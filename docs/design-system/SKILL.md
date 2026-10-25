@@ -35,7 +35,7 @@ Use for the Emmaki website, portfolio and case-study layouts, Fiverr visuals, pr
 
 - Dark-first with genuine light mode.
 - Monochrome neutral foundation carries hierarchy.
-- Yellow is authored/brand activity: `#FCC300` at 8% / 14% / 24%, solid only as rare splash.
+- Yellow is authored/brand activity: `#FFC300` at 8% / 14% / 24%, solid only as rare splash.
 - Green is machine/system activity: 8% / 14% / 24% plus crisp theme value; never semantic success.
 - Semantic state colors remain separate.
 - Geist display, IBM Plex Sans body/interface, IBM Plex Mono technical/meta.
