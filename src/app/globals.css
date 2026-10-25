@@ -94,12 +94,15 @@
   --sparkle-first: #FFC300;
   --sparkle-second: #FFE38A;
 }
-/* Unlit TOC notches: the faintest gray that keeps 3:1 against the page (WCAG 1.4.11), about 3.3:1 on black and 3.03:1 on white. */
+/*
+ * Unlit TOC notches. Dark: about 3.3:1 on black. Light: black at 10%, as grafit.agency does; deliberately
+ * below 3:1 (owner's call) because the lit notches and the headings carry the position.
+ */
 :root {
   --toc-tick: color-mix(in oklab, var(--color-fg-muted) 75%, var(--color-bg));
 }
 [data-theme="light"] {
-  --toc-tick: #939393;
+  --toc-tick: color-mix(in oklab, var(--color-fg-max) 10%, var(--color-bg));
   --sparkle-first: #E07B00;
   --sparkle-second: #E86A00;
 }

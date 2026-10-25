@@ -98,10 +98,10 @@ export function PostTools({ post }: { post: Post }) {
       : `Read from ${pageUrl} so I can ask questions about it`;
   const aiLinks: ToolLink[] = prompt ? [
     { label: "ChatGPT", href: `https://chatgpt.com/?q=${encodeURIComponent(prompt)}` },
+    { label: "Claude", href: `https://claude.ai/new?q=${encodeURIComponent(prompt)}` },
     { label: "Google AI", href: `https://www.google.com/search?q=${encodeURIComponent(prompt)}&udm=50` },
     { label: "Grok", href: `https://grok.com/?q=${encodeURIComponent(prompt)}` },
     { label: "Perplexity", href: `https://www.perplexity.ai/search/?q=${encodeURIComponent(prompt)}` },
-    { label: "Claude", href: `https://claude.ai/new?q=${encodeURIComponent(prompt)}` },
   ] : [];
   const shareLinks: ToolLink[] = pageUrl ? [
     { label: "Share on LinkedIn", href: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(post.title)}` },
