@@ -658,8 +658,9 @@
  *   0-115   the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
  *   45-110  the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
  *           (10-60) and the cover darkens to black (45-115)
- *   112-120 the lamp's shade appears, unlit, near the top of the black screen
- *   145-172 its light comes on as the card's headline rises into it
+ *   112-145 the lamp's shade sparks and grows out from the middle, unlit, near the top of the screen
+ *   145-172 its light comes on as the card's headline rises into it, and the headline's stripes
+ *           come up with it
  *   100-175 the card swings up from below, pivoting on its first screen's bottom-left corner
  *           (after story-scroll's FlowArt: 30 degrees to level); the tilt keeps its headline
  *           below the screen until about 150, so it rises into the lamp's light just after
@@ -708,13 +709,14 @@
   );
   box-shadow: inset 0 1px 0 color-mix(in oklab, var(--color-green-crisp) 70%, #fff 10%);
 }
-/* Lit: the shade's bottom lip glows with the bulb, and the glass gives off a faint green halo. */
+/* Lit: the shade's bottom lip glows with the bulb, and the glass gives off a soft green glow. */
 .post-lamp-lit {
   border-radius: inherit;
   box-shadow:
     inset 0 -2px 0 rgb(255 195 0 / 0.95),
     0 2px 8px rgb(255 195 0 / 0.55),
-    0 0 22px 2px rgb(72 205 57 / 0.16);
+    0 0 18px 2px rgb(72 205 57 / 0.3),
+    0 -2px 40px 8px rgb(72 205 57 / 0.14);
 }
 .post-lamp-light {
   filter: blur(22px);
@@ -756,6 +758,13 @@
     [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
     [data-theme="dark"] .post-lamp-shade { animation-name: lamp-shade; }
     [data-theme="dark"] :is(.post-lamp-lit, .post-lamp-light) { animation-name: lamp-light; }
+    [data-theme="dark"] .post-cover + .post-card .post-stripes {
+      animation-name: lamp-light;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 225svh;
+    }
   }
 }
 @keyframes cover-parallax {
@@ -775,11 +784,16 @@
   35.6% { opacity: 0.5; }
   51%, to { opacity: 1; }
 }
-/* The shade appears, unlit, as the pixelation ends; the bulb comes on as the headline rises into
-   view (about 150svh), with one stutter, and is at full strength when the card settles. */
+/* The shade sparks as the pixelation ends and grows out from the middle, unlit, like the first
+   light bar; once it is full width, as the headline rises into view (about 145svh), the bulb comes
+   on with one stutter, and is at full strength when the card settles. The headline's stripes come
+   up with the light, as if it had found them. */
 @keyframes lamp-shade {
-  0%, 49.8% { opacity: 0; }
-  53.3%, to { opacity: 1; }
+  0%, 49.8% { opacity: 0; scale: 0 1; }
+  50.4% { opacity: 1; scale: 0.08 1; }
+  51% { opacity: 0.3; scale: 0.08 1; }
+  51.6% { opacity: 1; scale: 0.12 1; }
+  64.4%, to { opacity: 1; scale: 1; }
 }
 @keyframes lamp-light {
   0%, 64.4% { opacity: 0; }
