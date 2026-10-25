@@ -12,8 +12,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 // The photo's pixelation in dark mode: block sizes in CSS px, stepped like a censor's mosaic, over
 // this stretch of scrolling, in screen heights (the timings in globals.css, "Post cover").
 const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
-const PIXEL_FROM = 0.45;
-const PIXEL_TO = 1.1;
+const PIXEL_FROM = 0.3;
+const PIXEL_TO = 0.85;
 
 // How far down the screen, in px, a spotlight reaches the header's buttons: the header (64) plus
 // most of the spotlight's 190px radius.
@@ -26,26 +26,6 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
   const content = useRef<HTMLDivElement>(null);
   const photo = useRef<HTMLDivElement>(null);
   const mosaic = useRef<HTMLCanvasElement>(null);
-  const lamp = useRef<HTMLDivElement>(null);
-
-  // The lamp spans the article's text column (the card's header). Measured from layout offsets,
-  // which ignore the card's swing, so it is right wherever the card is.
-  useEffect(() => {
-    const el = lamp.current;
-    const column = document.querySelector<HTMLElement>(".post-card-head header");
-    if (!el || !column) return;
-    const fit = () => {
-      let left = 0;
-      for (let node: HTMLElement | null = column; node; node = node.offsetParent as HTMLElement | null) left += node.offsetLeft;
-      el.style.setProperty("--lamp-left", `${left}px`);
-      el.style.setProperty("--lamp-width", `${column.offsetWidth}px`);
-    };
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(column);
-    observer.observe(document.documentElement);
-    return () => observer.disconnect();
-  }, []);
 
   // Pixelation: the photo is drawn into a canvas one cell per block, and the browser scales it up
   // without smoothing (image-rendering: pixelated). Redrawn only when the block size steps. Runs
@@ -172,7 +152,7 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
 
   return (
     // In dark mode the section is taller than the screen and the photo frame stays pinned for the
-    // extra length, so the choreography has room to play, until the article card covers it
+    // extra length, so the choreography has room to play, until the article card swings up over it
     // (globals.css).
     <section ref={cover} data-under-header className="post-cover relative -mt-16 h-svh min-h-[32rem] bg-bg">
       <div ref={photo} className="sticky top-0 h-svh min-h-[32rem] overflow-hidden">
@@ -185,19 +165,6 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
         <div aria-hidden className="post-cover-fade absolute inset-x-0 bottom-0 h-3/5" />
         <div ref={content} className="post-cover-title shell relative flex h-full items-center justify-center pt-16 text-left">
           {children}
-        </div>
-      </div>
-      {/* A banker's lamp that comes on once the photo is black, above the article card sliding up
-          under it: a green glass shade as wide as the article's column, its light falling from the
-          shade's open bottom (globals.css, "The lamp"). */}
-      <div ref={lamp} aria-hidden className="post-lamp pointer-events-none absolute inset-0 z-20">
-        <div className="sticky top-0 h-svh">
-          <div className="post-lamp-light absolute top-[calc(var(--lamp-top)+var(--lamp-h))] left-[calc(var(--lamp-left)-var(--lamp-width)*0.5)] h-[70svh] w-[calc(var(--lamp-width)*2)]">
-            <div className="post-lamp-cone size-full" />
-          </div>
-          <div className="post-lamp-shade absolute top-(--lamp-top) left-(--lamp-left) h-(--lamp-h) w-(--lamp-width)">
-            <div className="post-lamp-lit absolute inset-0" />
-          </div>
         </div>
       </div>
     </section>

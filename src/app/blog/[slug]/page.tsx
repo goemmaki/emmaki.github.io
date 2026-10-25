@@ -69,11 +69,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </PostCover>
       )}
       {/* The article as one card. In dark mode under a cover it swings up over the pinned, blacked-out
-          cover, under the cover's lamp (globals.css, "Post cover"); data-covers-media tells the site
-          header when it has covered the photo. */}
+          cover (globals.css, "Post cover"); data-covers-media tells the site header when it has
+          covered the photo. */}
       <div data-covers-media className="post-card relative z-10 bg-bg">
         {/* The headline area has its own grid, matching the body's so the columns line up. */}
-        <div className={`post-card-head pt-e2 pb-e2 ${postGrid}`}>
+        <div className={`pt-e2 pb-e2 ${postGrid}`}>
           {/* Phones: breadcrumb, title, author, then dates and tools on one row. md+: tools share the breadcrumb row. 52px around the title.
               Light mode with a cover has no title here yet (dark-mode experiment, owner 2026-10-26). */}
           <header
@@ -86,7 +86,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {/* Diagonal stripes lit around the title and fading out into the page, kept within the
                 headline column and just past the author line: texture, not light (owner, 2026-10-25).
                 Light mode shows them at half strength with a softer fade; dark mode is the priority. */}
-            <div aria-hidden className="post-stripes pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
+            <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
               <StripedPattern className="stroke-[0.75] text-fg-muted" />
             </div>
             <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
