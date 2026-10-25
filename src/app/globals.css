@@ -549,7 +549,8 @@
 .footer {
   --footer-dots: var(--color-fg-max);
   --footer-bar-h: 2.5rem;
-  --footer-mark: clamp(5rem, 21vw, 13rem);
+  /* the largest size at which "tryemmaki" (4.66em wide) fits the shell */
+  --footer-mark: min(13rem, (100vw - 2 * var(--gutter)) / 4.66);
   --footer-field-h: calc(var(--footer-mark) * 1.15);
   /* one dither tile, kept to whole dots (4px) so the drift loops seamlessly */
   --footer-tile: round(calc(var(--footer-field-h) * 1.5), 4px);

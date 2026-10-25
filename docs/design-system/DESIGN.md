@@ -83,6 +83,8 @@ Use IBM Plex Mono only when the content is genuinely metadata, technical annotat
 - **Gutter (owner, 2026-10-25):** one fluid gutter site-wide, header and footer included: 16px on a 320px screen, growing evenly to 48px at 1440px and up (`--layout-gutter`).
 - **Shell (owner, 2026-10-25):** one shell, max 1440px inside the gutters (`--layout-shell`). It is the widest any content or graphic element runs; below that everything is fluid.
 - **Reading measure:** 640–700px; blog articles use a 700px column that shrinks with the screen.
+- **Gutter alignment (owner, 2026-10-25):** the ink sits on the gutter, not the box around it: the first letter of a wordmark and the outermost icon glyphs line up with the gutter, top to bottom of the page.
+- **Site chrome (owner, 2026-10-25):** one header, menu and footer on every page, from the root layout (`site-header.tsx`, `site-footer.tsx`). The footer is a drifting dot field (white in dark mode, black in light) with "*try*emmaki" cut out of it, cropped at a black bar; dark mode adds a yellow mouse spotlight. The bar carries the © line (years update themselves: 2026, then 2026–2027 and on), Fiverr, View as agent and Back to top.
 
 Use centered shells, local grids, named areas, and content-shaped composition. Do not impose a universal 12-column grid. Do not introduce convenience spacing such as 48 / 64 / 96px as a parallel scale.
 
