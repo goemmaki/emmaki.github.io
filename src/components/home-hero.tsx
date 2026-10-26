@@ -1,5 +1,6 @@
 import { SparklesText } from "@/components/ui/sparkles-text";
 import { RectFit } from "@/components/rect-fit";
+import { MotionProvider } from "@/components/motion-provider";
 
 // Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
 // rectangle on lines the headline draws; rect-fit.tsx does the measuring.
@@ -21,16 +22,18 @@ export function HomeHero() {
             </p>
             <h1 className="hero-copy">
               Easily startled copywriter by day,{" "}
-              <SparklesText
-                colors={{
-                  first: "var(--sparkle-first)",
-                  second: "var(--sparkle-second)",
-                }}
-                sparklesCount={5}
-                className="inline font-[family-name:var(--nf-source-serif)] text-[length:inherit] font-light italic"
-              >
-                vituperative
-              </SparklesText>{" "}
+              <MotionProvider>
+                <SparklesText
+                  colors={{
+                    first: "var(--sparkle-first)",
+                    second: "var(--sparkle-second)",
+                  }}
+                  sparklesCount={5}
+                  className="inline font-[family-name:var(--nf-source-serif)] text-[length:inherit] font-light italic"
+                >
+                  vituperative
+                </SparklesText>
+              </MotionProvider>{" "}
               Luddite fighting Skynet’s patterns by night.
             </h1>
           </div>

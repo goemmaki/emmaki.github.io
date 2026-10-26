@@ -4,7 +4,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { MotionProvider } from "@/components/motion-provider";
 
 const geist = Geist({ subsets: ["latin"], variable: "--nf-geist" });
 const plexSans = IBM_Plex_Sans({ subsets: ["latin"], variable: "--nf-plex-sans" });
@@ -42,14 +41,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
-        <MotionProvider>
-          <a href="#content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">
-            Skip to content
-          </a>
-          <SiteHeader />
-          <main id="content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
-          <SiteFooter />
-        </MotionProvider>
+        <a href="#content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );
