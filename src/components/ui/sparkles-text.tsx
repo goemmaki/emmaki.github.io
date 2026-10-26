@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  useEffect,
-  useState,
-  type CSSProperties,
-  type ReactElement,
-} from "react"
+import { useEffect, useState } from "react"
 import { motion } from "motion/react"
 
 import { cn } from "@/lib/utils"
@@ -45,14 +40,6 @@ const Sparkle: React.FC<Sparkle> = ({ id, x, y, color, delay, scale }) => {
 }
 
 interface SparklesTextProps {
-  /**
-   * @default <div />
-   * @type ReactElement
-   * @description
-   * The component to be rendered as the text
-   * */
-  as?: ReactElement
-
   /**
    * @default ""
    * @type string
@@ -94,7 +81,6 @@ export const SparklesText: React.FC<SparklesTextProps> = ({
   colors = { first: "#9E7AFF", second: "#FE8BBB" },
   className,
   sparklesCount = 10,
-  ...props
 }) => {
   const [sparkles, setSparkles] = useState<Sparkle[]>([])
 
@@ -136,13 +122,6 @@ export const SparklesText: React.FC<SparklesTextProps> = ({
   return (
     <span
       className={cn("text-6xl font-bold", className)}
-      {...props}
-      style={
-        {
-          "--sparkles-first-color": `${colors.first}`,
-          "--sparkles-second-color": `${colors.second}`,
-        } as CSSProperties
-      }
     >
       <span className="relative inline-block">
         {sparkles.map((sparkle) => (

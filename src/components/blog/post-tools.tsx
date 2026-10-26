@@ -10,7 +10,7 @@ import { AI_LOGO_PATHS } from "@/components/blog/ai-logos";
 const itemClass =
   "flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none data-[highlighted]:bg-surface";
 
-type ToolLink = { label: string; href: string; brand?: "linkedin" | "x" };
+type ToolLink = { label: string; href: string };
 
 function MenuItemLink({ label, href }: ToolLink) {
   return (
