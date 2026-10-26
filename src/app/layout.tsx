@@ -25,8 +25,8 @@ export const metadata: Metadata = {
     "Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.",
 };
 
-// Runs before first paint: restores the theme and arms the entry choreography.
-const bootScript = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("emmaki-theme");if(t==="light"||t==="dark")d.dataset.theme=t;if(!matchMedia("(prefers-reduced-motion: reduce)").matches)d.classList.add("intro")}catch(e){}})()`;
+// Runs before first paint: restores the theme.
+const bootScript = `(function(){try{var d=document.documentElement;var t=localStorage.getItem("emmaki-theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

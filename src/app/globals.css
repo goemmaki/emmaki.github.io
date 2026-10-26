@@ -410,19 +410,6 @@
   scroll-snap-align: start;
 }
 
-/*
- * Entry choreography guard. An inline script adds `.intro` to <html> before
- * paint (never under reduced motion); GSAP takes over on mount. If JS never
- * runs, the failsafe reveals everything after 2.4s.
- */
-.intro [data-intro] {
-  visibility: hidden;
-  animation: intro-failsafe 0s 2.4s forwards;
-}
-@keyframes intro-failsafe {
-  to { visibility: visible; }
-}
-
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
 @keyframes menu-slide-in {
   from { translate: 100% 0; }
