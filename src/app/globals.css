@@ -544,6 +544,8 @@
   --footer-tile: round(calc(var(--footer-field-h) * 1.5), 4px);
 }
 .footer-base { height: var(--footer-bar-h); background: #000; }
+/* The 404 page keeps only the black bar; the field and wordmark would clash with its nebula field. */
+:root:has([data-not-found]) .footer-art { display: none; }
 .footer-bar {
   height: var(--footer-bar-h);
   color: var(--color-text-muted); /* #878787 / #7D7D7D on black: 5.9:1 / 5.1:1 */

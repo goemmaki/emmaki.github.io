@@ -49,14 +49,14 @@ export function FooterWordmark({ children }: { children: ReactNode }) {
       ref={footer}
       className="footer relative overflow-hidden" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div className="footer-base absolute inset-x-0 bottom-0" />
-      <div aria-hidden="true" className="footer-field footer-field--ink">
+      <div aria-hidden="true" className="footer-art footer-field footer-field--ink">
         <div className="footer-dots" />
       </div>
-      <div aria-hidden="true" className="footer-field footer-field--torch">
+      <div aria-hidden="true" className="footer-art footer-field footer-field--torch">
         <div className="footer-dots" />
       </div>
       {/* overflow-hidden crops the wordmark at the bar */}
-      <div aria-hidden="true" className="relative h-(--footer-field-h) overflow-hidden pointer-events-none">
+      <div aria-hidden="true" className="footer-art relative h-(--footer-field-h) overflow-hidden pointer-events-none">
         <div className="shell relative h-full">
           <p className="footer-mark absolute bottom-0 -ml-[0.05em] translate-y-[0.1em] select-none font-heading text-(length:--footer-mark) font-[number:var(--font-weight-announce)] leading-[0.8] tracking-[-0.06em] text-bg">
             <span className="font-[family-name:var(--nf-source-serif)] mr-[0.04em] font-light italic tracking-[-0.02em]">try</span>
