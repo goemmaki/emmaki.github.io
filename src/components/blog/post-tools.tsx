@@ -7,8 +7,10 @@ import { postMarkdown } from "@/lib/post-format";
 import type { Post } from "@/lib/posts";
 import { AI_LOGO_PATHS } from "@/components/blog/ai-logos";
 
+// Keyboard focus takes the site's focus ring, drawn inside the item; the highlight alone is too faint
+// to see (WCAG 2.4.7). A mouse doesn't trigger :focus-visible, so hover is unchanged.
 const itemClass =
-  "flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none data-[highlighted]:bg-surface";
+  "flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus-ring data-[highlighted]:bg-surface";
 
 type ToolLink = { label: string; href: string };
 

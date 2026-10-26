@@ -122,6 +122,7 @@ After grafit's article FAQs, with the owner's change: **+ opens and − closes**
 - **Accepted exception:** unlit TOC notches, as above.
 - **Focus order:** on phones the tools come before the title in DOM and screen-reader order but sit beside the dates visually. This was kept: WCAG 2.4.3 asks for an order that preserves meaning and operability, not one that mirrors the layout, and grafit uses the same order.
 - **Codex audit:** a read-only source audit (2026-10-25) found no other failures.
+- **Tool menu focus (2026-10-26):** keyboard-highlighted menu items were `#1f1f1f` on `#1a1a1a` with no outline (WCAG 2.4.7). They now take the site's 2px focus ring inside the item, on keyboard focus only; mouse hover is unchanged.
 - **Cover contrast (2026-10-26):** measured pixel by pixel behind the text on screenshots at 1440×900 and 390×844, against 3:1 (large text, icons). Light-mode black text on the colour photo measured about 1.5:1, so light mode took the white title on a black shade. Light-mode title, desktop, at rest: worst pixel 3.77:1. Header icons: 3.57:1 or better. While the light-mode shade lifts, no single icon colour holds 3:1 against the sky, so at 30svh the header takes its usual frosted background and dark text. A Codex read-only audit found no other failures.
 
 ## Rejected or dropped
