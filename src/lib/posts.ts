@@ -48,7 +48,7 @@ export const posts: Post[] = [
     author: "Emma Rawson",
     published: "2026-10-20",
     updated: "2026-10-25",
-    // Dev-only photo, kept out of git (.git/info/exclude); replace before publishing.
+    // Placeholder photo (generated, in Git); replace with the real cover before publishing.
     cover: "/blog/greek-coast.webp",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
     cta: { label: "See my X work", href: "/work" },
