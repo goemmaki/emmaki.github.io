@@ -549,6 +549,8 @@
 .footer-bar {
   height: var(--footer-bar-h);
   color: var(--color-text-muted); /* #878787 / #7D7D7D on black: 5.9:1 / 5.1:1 */
+  /* The same black as .footer-base behind it, so contrast checkers (Lighthouse, axe) see it too. */
+  background: #000;
   --color-focus: #fff;
 }
 /* On the black bar, hover and focus go white in both themes (quiet-link would go black in light). */
