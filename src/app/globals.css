@@ -648,6 +648,8 @@
 [data-theme="light"] :is(.post-cover-title, [data-site-header][data-over-media]) {
   --color-text-maximum: #fff;
   --color-text-secondary: #ededed;
+  /* The dark focus ring measured 1.78-2.43:1 against the photo (WCAG 1.4.11 asks 3:1). */
+  --color-focus: #fff;
 }
 
 /*
