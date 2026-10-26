@@ -12,6 +12,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - When the owner rejects a change ("this sucks", "hideous", "no"), stop all work on it at once, including any running agent, audit or verification, and revert to the last approved state. Do not iterate on, test or polish the rejected version; ask what to do next.
 
+## Development journal
+
+- At the end of every working session, append a dated entry to `docs/journal/` (rules in its `README.md`). It is the evidence base for the owner's case study about building this site: facts and commit hashes, every rejected or reversed idea, measured numbers, agent mistakes. No marketing prose; the owner writes the case study.
+
 ## Next action
 
 - Blog post page, cover, refactor and current branch state: resume from [docs/handoffs/20261026-site.md](docs/handoffs/20261026-site.md).
