@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { Menu } from "@base-ui/react/menu";
 import { Bot, Copy, FileText, Link2, Share2 } from "lucide-react";
-import { postMarkdown, type Post } from "@/lib/posts";
+import { postMarkdown } from "@/lib/post-format";
+import type { Post } from "@/lib/posts";
 import { AI_LOGO_PATHS } from "@/components/blog/ai-logos";
 
 const itemClass =

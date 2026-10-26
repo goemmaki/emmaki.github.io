@@ -10,7 +10,8 @@ import { PostToc } from "@/components/blog/post-toc";
 import { TextLink } from "@/components/text-link";
 import { StripedPattern } from "@/components/ui/striped-pattern";
 import { PostTools } from "@/components/blog/post-tools";
-import { formatPublished, getPost, headingId, posts, readingMinutes, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from "@/lib/posts";
+import { getPost, posts } from "@/lib/posts";
+import { formatPublished, headingId, readingMinutes, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from "@/lib/post-format";
 
 export const dynamicParams = false;
 
