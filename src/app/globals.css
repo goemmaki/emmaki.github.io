@@ -364,18 +364,11 @@
 }
 
 /*
- * Brand concepts (brand-concepts.tsx), under review. Index and grid names in Geist; the wall in the
- * covers' Geist 600 at -0.06em, one size for every name so the longest just fits; the run-in block
- * flush left, yellow (the sparkle colour, visible on white) only on its slashes.
+ * Brand concepts (brand-concepts.tsx), under review. The wall in the covers' Geist 600 at -0.06em, one
+ * size for every name so the longest just fits; the grid names in Geist on hairline cells.
  */
-.brand-index-names {
-  font-family: var(--font-heading);
-  font-weight: var(--font-weight-emphasize);
-  font-size: clamp(1.75rem, 4vw, 3.75rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-}
 .brand-wall-name {
+  width: fit-content;
   font-family: var(--font-heading);
   font-weight: var(--font-weight-announce);
   font-size: 9.5cqw;
@@ -399,16 +392,62 @@
   line-height: 1.05;
   letter-spacing: -0.02em;
 }
-.brand-run {
+/* The logo card: white in both themes, the logo in grey. */
+.brand-card {
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #111;
+}
+.brand-card-logo {
+  max-width: 70%;
+  max-height: 40%;
+  filter: grayscale(1) contrast(1.1);
+}
+.brand-card-name {
   font-family: var(--font-heading);
   font-weight: var(--font-weight-emphasize);
-  font-size: clamp(2rem, 6vw, 6.5rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
-.brand-run-sep {
-  color: var(--sparkle-first);
-  font-weight: 300;
+/* Wall: a small card up and to the right of the pointer, above everything but the header. */
+.brand-peek {
+  position: fixed;
+  z-index: 40;
+  width: 15rem;
+  aspect-ratio: 4 / 3;
+  translate: 1.5rem -100%;
+  pointer-events: none;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.35);
+  animation: brand-peek-in 0.18s ease-out;
+}
+.brand-peek .brand-card-name { font-size: 1.5rem; }
+@keyframes brand-peek-in {
+  from { opacity: 0; scale: 0.92; }
+}
+/*
+ * Grid: the cell's face turns towards the pointer (brand-concepts.tsx sets --rx and --ry) and the card
+ * fades in over it, inset so the turn stays inside the cell's lines.
+ */
+.brand-cell {
+  perspective: 800px;
+  overflow: clip;
+}
+.brand-cell-face {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.brand-cell:hover .brand-cell-face { transition-duration: 0.1s; }
+.brand-cell-card {
+  position: absolute;
+  inset: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+.brand-cell-card .brand-card-name { font-size: clamp(1.125rem, 2.2vw, 2rem); }
+.brand-cell:hover .brand-cell-card { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-cell-face { transform: none; }
+  .brand-peek { animation: none; }
 }
 
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
