@@ -222,7 +222,7 @@
 }
 
 /*
- * Home hero (also at /hero-lab, above the nib section). Sizes are solved in CSS from Geist metrics
+ * Home hero (also on /about). Sizes are solved in CSS from Geist metrics
  * (measured per em at the tracking used; Hello by its ink, not its advance), so
  * the headline's widest line fills the column and the rotated Hello runs exactly
  * from the headline's cap height to the question's last baseline. cqw is the
@@ -330,84 +330,6 @@
     --gap: var(--space-interface-12);
     --row-gap: var(--space-interface-24);
   }
-}
-
-/*
- * Temporary nib section at /hero-lab. The hero's canvas runs on as ink (--ink): an angular funnel
- * down to a neck on the shell's left axis, then a flat nib whose point lands on the headline.
- * --axis is the shell's inner left edge, in the section's full-bleed width. Inverse keeps the ink
- * the canvas colour; yellow and pin grey always use black ink.
- */
-.nib-section {
-  --axis: calc(max(0px, (100% - var(--shell-max)) / 2) + var(--gutter));
-  --neck: clamp(40px, 4.5vw, 72px);
-  --funnel-h: 38svh;
-  --ink: var(--color-canvas);
-  --paper: var(--color-text-maximum);
-  display: flex;
-  min-height: 100svh;
-  flex-direction: column;
-  background: var(--paper);
-  color: var(--ink);
-}
-.nib-section[data-paper="yellow"] { --paper: var(--color-brand-yellow-splash); --ink: #000; }
-.nib-section[data-paper="grey"] { --paper: #bdbdbd; --ink: #000; }
-.nib-ink {
-  position: relative;
-  height: calc(var(--funnel-h) + var(--neck) * 2.6);
-}
-.nib-funnel {
-  height: var(--funnel-h);
-  background: var(--ink);
-  clip-path: polygon(
-    0 0, 100% 0, 62% 30%,
-    calc(var(--axis) + var(--neck) * 3) 64%,
-    calc(var(--axis) + var(--neck)) 100%,
-    var(--axis) 100%,
-    max(0px, calc(var(--axis) - var(--neck))) 60%,
-    0 22%
-  );
-}
-.nib-pen {
-  position: absolute;
-  top: calc(var(--funnel-h) - 1px);
-  left: var(--axis);
-  width: var(--neck);
-  height: calc(var(--neck) * 2.6);
-}
-.nib-headline {
-  margin-top: clamp(12px, 1.5vw, 24px);
-  font-size: clamp(44px, 9vw, 140px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 0.9;
-  text-transform: uppercase;
-  text-box: trim-both cap alphabetic;
-}
-.nib-strip {
-  display: flex;
-  flex: 1;
-  align-items: flex-end;
-  gap: 16px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--axis);
-  padding: var(--space-editorial-52) var(--axis);
-}
-.nib-card {
-  display: flex;
-  flex: none;
-  width: clamp(240px, 26vw, 380px);
-  aspect-ratio: 4 / 5;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
-  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  scroll-snap-align: start;
 }
 
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
