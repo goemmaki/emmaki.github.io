@@ -364,34 +364,51 @@
 }
 
 /*
- * Brand list (brands/page.tsx), after the sales-copy gig's "select clients" image: lowercase Plex Sans
- * light, each name on a short yellow dash, hung off a yellow rule on the right half from 48rem. The
- * yellow is the sparkle colour, which stays visible on white.
+ * Brand concepts (brand-concepts.tsx), under review. Index and grid names in Geist; the wall in the
+ * covers' Geist 600 at -0.06em, one size for every name so the longest just fits; the run-in block
+ * flush left, yellow (the sparkle colour, visible on white) only on its slashes.
  */
-.brand-list {
-  border-inline-start: 1px solid var(--sparkle-first);
-  padding-inline-start: clamp(1.5rem, 4vw, 4rem);
-  font-family: var(--font-body);
+.brand-index-names {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-emphasize);
+  font-size: clamp(1.75rem, 4vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.brand-wall-name {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-announce);
+  font-size: 9.5cqw;
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+}
+.brand-wall-no {
+  margin-inline-start: 0.5em;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: max(0.75rem, 0.14em);
+  letter-spacing: 0;
+  vertical-align: super;
+  color: var(--color-fg-2);
+}
+.brand-grid-name {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-emphasize);
+  font-size: clamp(1.125rem, 2.2vw, 2rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.brand-run {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-emphasize);
+  font-size: clamp(2rem, 6vw, 6.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.brand-run-sep {
+  color: var(--sparkle-first);
   font-weight: 300;
-  font-size: clamp(2rem, 4.5vw, 4.5rem);
-  line-height: 1.15;
-  text-transform: lowercase;
-}
-.brand-list > li {
-  display: flex;
-  gap: 0.35em;
-}
-/* the dash sits on the middle of the first line, so a wrapped name keeps it there */
-.brand-list > li::before {
-  content: "";
-  flex: none;
-  width: 0.6em;
-  height: max(2px, 0.03em);
-  margin-block-start: 0.6em;
-  background: var(--sparkle-first);
-}
-@media (width >= 48rem) {
-  .brand-list { margin-inline-start: 50%; }
 }
 
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
