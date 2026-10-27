@@ -6,8 +6,6 @@
 
 - [Agent guide](/agents.md)
 - [Home](/)
-- [Work](/work)
-- [Projects](/projects)
 - [Proof](/proof)
 - [Blog](/blog)
 - [About](/about)

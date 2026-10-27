@@ -7,8 +7,6 @@ Contact is Fiverr-only: https://www.fiverr.com/emmaki
 ## Pages
 
 - `/` — Home
-- `/work` — Work
-- `/projects` — Projects
 - `/proof` — Proof
 - `/blog` — Blog
 - `/about` — About

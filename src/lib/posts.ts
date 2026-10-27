@@ -34,7 +34,7 @@ const placeholderParagraphs: PostParagraph[] = [
   "This is a placeholder paragraph for the article body. It gives the page enough text to show the reading measure, line spacing and rhythm without adding finished copy.",
   [
     "This is a second placeholder paragraph with ",
-    { text: "a placeholder link", href: "/work" },
+    { text: "a placeholder link", href: "/proof" },
     " in it. Replace it with owner-written copy when the article is ready, keeping the same paragraph structure for the layout review.",
   ],
   "This is a third placeholder paragraph to show how the article continues down the page and how the section spacing feels in context.",
@@ -51,7 +51,7 @@ export const posts: Post[] = [
     // Placeholder photo (generated, in Git); replace with the real cover before publishing.
     cover: "/blog/greek-coast.webp",
     aiQuestion: "Using this article, evaluate where AI-generated content could be damaging my brand.",
-    cta: { label: "See my X work", href: "/work" },
+    cta: { label: "See my X work", href: "/proof" },
     intro:
       "This is the placeholder intro paragraph. It sits level with the top of the table of contents and runs ahead of the TL;DR.",
     tldr: ["Placeholder takeaway one…", "Placeholder takeaway two…", "Placeholder takeaway three…"],
