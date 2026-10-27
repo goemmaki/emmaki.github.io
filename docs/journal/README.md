@@ -24,3 +24,4 @@ Some shots miss the feature they are named for, because it only shows mid-scroll
 ## Measurements
 
 - [Accessibility and browser baseline, 2026-10-26](20261026-baseline.md)
+- [End-of-day checks, 2026-10-27](20261027-checks.md)
