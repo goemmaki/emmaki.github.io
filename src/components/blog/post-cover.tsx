@@ -47,7 +47,8 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
         const active = supported && motion.matches;
         const progress = window.scrollY / view.offsetHeight;
         const at = (progress - PIXEL_FROM) / (PIXEL_TO - PIXEL_FROM);
-        const step = !active || at <= 0 || !img.complete ? 0 : Math.min(PIXEL_STEPS.length - 1, 1 + Math.floor(at * (PIXEL_STEPS.length - 1)));
+        // A broken photo is complete with no size: it stays a blank space, with no mosaic to draw.
+        const step = !active || at <= 0 || !img.complete || !img.naturalWidth ? 0 : Math.min(PIXEL_STEPS.length - 1, 1 + Math.floor(at * (PIXEL_STEPS.length - 1)));
         if (step === drawn) return;
         drawn = step;
         canvas.hidden = step === 0;
