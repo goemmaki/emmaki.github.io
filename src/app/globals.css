@@ -363,6 +363,37 @@
   }
 }
 
+/*
+ * Brand list (brands/page.tsx), after the sales-copy gig's "select clients" image: lowercase Plex Sans
+ * light, each name on a short yellow dash, hung off a yellow rule on the right half from 48rem. The
+ * yellow is the sparkle colour, which stays visible on white.
+ */
+.brand-list {
+  border-inline-start: 1px solid var(--sparkle-first);
+  padding-inline-start: clamp(1.5rem, 4vw, 4rem);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(2rem, 4.5vw, 4.5rem);
+  line-height: 1.15;
+  text-transform: lowercase;
+}
+.brand-list > li {
+  display: flex;
+  gap: 0.35em;
+}
+/* the dash sits on the middle of the first line, so a wrapped name keeps it there */
+.brand-list > li::before {
+  content: "";
+  flex: none;
+  width: 0.6em;
+  height: max(2px, 0.03em);
+  margin-block-start: 0.6em;
+  background: var(--sparkle-first);
+}
+@media (width >= 48rem) {
+  .brand-list { margin-inline-start: 50%; }
+}
+
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
 @keyframes menu-slide-in {
   from { translate: 100% 0; }

@@ -7,5 +7,6 @@
 - [Agent guide](/agents.md)
 - [Home](/)
 - [Proof](/proof)
+- [Brands](/brands)
 - [Blog](/blog)
 - [About](/about)

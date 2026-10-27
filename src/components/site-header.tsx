@@ -14,6 +14,7 @@ import { Wordmark } from "@/components/wordmark";
 const nav = [
   { href: "/", label: "Home" },
   { href: "/proof", label: "Proof" },
+  { href: "/brands", label: "Brands" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
 ];
