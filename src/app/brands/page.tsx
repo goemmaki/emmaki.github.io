@@ -13,7 +13,7 @@ const brands: Brand[] = [
   { name: "Arc4dia", logo: "/brands/arc4dia.png", color: "#317DB3" },
   { name: "Compoundly", logo: "/brands/compoundly.svg", color: "#0EB400" },
   { name: "Design Bundles", logo: "/brands/design-bundles.svg", color: "#4CC5FB" },
-  { name: "Fiverr", logo: "/brands/fiverr.svg", color: "#1DBF73" },
+  { name: "Fiverr", logo: "/brands/fiverr.svg", color: "#1DBF73", ink: "#fff" }, // white: the owner's call
   { name: "HackerRank", logo: "/brands/hackerrank.svg", color: "#1BA94C" },
   { name: "Marco Polo", logo: "/brands/marco-polo.png", color: "#1DA2C7" },
   { name: "MHC Digital Group", logo: "/brands/mhc-digital-group.svg", color: "#AB5DE3" },

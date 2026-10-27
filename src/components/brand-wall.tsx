@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type Brand = { name: string; logo?: string; color?: string };
-
-const pad = (n: number) => String(n + 1).padStart(2, "0");
+// ink: the logo colour when the owner overrides the contrast pick.
+export type Brand = { name: string; logo?: string; color?: string; ink?: "#fff" | "#000" };
 
 // The hover card, standardised: every logo is drawn in one ink on the brand's colour (a neutral card
 // where none is known), at the screen's full resolution. The ink is white or black, whichever has
@@ -67,7 +66,7 @@ function LogoCard({ brand, font, x, y }: { brand: Brand; font: string; x: number
       draw();
       // Recolour whatever was drawn to the ink, keeping its shape and soft edges.
       c.globalCompositeOperation = "source-in";
-      c.fillStyle = inkFor(brand.color ?? NEUTRAL);
+      c.fillStyle = brand.ink ?? inkFor(brand.color ?? NEUTRAL);
       c.fillRect(0, 0, cols, rows);
     };
     if (!brand.logo) {
@@ -112,7 +111,7 @@ function LogoCard({ brand, font, x, y }: { brand: Brand; font: string; x: number
   );
 }
 
-// The covers' massive type carried on: one name a line, flush left, set solid, numbered. Hovering a
+// The covers' type carried on, smaller: one name a line, flush left, set solid. Hovering a
 // name (mouse only) brings up its logo card by the pointer.
 export function BrandWall({ brands }: { brands: Brand[] }) {
   const list = useRef<HTMLOListElement>(null);
@@ -125,9 +124,9 @@ export function BrandWall({ brands }: { brands: Brand[] }) {
   }, []);
 
   return (
-    <section className="overflow-x-clip py-32 [container-type:inline-size]">
+    <section className="py-32">
       <ol ref={list} className="brand-wall shell">
-        {brands.map((b, i) => (
+        {brands.map((b) => (
           <li
             key={b.name}
             className="brand-wall-name"
@@ -135,7 +134,6 @@ export function BrandWall({ brands }: { brands: Brand[] }) {
             onPointerLeave={() => setPeek(null)}
           >
             {b.name}
-            <sup className="brand-wall-no">{pad(i)}</sup>
           </li>
         ))}
       </ol>

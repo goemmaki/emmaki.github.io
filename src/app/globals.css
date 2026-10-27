@@ -364,28 +364,20 @@
 }
 
 /*
- * Brand wall (brand-wall.tsx): the covers' Geist 600 at -0.06em, one size for every name so the
- * longest just fits, numbered.
+ * Brand wall (brand-wall.tsx): the covers' Geist 600 at -0.06em, sized on the content column (the
+ * list is its own container, so names never reach the gutter) and capped at 5.5rem: a client list,
+ * not a headline, even on a 4K screen. A name too long for the column wraps.
  */
 .brand-wall {
+  container-type: inline-size;
   font-family: var(--font-heading);
 }
 .brand-wall-name {
   width: fit-content;
   font-weight: var(--font-weight-announce);
-  font-size: 9.5cqw;
-  line-height: 0.92;
+  font-size: min(9.5cqi, 5.5rem);
+  line-height: 0.95;
   letter-spacing: -0.06em;
-  white-space: nowrap;
-}
-.brand-wall-no {
-  margin-inline-start: 0.5em;
-  font-family: var(--font-mono);
-  font-weight: 400;
-  font-size: max(0.75rem, 0.14em);
-  letter-spacing: 0;
-  vertical-align: super;
-  color: var(--color-fg-2);
 }
 /* The hover card: up and to the right of the pointer, above everything but the header. */
 .brand-peek {
