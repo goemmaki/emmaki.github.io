@@ -636,8 +636,12 @@
   transition: --cover-spot 300ms;
 }
 .cover-lit .post-cover-shade { --cover-spot: 190px; }
+/* The static cover (Firefox, which lacks scroll-driven animations, and reduced motion) keeps the
+   shade to the bottom and fades to the page only along the last tenth, so the white title and
+   header never sit on white: Firefox measured the title at 1.55:1 with the full fade (2026-10-27).
+   The animated cover swaps in the fuller versions below. */
 [data-theme="light"] .post-cover-shade {
-  background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.35) 30%, rgb(0 0 0 / 0.35) 65%, transparent 90%);
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.35) 30%, rgb(0 0 0 / 0.35));
   mask-image: none;
 }
 /* Light mode's own text colours, captured where the theme sets them, for the header to return to. */
@@ -672,7 +676,7 @@
  */
 .post-cover-dim { opacity: 0; }
 .post-cover-fade {
-  background: linear-gradient(to bottom, transparent, rgb(from var(--color-bg) r g b / 0.6) 55%, var(--color-bg));
+  background: linear-gradient(to bottom, transparent 90%, var(--color-bg));
 }
 /* The spotlight clears less towards the photo's bottom edge and nothing at it, so it never shows
    the edge. */
@@ -708,11 +712,18 @@
     .post-cover-media { animation-name: cover-parallax; will-change: translate; }
     .post-cover-title { animation-name: cover-title-rise; }
     .post-cover-dim { animation-name: cover-dim; }
-    .post-cover-fade { animation-name: cover-fade; transform-origin: bottom; }
+    .post-cover-fade {
+      background: linear-gradient(to bottom, transparent, rgb(from var(--color-bg) r g b / 0.6) 55%, var(--color-bg));
+      animation-name: cover-fade;
+      transform-origin: bottom;
+    }
     [data-theme="dark"] .post-cover-shade { animation-name: cover-power-fail; }
     /* Light mode: the shade lifts once the title has gone, so the photo washes to white rather than
        grey, and the header over it returns to its usual look as the shade goes. */
-    [data-theme="light"] .post-cover-shade { animation-name: cover-shade-lift; }
+    [data-theme="light"] .post-cover-shade {
+      background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0.4) 12%, rgb(0 0 0 / 0.35) 30%, rgb(0 0 0 / 0.35) 65%, transparent 90%);
+      animation-name: cover-shade-lift;
+    }
     [data-theme="light"] [data-site-header][data-over-media] {
       animation-name: cover-header-ink;
       animation-timing-function: linear;
