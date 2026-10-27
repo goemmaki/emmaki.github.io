@@ -57,7 +57,7 @@ The current Luma settings — including its translucent menu and spacious compon
 
 - CSS: simple hover/state transitions.
 - Motion: ordinary React/UI transitions.
-- GSAP: bespoke authored choreography that benefits from a timeline, such as a signature/wordmark trace or a controlled entry sequence.
+- GSAP: bespoke authored choreography that benefits from a timeline, such as a signature/wordmark trace or a controlled entry sequence. Unused for now, and kept installed on purpose (owner, 2026-10-27); do not propose removing it.
 - Do not use Motion and GSAP to drive the same effect.
 - Respect `prefers-reduced-motion`; the final readable state must be immediately available without animation.
 - The entry may be striking. The interior should become stark, quiet, and controlled.

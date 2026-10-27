@@ -99,8 +99,10 @@ push or install anything. Write only under `runtime/`. Compare with the last run
    landmarks, heading outline (one h1 per page?), controls without names, duplicate announcements,
    decorative content exposed to assistive tech. Say plainly this is not a real screen-reader test.
 5. **Reduced motion** (`reducedMotion: 'reduce'`): what still moves; anything missing or unreadable.
-6. **WCAG 2.2.2:** every animation that starts by itself and runs longer than 5 s, and whether it can
-   be paused.
+6. **WCAG 2.2.2:** the sparkles, footer drift, blog masks and 404 nebula run without a pause control
+   by the owner's decision (`docs/design-system/DESIGN.md`, "Motion"): list them as accepted, not as
+   a finding or a decision to make. Report only a *new* animation that starts by itself and runs
+   longer than 5 s.
 7. **Firefox vs Chromium differences** you can see from code (e.g. `animation-timeline` fallbacks)
    and in Firefox screenshots: overlaps, unreadable text, console errors.
 8. **Resilience:** images blocked (route abort): what the user sees. Short viewports (1440×600,
