@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
  * kept dim. The glow sits left of centre from md (the 404 is in the right-hand column) and above
  * the text on phones. Each 16px cell samples an animated radial gradient at its centre; dim cells
  * are left out, which is what makes it sparse. Film grain, halftone, scan lines and vignette as in
- * the preset. Reduced motion gets one still frame.
+ * the preset. Reduced motion gets one still frame, also when it's switched on mid-visit.
  */
 
 const CELL = 16;
@@ -91,7 +91,8 @@ export function NebulaField() {
     const ctx = canvas.getContext("2d")!;
     const overlay = overlayRef.current!;
     const overlayCtx = overlay.getContext("2d")!;
-    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    let still = reduce.matches;
 
     const [grain, grainCtx] = makeCanvas(256, 256);
     const noise = grainCtx.createImageData(256, 256);
@@ -195,16 +196,27 @@ export function NebulaField() {
     // so redraw at once (at the last frame's time) or the field blanks while the window is dragged.
     const observer = new ResizeObserver(() => {
       resize();
-      draw(still ? 0 : Math.max(0, drawn) / 1000);
+      draw(Math.max(0, drawn) / 1000);
     });
     observer.observe(canvas);
     resize();
-    if (still) draw(0);
-    else frame = requestAnimationFrame(loop);
+    // Stops on the frame it's showing when reduced motion is switched on, and carries on from there.
+    function play() {
+      cancelAnimationFrame(frame);
+      if (still) draw(Math.max(0, drawn) / 1000);
+      else frame = requestAnimationFrame(loop);
+    }
+    const onMotion = () => {
+      still = reduce.matches;
+      play();
+    };
+    reduce.addEventListener("change", onMotion);
+    play();
 
     return () => {
       cancelAnimationFrame(frame);
       observer.disconnect();
+      reduce.removeEventListener("change", onMotion);
     };
   }, []);
 
