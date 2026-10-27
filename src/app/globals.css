@@ -366,7 +366,8 @@
 /*
  * Brand wall (brand-wall.tsx): the covers' Geist 600 at -0.06em, sized on the content column (the
  * list is its own container, so names never reach the gutter) and capped at 5.5rem: a client list,
- * not a headline, even on a 4K screen. A name too long for the column wraps.
+ * not a headline, even on a 4K screen. A name too long for the column wraps. Hovering a name turns
+ * it the brand's colour (--brand, set per name).
  */
 .brand-wall {
   container-type: inline-size;
@@ -379,27 +380,11 @@
   line-height: 0.95;
   letter-spacing: -0.06em;
 }
-/* The hover card: up and to the right of the pointer, above everything but the header. */
-.brand-peek {
-  position: fixed;
-  z-index: 40;
-  width: 15rem;
-  aspect-ratio: 4 / 3;
-  translate: 1.5rem -100%;
-  pointer-events: none;
-  box-shadow: 0 1rem 3rem rgb(0 0 0 / 0.35);
-  animation: brand-peek-in 0.18s ease-out;
+.brand-wall-name {
+  transition: color 0.2s ease-out;
 }
-.brand-peek > canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-@keyframes brand-peek-in {
-  from { opacity: 0; scale: 0.92; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .brand-peek { animation: none; }
+.brand-wall-name:hover {
+  color: var(--brand, currentColor);
 }
 
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
