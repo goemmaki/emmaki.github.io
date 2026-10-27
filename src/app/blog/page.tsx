@@ -38,6 +38,8 @@ export default function BlogIndex() {
         <p className="blog-cover-name text-fg-max">Crossed Wires</p>
       </div>
       <div className="blog-cover-overhang" aria-hidden />
+      {/* Placeholder until the index below the fold is designed (owner, 2026-10-27). */}
+      <div className="shell py-24 text-center type-meta text-fg-2">Coming soon</div>
     </section>
   );
 }
