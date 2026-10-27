@@ -389,7 +389,6 @@
 }
 /* The hover card: up and to the right of the pointer, above everything but the header. */
 .brand-peek {
-  --brand-peek-neutral: #2a2a2a;
   position: fixed;
   z-index: 40;
   width: 15rem;
