@@ -1,6 +1,16 @@
-import { HomeHero } from "@/components/home-hero";
+import { PageClosing } from "@/components/page-closing";
+import { PageCover } from "@/components/page-cover";
 
-// The home hero graphic, moved here from the deleted /hero-lab (owner, 2026-10-27).
+// Placeholders until the owner writes the intro, the closing line and the button label.
 export default function AboutPage() {
-  return <HomeHero />;
+  return (
+    <>
+      <PageCover
+        word="About"
+        ink={2.613}
+        intro="Owner’s intro: one or two lines on what this page is and who it’s for."
+      />
+      <PageClosing line="Owner’s closing line: the ask, in one sentence." cta="Owner’s CTA label" />
+    </>
+  );
 }

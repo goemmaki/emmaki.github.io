@@ -24,4 +24,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Next action
 
 - Blog post page, cover, refactor and current branch state: resume from [docs/handoffs/20261026-site.md](docs/handoffs/20261026-site.md).
-- Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27; the hero is also on `/about`.
+- Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.
