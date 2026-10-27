@@ -13,8 +13,10 @@ export const metadata: Metadata = {
 };
 
 // The blog, Crossed Wires. The cover fills the window, under the header, with the comedy and tragedy
-// masks, redrawn in dithered characters, in the middle of the window. The name runs edge to edge with a quarter of its letters below the window, shown on scroll; the tagline sits centred
-// just above it. The H1 will go below the fold (owner, 2026-10-26).
+// masks redrawn in dithered characters. The name runs edge to edge with a quarter of its letters
+// below the window, shown on scroll; the tagline sits just above it. On wide windows the masks move
+// to the right and the tagline goes flush left (globals.css, "Blog index cover"). The H1 will go
+// below the fold (owner, 2026-10-26).
 export default function BlogIndex() {
   return (
     <section className={`blog-cover relative -mt-16 overflow-x-clip ${geistPixel.variable}`}>
@@ -26,7 +28,7 @@ export default function BlogIndex() {
           height={890}
           className="blog-cover-masks"
         />
-        <div className="shell flex flex-1 flex-col justify-end pb-[clamp(1rem,3vw,2.5rem)]">
+        <div className="blog-cover-bottom shell flex flex-1 flex-col justify-end pb-(--tagline-pb)">
           <div className="blog-cover-tagline-box">
             <p className="blog-cover-tagline text-center leading-[1.2] text-fg-2">
               A chronicle of <span className="text-fg-max">absurd humanity</span>
