@@ -1,6 +1,7 @@
 // Lighthouse for the end-of-day checks (docs/checks/end-of-day.md). Runs outside Codex's sandbox,
 // which blocks Chrome. Needs the static export served by serve.py.
 // Usage: NODE_PATH=<playwright node_modules> node docs/checks/lighthouse.cjs <out-dir> <port> <page>...
+/* eslint-disable @typescript-eslint/no-require-imports -- a plain Node script, run with NODE_PATH, not app code */
 const fs = require("fs");
 const path = require("path");
 const { chromium } = require("playwright");

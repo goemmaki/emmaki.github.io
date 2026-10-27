@@ -18,6 +18,7 @@ Codex's sandbox blocks a Turbopack build and Chrome, so those stay with Claude.
 - **Lighthouse:**
   `NODE_PATH=... node docs/checks/lighthouse.cjs runtime/checks-<date> 3021 <pages>`.
   It covers light and dark, desktop and mobile.
+  Leave the 404 out: Lighthouse refuses a page with a 404 status (`ERRORED_DOCUMENT_REQUEST`).
 - **Pages:** every route in `src/app`, plus a missing URL (e.g. `/nope`) for the 404.
 - **Brief:** copy the brief below to `runtime/briefs/<date>-end-of-day.md`. Fill in the worktree,
   branch, commit, date and pages.
