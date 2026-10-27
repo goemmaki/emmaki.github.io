@@ -2,11 +2,11 @@ import { SparklesText } from "@/components/ui/sparkles-text";
 import { RectFit } from "@/components/rect-fit";
 import { MotionProvider } from "@/components/motion-provider";
 
-// Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
+// The About page's poster, below the cover (on Home until 2026-10-27). Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
 // rectangle on lines the headline draws; rect-fit.tsx does the measuring.
-export function HomeHero() {
+export function Hero() {
   return (
-    <section className="shell -mt-16 flex min-h-[calc(100svh-var(--peek))] flex-col justify-center pt-[calc(4rem+var(--spacing-e1))] pb-e1">
+    <section className="shell flex min-h-svh flex-col justify-center py-e1">
       <RectFit />
       <div className="hero-frame">
         <div className="hero-poster font-heading text-fg-max">
@@ -20,7 +20,7 @@ export function HomeHero() {
               <span className="block">How can I</span>
               <span className="block">help you?</span>
             </p>
-            <h1 className="hero-copy">
+            <p className="hero-copy">
               Easily startled copywriter by day,{" "}
               <MotionProvider>
                 <SparklesText
@@ -35,7 +35,7 @@ export function HomeHero() {
                 </SparklesText>
               </MotionProvider>{" "}
               Luddite fighting Skynet’s patterns by night.
-            </h1>
+            </p>
           </div>
         </div>
       </div>

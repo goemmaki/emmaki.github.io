@@ -1,3 +1,4 @@
+import { Hero } from "@/components/hero";
 import { PageClosing } from "@/components/page-closing";
 import { PageCover } from "@/components/page-cover";
 
@@ -10,6 +11,7 @@ export default function AboutPage() {
         ink={2.613}
         intro="Owner’s intro: one or two lines on what this page is and who it’s for."
       />
+      <Hero />
       <PageClosing line="Owner’s closing line: the ask, in one sentence." cta="Owner’s CTA label" />
     </>
   );
