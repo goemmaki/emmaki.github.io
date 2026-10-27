@@ -24,6 +24,7 @@ const choose = (v: Concept) => {
 
 export type Brand = { name: string; logo?: string };
 
+const initial = (b: Brand) => b.name[0].toUpperCase();
 const pad = (n: number) => String(n + 1).padStart(2, "0");
 
 // The logo in grey on a white card, in both themes, so dark and light logos both read. Without a logo
@@ -59,26 +60,40 @@ export function BrandConcepts({ brands }: { brands: Brand[] }) {
   const concept = useSyncExternalStore(subscribe, read, () => "wall" as const);
   // Wall: the brand under the pointer, and the pointer's position for its card.
   const [peek, setPeek] = useState<{ brand: Brand; x: number; y: number } | null>(null);
+  const letters = [...new Set(brands.map(initial))];
 
   return (
     <>
       {concept === "wall" && (
-        // The covers' massive type carried on: one name a line, flush left, set solid. Hovering a name
-        // brings up a small logo card by the pointer (mouse only).
+        // An A to Z of only the letters with clients: each letter massive, its names stacked under it,
+        // the groups alternately flush left and flush right. Hovering a name brings up a small logo
+        // card by the pointer (mouse only).
         <section className="overflow-x-clip py-32 [container-type:inline-size]">
-          <ol className="shell">
-            {brands.map((b, i) => (
-              <li
-                key={b.name}
-                className="brand-wall-name"
-                onPointerMove={(e) => e.pointerType === "mouse" && setPeek({ brand: b, x: e.clientX, y: e.clientY })}
-                onPointerLeave={() => setPeek(null)}
-              >
-                {b.name}
-                <sup className="brand-wall-no">{pad(i)}</sup>
-              </li>
+          <div className="shell">
+            {letters.map((letter, g) => (
+              <div key={letter} className={`brand-az ${g % 2 ? "brand-az--end" : ""}`}>
+                <p aria-hidden="true" className="brand-az-letter">
+                  {letter}
+                </p>
+                <ul>
+                  {brands
+                    .filter((b) => initial(b) === letter)
+                    .map((b) => (
+                      <li
+                        key={b.name}
+                        className="brand-az-name"
+                        onPointerMove={(e) =>
+                          e.pointerType === "mouse" && setPeek({ brand: b, x: e.clientX, y: e.clientY })
+                        }
+                        onPointerLeave={() => setPeek(null)}
+                      >
+                        {b.name}
+                      </li>
+                    ))}
+                </ul>
+              </div>
             ))}
-          </ol>
+          </div>
           {peek && (
             <LogoCard
               key={peek.brand.name}
