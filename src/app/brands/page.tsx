@@ -2,13 +2,11 @@ import { BrandWall, type Brand } from "@/components/brand-wall";
 import { PageClosing } from "@/components/page-closing";
 import { PageCover } from "@/components/page-cover";
 
-// The brands already named on the Fiverr sales-copy gig's "select clients" image, plus Fiverr itself,
-// in alphabetical order. A starter list; the owner adds to it. Colours are each brand's accent from
+// The owner's clients, in alphabetical order; the owner adds to them.
+// Colours are each brand's accent from
 // Brandfetch (2026-10-27), except Harvard's (its crimson) and TV Tropes' (its blue: the accent is a
-// yellow too close to emmaki's); never fetch anything from Fiverr itself. Harvard University is
-// confirmed by Fiverr as a Featured Client (owner, 2026-10-27).
-// Before launch: TV Tropes, Quartile and Tenity are not yet cleared to name publicly in Second Brain
-// business/emmaki/brand/portfolio.md (each client relationship awaits its original-source check).
+// yellow too close to emmaki's); never fetch anything from Fiverr itself. Every client here
+// is confirmed (owner, 2026-10-27).
 const brands: Brand[] = [
   { name: "Accredible", color: "#5B4DFC" },
   { name: "Arc4dia", color: "#317DB3" },
