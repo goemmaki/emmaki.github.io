@@ -68,6 +68,8 @@ Final design for now (owner, 2026-10-29). The cover reads "Proof." with a yellow
 `/proof/placeholder` (2026-10-29) is blocked out to design the case-study pages from, after grafit.agency's case studies. It has the breadcrumb (the shared `Breadcrumb`, also on blog posts), a lorem headline at the blog title's size, and a frame of lines in grafit's proportions. The frame starts just over halfway down the first screen and runs past it, to invite the scroll. Below it are a sticky column of placeholder facts and placeholder sections in the blog's sizes. Not indexed by search engines.
 
 - **Note (owner, 2026-10-29):** the frame gets the Proof index's noisy, moving gradient across the whole grid, in each case study's client brand color, with faint lines over it. The design may take a few rounds.
+- **Frame (2026-10-29):** the gradient on a black ground in both themes, so it looks the same in light mode. Results on the left; on the right the testimonial, then the person's photo, "Name Surname" over their role, and the client's logo in white. The logo is the height of those two lines, its right edge on the testimonial's longest line.
+- **Sticky column (2026-10-29):** Client, Service (an icon per service), Length, Company size and Annual revenue, with made-up values for now. Then the global "Message me" button, and under it the AI assistants as grayscale badges, after grafit.agency's "Explore AI Summary" (`AiBadges`, which takes a per-page question; the question is still to write). No Copy page or Share here; blog posts keep theirs.
 
 ## The research behind the order (owner, 2026-10-28)
 
@@ -158,4 +160,5 @@ The main commercial outcomes are qualified inquiries and Fiverr orders that can 
   - The page never scrolls sideways.
 
   A visitor who instinctively swipes left gets no response. The option, not built: map a sideways swipe inside the section to the same progress as a vertical one. Real iPhone Safari is untested.
+- **Home client logos flicker on hover (owner, 2026-10-29).** Coloring a logo on hover isn't smooth: there's a brief flicker before the color shows. The owner wants the box hovered and the color simply on. Codex's attempt (a color copy crossfading over the monochrome logo, `073ef9ba`) still flickered and left the logos at different heights, so it was reverted. Its diagnosis may still help: the filter transition passes through mid-gray, which nearly vanishes on the dark theme (`runtime/codex/client-hover/report.md`).
 - **Where the personal introduction goes** on Home before the About preview exists.
