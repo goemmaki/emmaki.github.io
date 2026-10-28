@@ -653,6 +653,11 @@
  * position, so scrolling back up plays it backwards. Without scroll-driven animations, or with
  * reduced motion, the cover stays one static screen.
  */
+/* Keep shade directly behind the title's strokes, including inside the flashlight. Blurred
+   halos follow the letters rather than dimming the color reveal across the photo. */
+.post-cover-title h1 {
+  text-shadow: 0 0 0.06em rgb(0 0 0 / 0.9), 0 0 0.16em rgb(0 0 0 / 0.7);
+}
 .post-cover-dim { opacity: 0; }
 .post-cover-fade {
   background: linear-gradient(to bottom, transparent 90%, var(--color-bg));
