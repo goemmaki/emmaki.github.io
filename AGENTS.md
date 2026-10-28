@@ -24,6 +24,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Next action
 
+- The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
 - New client or a logo to replace: follow [.claude/skills/client-logo/SKILL.md](.claude/skills/client-logo/SKILL.md).
 - Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
