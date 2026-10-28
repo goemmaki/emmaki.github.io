@@ -384,7 +384,10 @@
   transition: color 0.2s ease-out;
 }
 .brand-wall-name:hover {
-  color: var(--brand, currentColor);
+  color: var(--brand-hover-dark, var(--brand, currentColor));
+}
+[data-theme="light"] .brand-wall-name:hover {
+  color: var(--brand-hover-light, var(--brand, currentColor));
 }
 
 /* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */

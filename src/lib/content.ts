@@ -11,8 +11,9 @@ export const AVAILABILITY: Availability = "open";
 export const WORK_HOURS = { timeZone: "Europe/Athens", days: [1, 2, 3, 4, 5], start: 10, end: 18 };
 
 // A client the owner has written for (the brands wall, the client slots). color: the brand's color,
-// for its name on hover. Leave it out for a black (or near-black) brand: its name keeps the page's ink.
-export type Brand = { name: string; color?: string };
+// for its name on hover. hoverInk adjusts only failing wall inks to at least 3.15:1 on the theme canvas.
+// Leave color out for a black (or near-black) brand: its name keeps the page's ink.
+export type Brand = { name: string; color?: string; hoverInk?: { light?: string; dark?: string } };
 
 // The owner's clients, in alphabetical order; the owner adds to them. Colors are each brand's accent from
 // Brandfetch (2026-10-27), except Harvard's (its crimson) and TV Tropes' (its blue: the accent is a
@@ -21,17 +22,17 @@ export type Brand = { name: string; color?: string };
 export const BRANDS: Brand[] = [
   { name: "Accredible", color: "#5B4DFC" },
   { name: "Arc4dia", color: "#317DB3" },
-  { name: "Compoundly", color: "#0EB400" },
-  { name: "Design Bundles", color: "#4CC5FB" },
-  { name: "Fiverr", color: "#1DBF73" },
+  { name: "Compoundly", color: "#0EB400", hoverInk: { light: "#0DA800" } },
+  { name: "Design Bundles", color: "#4CC5FB", hoverInk: { light: "#3C9AC5" } },
+  { name: "Fiverr", color: "#1DBF73", hoverInk: { light: "#19A564" } },
   { name: "HackerRank", color: "#1BA94C" },
-  { name: "Harvard University", color: "#A51C30" },
-  { name: "Marco Polo", color: "#1DA2C7" },
+  { name: "Harvard University", color: "#A51C30", hoverInk: { dark: "#AB2C3E" } },
+  { name: "Marco Polo", color: "#1DA2C7", hoverInk: { light: "#1C9DC1" } },
   { name: "MHC Digital Group", color: "#AB5DE3" },
-  { name: "Quartile", color: "#FF9900" },
-  { name: "SellersFi", color: "#FCB337" },
-  { name: "Spectral Core", color: "#17B3D0" },
-  { name: "Tenity", color: "#993744" },
+  { name: "Quartile", color: "#FF9900", hoverInk: { light: "#D17D00" } },
+  { name: "SellersFi", color: "#FCB337", hoverInk: { light: "#BD8729" } },
+  { name: "Spectral Core", color: "#17B3D0", hoverInk: { light: "#149EB8" } },
+  { name: "Tenity", color: "#993744", hoverInk: { dark: "#9C3C49" } },
   { name: "TV Tropes", color: "#006BB1" },
 ];
 

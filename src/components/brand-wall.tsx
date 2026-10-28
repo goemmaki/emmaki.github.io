@@ -13,7 +13,15 @@ export function BrandWall({ brands, note }: { brands: Brand[]; note: ReactNode }
         </aside>
         <ul className="brand-wall">
           {brands.map((b) => (
-            <li key={b.name} className="brand-wall-name" style={b.color ? ({ "--brand": b.color } as CSSProperties) : undefined}>
+            <li
+              key={b.name}
+              className="brand-wall-name"
+              style={b.color ? ({
+                "--brand": b.color,
+                "--brand-hover-light": b.hoverInk?.light,
+                "--brand-hover-dark": b.hoverInk?.dark,
+              } as CSSProperties) : undefined}
+            >
               {b.name}
             </li>
           ))}
