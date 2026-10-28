@@ -1403,6 +1403,24 @@
 }
 
 /*
+ * Case frame (proof/placeholder/page.tsx): one-pixel lines in grafit.agency's case-study proportions,
+ * three stacked cells over five of twelve columns beside one over the other seven. Phones stack them.
+ */
+.case-frame {
+  display: grid;
+  grid-template-rows: repeat(3, 5rem) 16rem;
+  gap: 1px;
+  border: 1px solid var(--color-line);
+  background: var(--color-line);
+}
+.case-frame > div { background: var(--color-bg); }
+@media (width >= 64rem) {
+  .case-frame { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); height: clamp(20rem, 46svh, 30rem); }
+  .case-frame > div { grid-column: 1 / span 5; }
+  .case-frame > div:last-child { grid-column: 6 / -1; grid-row: 1 / -1; }
+}
+
+/*
  * Proof index (proof-index.tsx), after gorantrickovski.design's works list (owner, 2026-10-29): full-ink
  * rules, tight rows, the client in the Brands typography and the project and work in a smaller bold,
  * after supersolid.agency's list. Names are 4rem at full width, scaling down with the list.

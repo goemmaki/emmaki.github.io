@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Clock, House, ListChecks } from "lucide-react";
+import { Clock, ListChecks } from "lucide-react";
+import { Breadcrumb } from "@/components/breadcrumb";
 import { FloodButton } from "@/components/flood-button";
 import { PostCover } from "@/components/blog/post-cover";
 import { Faq } from "@/components/faq";
@@ -85,21 +85,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] opacity-70 light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
               <StripedPattern className="stroke-[0.75] text-fg-muted" />
             </div>
-            <nav aria-label="Breadcrumb" className="type-meta uppercase text-fg-2 [grid-area:breadcrumb]">
-              <ol className="flex min-w-0 items-center gap-2">
-                <li className="flex shrink-0">
-                  <Link href="/" aria-label="Home" className="quiet-link">
-                    <House className="size-3.5" aria-hidden />
-                  </Link>
-                </li>
-                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-                <li className="shrink-0">
-                  <Link href="/blog" className="quiet-link">Blog</Link>
-                </li>
-                <li aria-hidden="true"><ChevronRight className="size-3.5" /></li>
-                <li aria-current="page" className="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li>
-              </ol>
-            </nav>
+            <Breadcrumb trail={[{ label: "Blog", href: "/blog" }]} current={post.category} className="[grid-area:breadcrumb]" />
 
             <div className="justify-self-end [grid-area:tools]">
               <PostTools post={post} />
