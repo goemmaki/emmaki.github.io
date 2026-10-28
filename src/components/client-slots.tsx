@@ -3,12 +3,24 @@
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { BRANDS, type Brand } from "@/lib/content";
 
-// The client strip, after grafit.agency's home page: a row of hairline cells, each a slot-machine
-// reel of client names. One cell rolls to its next name at a time, left to right, so the row never
-// changes all at once. Hovering a name shows its brand's color. Two cells on phones, three on
-// tablets, five on desktops; the names are dealt across the cells in turn. Rolling stops while the
-// strip is off screen or hovered, and never starts with reduced motion. Styles: "Client slots" in
-// globals.css.
+// The client strip, after grafit.agency's home page: a row of cells between full-bleed hairlines, each
+// a slot-machine reel of client logos, monochrome until hovered, when the logo shows its own colors.
+// One cell rolls to its next logo at a time, left to right, so the row never changes all at once. Two
+// cells on phones, three on tablets, five on desktops; the clients are dealt across the cells in turn.
+// Rolling stops while the strip is off screen or hovered, and never starts with reduced motion.
+// Styles: "Client slots" in globals.css.
+
+/* eslint-disable @next/next/no-img-element -- small trimmed logos in a static export: next/image would only add sizing */
+// Both theme versions; CSS shows the one for the current theme.
+function Logo({ brand }: { brand: Brand }) {
+  const { light, dark } = brand.logo;
+  return (
+    <span className="client-slot-logo">
+      <img src={`/clients/${light}`} alt="" className="client-logo-on-light" />
+      <img src={`/clients/${dark}`} alt="" className="client-logo-on-dark" />
+    </span>
+  );
+}
 const STEP_MS = 1400;
 
 function useColumns() {
@@ -44,16 +56,14 @@ function Slot({ reel, rolls }: { reel: Brand[]; rolls: number }) {
         className="client-slot-reel"
         data-rolling={rolling || undefined}
         onTransitionEnd={(e) => {
-          // A name's hover color fades too; only the reel's own roll counts.
+          // A logo's hover fades too; only the reel's own roll counts.
           if (e.target !== e.currentTarget) return;
           setShown((s) => s + 1);
           setRolling(false);
         }}
       >
         {[current, next].map((b, i) => (
-          <span key={i} className="client-slot-name" style={{ "--brand": b.color } as CSSProperties}>
-            {b.name}
-          </span>
+          <Logo key={i} brand={b} />
         ))}
       </div>
     </li>
@@ -86,7 +96,7 @@ export function ClientSlots({ className }: { className?: string }) {
   return (
     <div
       ref={ref}
-      className={className}
+      className={`client-strip ${className ?? ""}`}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >

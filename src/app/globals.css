@@ -880,39 +880,52 @@
 }
 
 /*
- * Client slots (client-slots.tsx): hairline cells, 96px tall, each a reel of two names that rolls
- * up one name. Names in the covers' Geist 600, the page's ink, the brand's color on hover.
+ * Client slots (client-slots.tsx), after grafit.agency: 120px cells between two lines that run to the
+ * window's edges (a border-image outset paints past the box without making the page scroll), with
+ * vertical lines only across the content. Logos sit at one height, capped in width, in the page's ink;
+ * on hover the theme's version shows its brand colors. The background never changes.
  */
+/* Lines as visible as grafit's: about 2.5:1 on the dark canvas and 1.45:1 on the light one. */
+.client-strip {
+  --client-line: rgb(255 255 255 / 0.3);
+  border-block: 1px solid;
+  border-image: linear-gradient(var(--client-line) 0 0) 1 / 1px 0 / 0 100vw;
+}
 .client-slots {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-  border-block: 1px solid var(--color-line);
-  border-left: 1px solid var(--color-line);
+  border-left: 1px solid var(--client-line);
 }
 .client-slot {
-  height: 96px;
+  height: 120px;
   overflow: hidden;
-  border-right: 1px solid var(--color-line);
+  border-right: 1px solid var(--client-line);
 }
 .client-slot-reel[data-rolling] {
   translate: 0 -50%;
   transition: translate 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.client-slot-name {
+.client-slot-logo {
   display: flex;
-  height: 96px;
+  height: 120px;
   align-items: center;
   justify-content: center;
-  padding-inline: 12px;
-  font-family: var(--font-heading);
-  font-weight: var(--font-weight-announce);
-  font-size: 1.25rem;
-  letter-spacing: -0.04em;
-  text-align: center;
-  color: var(--color-fg-max);
-  transition: color 0.2s ease-out;
+  padding-inline: 20px;
 }
-.client-slot:hover .client-slot-name { color: var(--brand, var(--color-fg-max)); }
+.client-slot-logo img {
+  height: 28px;
+  width: auto;
+  max-width: min(100%, 150px);
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: filter 0.2s ease-out;
+}
+.client-slot-logo .client-logo-on-light { display: none; }
+[data-theme="light"] .client-strip { --client-line: rgb(0 0 0 / 0.16); }
+[data-theme="light"] .client-slot-logo img { filter: brightness(0); }
+[data-theme="light"] .client-slot-logo .client-logo-on-light { display: block; }
+[data-theme="light"] .client-slot-logo .client-logo-on-dark { display: none; }
+.client-slot:hover .client-slot-logo img { filter: none; }
 
 /* About concepts (about-concepts.tsx): a figure set huge in the covers' Geist 600. */
 .about-figure {
