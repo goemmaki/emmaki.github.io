@@ -166,7 +166,8 @@ export function SiteHeader() {
                       <X className="size-5" aria-hidden />
                     </Dialog.Close>
                   </div>
-                  <div className="flex flex-1 flex-col justify-center gap-e2">
+                  {/* py-8: equal, so a centered menu stays put; on short screens it keeps the icons off the wordmark */}
+                  <div className="flex flex-1 flex-col justify-center gap-e2 py-8">
                     {/* Theme, Fiverr inbox, Fiverr profile. */}
                     <div className="flex items-center gap-8 [--menu-icon:clamp(2rem,3.5vw,3rem)]">
                       <ThemeToggle className="size-auto" iconClassName="size-(--menu-icon)" />
