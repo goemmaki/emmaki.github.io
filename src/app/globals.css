@@ -335,19 +335,24 @@
 /*
  * Page cover (page-cover.tsx): the page's word in Geist 600 at -0.06em, 30.5% of the width on every
  * page (the owner's pick, from the first Proof mockup, 2026-10-27). A longer word would shrink to
- * fit: --ink is its measured ink width in em at this tracking. The line box is
- * the cap height, and a sliver hangs below the window.
+ * fit: --ink is its measured ink width in em at this tracking. The line box is the cap height;
+ * as on Crossed Wires, a quarter of it hangs below the window and .page-cover-overhang makes room
+ * for it, so it shows on scroll.
  */
+.page-cover-word,
+.page-cover-overhang {
+  font-size: min(30.5cqw, 98cqw / var(--ink));
+}
 .page-cover-word {
   font-family: var(--font-heading);
   font-weight: var(--font-weight-announce);
   letter-spacing: -0.06em;
-  font-size: min(30.5cqw, 98cqw / var(--ink));
   margin-inline-start: -0.04em;
   line-height: 0.72;
   white-space: nowrap;
-  margin-block-end: -0.06em;
+  margin-block-end: -0.18em;
 }
+.page-cover-overhang { height: 0.18em; }
 /*
  * The intro sits just above the word on columns 9-12 (owner, 2026-10-27), from 48rem; phones keep it
  * on the left. Every page word is short enough to leave that space free.
