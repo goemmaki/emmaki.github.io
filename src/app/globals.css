@@ -122,6 +122,13 @@
   body {
     background: var(--color-canvas);
   }
+  /* Longhands, so they never undo a nowrap. */
+  :where(h1, h2, h3, h4, h5, h6) {
+    text-wrap-style: balance;
+  }
+  :where(p, li, blockquote, figcaption, dd) {
+    text-wrap-style: pretty;
+  }
   ::selection {
     background: var(--color-text-primary);
     color: var(--color-canvas);
@@ -541,8 +548,8 @@
 .footer-bar a { color: inherit; }
 .footer-bar :is(a:hover, a:focus-visible) { color: #fff; }
 /* 13px, shrinking on phones so the © line stays on one line beside the icons (87px; about 23
-   character widths of line), down to 10px; narrower than about 340px it wraps. */
-.footer-legal { font-size: clamp(10px, (100vw - 2 * var(--gutter) - 87px) / 23, var(--type-meta-default-size)); }
+   character widths of line), down to 10px; narrower than about 340px it wraps onto two even lines. */
+.footer-legal { font-size: clamp(10px, (100vw - 2 * var(--gutter) - 87px) / 23, var(--type-meta-default-size)); text-wrap-style: balance; }
 .footer-field { position: absolute; inset: 0; transition: opacity 300ms, visibility 0s; }
 /* The spotlight fades in and out over the same 300ms as the field dims and brightens. */
 .footer-field--torch {
