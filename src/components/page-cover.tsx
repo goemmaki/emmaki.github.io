@@ -8,7 +8,9 @@ export function PageCover({ word, ink, intro }: { word: string; ink: number; int
         <p className="page-cover-intro px-gutter pb-8 type-lead text-fg-2">
           <span className="block max-w-[36ch]">{intro}</span>
         </p>
-        <h1 className="page-cover-word text-fg-max">{word}</h1>
+        <h1 className="page-cover-word text-fg-max">
+          {word.endsWith(".") ? <>{word.slice(0, -1)}<span className="text-yellow-splash">.</span></> : word}
+        </h1>
       </div>
       <div className="page-cover-overhang" aria-hidden />
     </section>

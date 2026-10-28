@@ -1401,3 +1401,115 @@
   font-size: calc(100cqw / var(--name-ink, 6.387));
   height: 0.18em;
 }
+
+/*
+ * Proof index (proof-index.tsx), after gorantrickovski.design's works list (owner, 2026-10-29): full-ink
+ * rules, tight rows, the client in the Brands typography and the project and work in a smaller bold,
+ * after supersolid.agency's list. Names are 4rem at full width, scaling down with the list.
+ */
+.proof-index { padding-block: 84px 52px; }
+.proof-index-head,
+.proof-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
+.proof-index-head { display: none; }
+.proof-list { container-type: inline-size; border-top: 1px solid var(--color-fg-max); }
+.proof-row {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --proof-name-ink: var(--proof-ink-dark, var(--proof-brand));
+  --proof-name-companion: var(--proof-companion);
+  position: relative;
+  isolation: isolate;
+  align-items: center;
+  padding-block: 16px;
+  border-bottom: 1px solid var(--color-fg-max);
+  color: var(--color-fg-max);
+}
+[data-theme="light"] .proof-row {
+  --proof-name-ink: var(--proof-ink-light, var(--proof-brand));
+  --proof-name-companion: var(--proof-companion-light, var(--proof-companion));
+}
+.proof-row:focus-visible { outline: 2px solid var(--color-fg-max); outline-offset: 4px; z-index: 1; }
+.proof-row:active { background-color: color-mix(in srgb, var(--color-fg-max) 5%, transparent); }
+/* The arrow, then a word space (Geist's, less the tracking), then the name: one line of type. */
+.proof-client-cell {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.2em;
+  min-width: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(1.75rem, 4.76cqw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+/* The viewBox is cropped to the glyph, so 0.85em puts the arrow's height on Geist's cap height. */
+.proof-row-arrow { flex-shrink: 0; position: relative; top: 0.07em; width: 0.85em; height: 0.85em; }
+.proof-client { position: relative; min-width: 0; padding-block: 0.08em; }
+/* Real, selectable text crossfades with a decorative copy; the last grain frame fades with it. */
+.proof-client-base { opacity: 1; transition: opacity 0.5s var(--ease); }
+.proof-client-gradient {
+  position: absolute;
+  inset: 0;
+  padding-block: inherit;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  background-image: var(--proof-noise, linear-gradient(transparent, transparent)), linear-gradient(115deg, var(--proof-name-ink) 10%, var(--proof-name-companion) 55%, var(--proof-name-ink) 90%);
+  background-size: 96px 64px, 220% 100%;
+  background-position: 0 0, 50% 50%;
+  background-blend-mode: soft-light, normal;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.proof-row[data-active] .proof-client-base { opacity: 0; transition-duration: 0.2s; }
+.proof-row[data-active] .proof-client-gradient { opacity: 1; transition-duration: 0.2s; }
+.proof-client::selection { color: var(--color-bg); background: var(--color-fg-max); }
+.proof-project,
+.proof-work {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+/* The dot screen: the page's strongest ink, held to a quiet grey by the canvas's opacity. */
+.proof-screen {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  color: var(--color-fg-max);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.proof-row[data-active] .proof-screen { opacity: 0.22; transition-duration: 0.2s; }
+[data-theme="light"] .proof-row[data-active] .proof-screen { opacity: 0.14; }
+@media (width >= 48rem) {
+  .proof-index-head,
+  .proof-row { grid-template-columns: minmax(0, 1fr) minmax(0, 0.34fr) minmax(0, 0.26fr); column-gap: 24px; }
+  .proof-index-head { display: grid; padding-bottom: 12px; }
+  .proof-row { padding-block: 12px; }
+  .proof-client-cell { grid-column: auto; }
+  .proof-project,
+  .proof-work { font-size: 1.25rem; }
+}
+/* Under a mouse the arrow waits outside the column; hover or focus brings it in and moves the name
+   over by its width and the word space. Touch keeps it showing, marking each row as a link. */
+@media (hover: hover) and (pointer: fine) {
+  .proof-client-cell { translate: -1.05em 0; transition: translate 0.5s var(--ease); }
+  .proof-row-arrow { opacity: 0; transition: opacity 0.5s var(--ease); }
+  .proof-row[data-active] .proof-client-cell { translate: 0; transition-duration: 0.2s; }
+  .proof-row[data-active] .proof-row-arrow { opacity: 1; transition-duration: 0.2s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .proof-client-cell { translate: 0; }
+  .proof-client-cell,
+  .proof-client-base,
+  .proof-client-gradient,
+  .proof-screen,
+  .proof-row-arrow { transition: none !important; }
+}
