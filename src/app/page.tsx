@@ -17,7 +17,8 @@ export default function Home() {
         ink={3.367}
         intro="Owner’s intro: who I am and what I write, in one or two lines for a Fiverr buyer."
       />
-      <section className="shell py-e2">
+      {/* No bottom padding: the services' own top padding is the gap, so it isn't doubled. */}
+      <section className="shell pt-e1">
         <ClientSlots />
       </section>
       <Services />
