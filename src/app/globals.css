@@ -786,9 +786,12 @@
  * error; yellow is the brand's (owner's call, 2026-10-27).
  */
 .status-badge { display: inline-flex; align-items: center; gap: 8px; height: 24px; padding-inline: 8px; border: 1px solid var(--color-line); border-radius: var(--shape-control-radius); white-space: nowrap; }
-.status-light { --status: var(--color-semantic-success); width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--status); filter: drop-shadow(0 0 3px var(--status)); animation: status-breathe 3s ease-in-out infinite; }
+.status-light { --status: var(--color-semantic-success); width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--status); filter: drop-shadow(0 0 3px var(--status)); }
 .status-light[data-status="limited"] { --status: var(--color-yellow-splash); }
 .status-light[data-status="full"] { --status: var(--color-semantic-error); }
+@media (prefers-reduced-motion: no-preference) {
+  .status-light { animation: status-breathe 3s ease-in-out infinite; }
+}
 @keyframes status-breathe { 50% { opacity: 0.5; } }
 
 /* Menu links: the label slides 20px right on hover or focus (after supersolid.agency's values list). */
