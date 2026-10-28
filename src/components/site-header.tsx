@@ -184,7 +184,7 @@ export function SiteHeader() {
                         target="_blank"
                         rel="noopener"
                         aria-label="emmaki on Fiverr (opens in a new tab)"
-                        className="transition-[filter] dark:hover:brightness-125 dark:focus-visible:brightness-125 light:hover:brightness-85 light:focus-visible:brightness-85"
+                        className="text-fg-2 quiet-link"
                       >
                         <FiverrLogo className="size-(--menu-icon)" />
                       </a>
