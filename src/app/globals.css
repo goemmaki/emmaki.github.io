@@ -355,15 +355,15 @@
 .page-cover-overhang { height: 0.18em; }
 /*
  * The intro sits just above the word on columns 9-12 (owner, 2026-10-27), from 48rem; phones keep it
- * on the left. Every page word is short enough to leave that space free.
+ * on the left. Every page word is short enough to leave that space free. Like the word, its columns
+ * span the window's gutters, not the 1440px shell, so the two keep their proportions on big screens.
  */
 .page-cover {
-  --inner: calc(min(100cqw, var(--shell-max)) - 2 * var(--gutter));
-  --col: calc(var(--inner) / 12);
+  --col: calc((100cqw - 2 * var(--gutter)) / 12);
 }
 @media (width >= 48rem) {
   .page-cover-intro > span {
-    max-width: calc(4 * var(--col));
+    max-width: calc(4 * min(var(--col), var(--layout-shell) / 12)); /* never wider than four shell columns */
     margin-inline-start: calc(8 * var(--col));
   }
 }
