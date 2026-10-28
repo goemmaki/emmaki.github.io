@@ -3,7 +3,8 @@
 import { useSyncExternalStore } from "react";
 import { ClientSlots } from "@/components/client-slots";
 import { Faq, type FaqItem } from "@/components/faq";
-import { Testimonials, type Testimonial } from "@/components/testimonials";
+import { Testimonials } from "@/components/testimonials";
+import { PLACEHOLDER_QUOTES } from "@/lib/content";
 
 // About-page layout concepts under review (owner, 2026-10-28): /about?v=ledger|split|statement. The
 // switcher in the corner is for review only and goes once the owner picks one. Every line of text
@@ -43,23 +44,6 @@ const FIGURES = [
   { value: "20+", label: "years writing" },
   { value: "000", label: "Fiverr reviews (owner’s figure)" },
   { value: "0.0", label: "Fiverr rating (owner’s figure)" },
-];
-const QUOTES: Testimonial[] = [
-  {
-    quote: "Placeholder for a real Fiverr review: two or three sentences on what changed for the client after the work.",
-    name: "Client name",
-    role: "Role, Company",
-  },
-  {
-    quote: "A shorter placeholder review, one sentence long.",
-    name: "Client name",
-    role: "Role, Company",
-  },
-  {
-    quote: "A longer placeholder review, to show how the block copes with length: four sentences or so, the sort a happy client leaves after a big project, naming the result and how it felt to work together.",
-    name: "Client name",
-    role: "Role, Company",
-  },
 ];
 const FAQS: FaqItem[] = [
   { question: "Placeholder question: can I message you before ordering?", answer: "Owner’s answer." },
@@ -143,7 +127,7 @@ export function AboutConcepts() {
               body: (
                 <div className="flex flex-col gap-e1">
                   <Figures />
-                  <Testimonials items={QUOTES} className="max-w-[60ch]" />
+                  <Testimonials items={PLACEHOLDER_QUOTES} className="max-w-[60ch]" />
                 </div>
               ),
             },
@@ -168,7 +152,7 @@ export function AboutConcepts() {
           <section className="shell grid gap-e1 py-e2 lg:grid-cols-[1fr_2fr]">
             <aside className="flex flex-col gap-e1 lg:sticky lg:top-24 lg:self-start">
               <Portrait className="max-w-80" />
-              <Testimonials items={QUOTES} />
+              <Testimonials items={PLACEHOLDER_QUOTES} />
             </aside>
             <div className="flex flex-col gap-e2">
               <div className="flex flex-col gap-6">
@@ -234,7 +218,7 @@ export function AboutConcepts() {
             </ol>
           </section>
           <section className="shell pb-e2">
-            <Testimonials items={QUOTES} size="lg" className="max-w-[48ch]" />
+            <Testimonials items={PLACEHOLDER_QUOTES} size="lg" className="max-w-[48ch]" />
           </section>
           <section className="shell grid grid-cols-12 gap-x-(--gutter) gap-y-6 pb-e2">
             <h2 className="col-span-12 type-h2 text-fg-max lg:col-span-4">Questions</h2>

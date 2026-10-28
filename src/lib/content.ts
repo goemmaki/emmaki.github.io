@@ -82,3 +82,49 @@ export const SERVICES = [
   "AI Content Strategy",
   "Fiverr Optimization",
 ];
+
+// photo: a square headshot in public/testimonials, at least 3x its 56px display size. about: who the
+// client is, one line shown in mono under the name (after bymonolog.com).
+export type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+  photo?: string;
+  about?: string;
+};
+
+// Real client quotes, as the owner supplied them (2026-10-28).
+export const TESTIMONIALS: Testimonial[] = [
+  {
+    quote:
+      "Emma was a fantastic partner in helping us refine and rewrite the content for our website. She brought a highly process-oriented approach to the project, which made collaboration smooth and efficient from start to finish. Emma took the time to conduct thorough research into our business, industry, and audience, and it really showed in the final result.",
+    name: "Brett Smith",
+    role: "Founder & Principal Consultant",
+    company: "Cumulus Vision",
+    photo: "brett-smith.webp",
+    about: "A San Francisco Salesforce partner with 100+ clients since 2012.",
+  },
+];
+
+// Placeholder client quotes until the owner picks real Fiverr reviews (About, Home).
+export const PLACEHOLDER_QUOTES: Testimonial[] = [
+  {
+    quote: "Placeholder for a real Fiverr review: two or three sentences on what changed for the client after the work.",
+    name: "Client name",
+    role: "Role",
+    company: "Company",
+  },
+  {
+    quote: "A shorter placeholder review, one sentence long.",
+    name: "Client name",
+    role: "Role",
+    company: "Company",
+  },
+  {
+    quote: "A longer placeholder review, to show how the block copes with length: four sentences or so, the sort a happy client leaves after a big project, naming the result and how it felt to work together.",
+    name: "Client name",
+    role: "Role",
+    company: "Company",
+  },
+];

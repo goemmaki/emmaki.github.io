@@ -963,13 +963,327 @@
   transition: border-color 0.2s ease-out;
 }
 .testimonials-button:hover { border-color: var(--color-fg-max); }
+.testimonials-stack { display: grid; }
+.testimonials-stack > * { grid-area: 1 / 1; }
+.testimonials-quote:not([data-current]) { visibility: hidden; }
+/* Square, like every other edge here, with the controls' 2px corner (DESIGN.md). */
+.testimonials-photo { flex: none; width: 56px; height: 56px; border-radius: var(--shape-control-radius); object-fit: cover; }
 @media (prefers-reduced-motion: no-preference) {
   .testimonials-fill { animation: testimonials-fill 7s linear forwards; }
   .testimonials-fill[data-held] { animation-play-state: paused; }
-  .testimonials-quote { animation: testimonials-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .testimonials-quote[data-current] { animation: testimonials-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
 }
 @keyframes testimonials-fill { to { scale: 1 1; } }
 @keyframes testimonials-rise { from { opacity: 0; translate: 0 1.5rem; } }
+
+/*
+ * Statement (statement.tsx, after grafit.agency's "Who we are"): the linked phrases sit on a faint
+ * tint and fill with full ink on hover or keyboard focus. Under a mouse a preview card in reversed
+ * ink trails the pointer, scaling in from its corner (grafit's timing); monochrome for now.
+ */
+.statement-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  margin-block: 0.04em;
+  padding-inline: 0.18em;
+  background: color-mix(in srgb, var(--color-fg-max) 10%, transparent);
+  color: var(--color-fg-max);
+  transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.statement-link-icon { width: 0.6em; height: 0.6em; color: var(--color-fg-2); transition: color 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.statement-link:hover,
+.statement-link:focus-visible { background: var(--color-fg-max); color: var(--color-bg); }
+.statement-link:hover .statement-link-icon,
+.statement-link:focus-visible .statement-link-icon { color: var(--color-bg); }
+.statement-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 45;
+  width: min(22.5rem, 80vw);
+  aspect-ratio: 3.6 / 3.06;
+  pointer-events: none;
+}
+.statement-preview-inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  padding: 1.25rem 2.5rem 1.25rem 1.5rem;
+  /* A stand-in for the case study's picture: a soft dither of the reversed ink. */
+  background:
+    radial-gradient(circle at 75% 85%, color-mix(in srgb, var(--color-bg) 22%, transparent), transparent 55%),
+    var(--color-fg-max);
+  color: var(--color-bg);
+  transform-origin: top left;
+  opacity: 0;
+  scale: 0;
+  transition: opacity 0.1s, scale 0.6s cubic-bezier(0.65, 0.1, 0, 1);
+}
+.statement-preview[data-open] .statement-preview-inner { opacity: 1; scale: 1; }
+
+/*
+ * Why me (why-me.tsx): four squares, then three wider boxes on one-pixel rules.
+ * Each figure and its label form one block. Variety comes from scale, weight and the placement of
+ * that block, never from separating its parts. Hover adds seven cropped Swiss posters behind it.
+ */
+.why-me-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 24px;
+  border: 1px solid var(--color-line);
+  background: var(--color-line);
+}
+.why-me-proof-box {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --poster-paper: var(--color-bg);
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  display: grid;
+  min-width: 0;
+  aspect-ratio: 1;
+  container-type: inline-size;
+  padding: 16px;
+  background: var(--color-bg);
+  color: var(--color-fg-max);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.why-me-proof-box:nth-child(n + 5) { grid-column: span 2; aspect-ratio: auto; min-height: 16rem; padding: 24px; }
+.why-me-proof-block {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: end;
+  gap: 12px;
+  min-width: 0;
+  transform-origin: left bottom;
+}
+.why-me-proof-value { font-family: var(--font-display); font-weight: 600; }
+.why-me-proof-label { color: var(--color-fg-2); }
+
+/* 1 Top Rated Seller: the leading credential, anchored at the bottom. */
+.why-me-proof-box:nth-child(1) .why-me-proof-value {
+  max-width: 9ch;
+  font-size: clamp(1.5rem, 16cqw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+/* 2 Orders: the strongest figure, at the middle of its square. */
+.why-me-proof-box:nth-child(2) .why-me-proof-block { align-self: center; transform-origin: left center; }
+.why-me-proof-box:nth-child(2) .why-me-proof-value {
+  font-size: 36cqw;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+/* 3 Clients: a lighter, smaller figure, with its own label directly below. */
+.why-me-proof-box:nth-child(3) .why-me-proof-value {
+  font-size: 30cqw;
+  font-weight: 350;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+/* 4 Years: top aligned, with enough room for the changing year count. */
+.why-me-proof-box:nth-child(4) .why-me-proof-block { align-self: start; transform-origin: left top; }
+.why-me-proof-box:nth-child(4) .why-me-proof-value {
+  font-size: 44cqw;
+  font-weight: 250;
+  line-height: 1.15;
+  letter-spacing: -0.06em;
+}
+/* 5 Pro Verified: top aligned, leaving the lower half open. */
+.why-me-proof-box:nth-child(5) .why-me-proof-block { align-self: start; transform-origin: left top; }
+.why-me-proof-box:nth-child(5) .why-me-proof-value {
+  font-size: clamp(1.75rem, 9cqw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+/* 6 Tel Aviv: a compact sentence and date, read together in the middle. */
+.why-me-proof-box:nth-child(6) .why-me-proof-block { align-self: center; transform-origin: left center; }
+.why-me-proof-box:nth-child(6) .why-me-proof-value {
+  max-width: 20ch;
+  font-size: clamp(1.5rem, 7.5cqw, 2rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+/* 7 Quote: quote, then a vertical attribution with the client's square portrait. */
+.why-me-proof-quote { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.why-me-proof-box:nth-child(7) .why-me-proof-value {
+  max-width: 26ch;
+  font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.why-me-proof-by {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--color-fg-2);
+  font-size: var(--type-body-secondary-size);
+  line-height: var(--type-body-secondary-leading);
+}
+.why-me-proof-name { color: var(--color-fg-max); }
+.why-me-proof-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--shape-control-radius);
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: filter 0.2s var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .why-me-proof-box[data-accent]:hover { --poster-paper: var(--color-yellow-splash); background: var(--color-yellow-splash); color: #000; }
+  .why-me-proof-box[data-accent]:hover .why-me-proof-label { color: inherit; }
+  .why-me-proof-box:hover .why-me-proof-photo { filter: none; }
+}
+/* A small inward scale keeps each figure and label together, with no layout shift. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .why-me-proof-block { transition: transform 0.2s var(--ease); }
+  .why-me-proof-box:hover .why-me-proof-block { transform: scale(0.97); }
+}
+
+/* Graphics occupy an isolated, clipped layer. The type keeps its contrast through a soft halo of
+ * the box's own paper that follows the letter shapes (owner, 2026-10-28: solid backing slabs behind
+ * the text were too heavy), so the print runs right up to the glyphs and fades only around them.
+ * No graphic receives pointer or accessibility events. */
+.why-me-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  pointer-events: none;
+  color: var(--color-fg-max);
+  opacity: 0;
+}
+.why-me-poster svg { display: block; width: 100%; height: 100%; }
+.why-me-poster-1 { color: #000; }
+/* Switch both inks together: interpolating black/white through yellow loses contrast. */
+.why-me-proof-box[data-accent] { transition: none; }
+.why-me-proof-value,
+.why-me-proof-label,
+.why-me-proof-by > span { position: relative; }
+.why-me-proof-value,
+.why-me-proof-by > span {
+  text-shadow: 0 0 1px var(--poster-paper), 0 0 5px var(--poster-paper), 0 0 12px var(--poster-paper);
+}
+/* The small mono labels sit on a crisp strip of paper cut to the text, like a printed tag. */
+.why-me-proof-label {
+  width: fit-content;
+  background: var(--poster-paper);
+  box-shadow: 0 0 0 4px var(--poster-paper);
+}
+.why-me-moire-base { transform: rotate(-19deg); transform-origin: center; }
+.why-me-moire-slide { transform: rotate(-26deg); transform-origin: center; }
+.why-me-disc { transform-origin: 254px 22px; }
+.why-me-rings { transform-origin: 318px 318px; }
+.why-me-module { transform-box: fill-box; transform-origin: bottom left; }
+
+/* Timelines exist only during an eligible hover. Removing :hover removes every animation,
+ * including the slow interference loop; rest and touch have no animation work. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .why-me-proof-box:hover .why-me-poster { opacity: 1; animation: why-me-print-in 180ms ease-out; }
+  .why-me-proof-box:hover .why-me-disc { animation: why-me-disc-in 1100ms var(--ease) both; }
+  .why-me-proof-box:hover .why-me-slash { animation: why-me-slash-in 800ms var(--ease) both; }
+  .why-me-proof-box:hover .why-me-moire-slide { animation: why-me-interference 7s ease-in-out infinite alternate; }
+  .why-me-proof-box:hover .why-me-rings { animation: why-me-rings-in 1400ms var(--ease) both; }
+  .why-me-proof-box:hover .why-me-stripe { animation: why-me-stripe-in 850ms var(--ease) both; }
+  .why-me-proof-box:hover .why-me-stripe-1 { animation-delay: 70ms; }
+  .why-me-proof-box:hover .why-me-stripe-2 { animation-delay: 140ms; }
+  .why-me-proof-box:hover .why-me-module { animation: why-me-module-in 480ms var(--ease) both; }
+  .why-me-proof-box:hover .why-me-module-1 { animation-delay: 55ms; }
+  .why-me-proof-box:hover .why-me-module-2 { animation-delay: 110ms; }
+  .why-me-proof-box:hover .why-me-module-3 { animation-delay: 165ms; }
+  .why-me-proof-box:hover .why-me-module-4 { animation-delay: 220ms; }
+  .why-me-proof-box:hover .why-me-module-5 { animation-delay: 275ms; }
+  .why-me-proof-box:hover .why-me-module-6 { animation-delay: 330ms; }
+  .why-me-proof-box:hover .why-me-module-7 { animation-delay: 385ms; }
+  .why-me-proof-box:hover .why-me-quote-stroke { stroke-dasharray: 1; animation: why-me-quote-in 1100ms var(--ease) both; }
+}
+@keyframes why-me-print-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes why-me-disc-in { from { transform: rotate(-42deg) scale(.82); } to { transform: rotate(0) scale(1); } }
+@keyframes why-me-slash-in { from { transform: translate(60px, -90px); } to { transform: translate(0, 0); } }
+@keyframes why-me-interference { from { transform: rotate(-26deg) translateY(-5px); } to { transform: rotate(-19.8deg) translateY(16px); } }
+@keyframes why-me-rings-in { from { transform: scale(.72); } to { transform: scale(1); } }
+@keyframes why-me-stripe-in { from { transform: translateY(68%); } to { transform: translateY(0); } }
+@keyframes why-me-module-in { from { opacity: 0; transform: scaleY(.05); } to { opacity: 1; transform: scaleY(1); } }
+@keyframes why-me-quote-in { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  /* The global minimum duration otherwise delays inherited ink by one frame. */
+  .why-me-proof-box * { transition-property: none; }
+  .why-me-proof-box, .why-me-proof-photo { transition: none; }
+}
+
+@media (min-width: 64rem) {
+  .why-me-proof { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .why-me-proof-box { grid-column: span 3; padding: 24px; }
+  .why-me-proof-box:nth-child(n + 5) { grid-column: span 4; min-height: 22rem; padding: 32px; }
+}
+
+/*
+ * Testimonial box (darlings/testimonial-box.tsx), mounted nowhere: the rotating quotes on a ruled,
+ * raised ground.
+ */
+.testimonial-box { padding: 16px; border: 1px solid var(--color-line); background: var(--color-bg-2); }
+.testimonial-box blockquote { margin-top: 16px; font-size: 1rem; }
+.testimonial-box figcaption { margin-top: 12px; }
+@media (min-width: 64rem) {
+  .testimonial-box { padding: 24px; }
+}
+
+/*
+ * Benefit run (darlings/benefit-run.tsx), mounted nowhere: the lane pins at the top and the script
+ * sets the run's height and slides the track. Reduced motion: a plain stack.
+ */
+.benefit-run-lane { position: sticky; top: 24px; overflow: hidden; }
+.benefit-run-track {
+  display: flex;
+  width: max-content;
+  gap: 16px;
+  padding-inline: max(var(--gutter), (100% - var(--shell-max)) / 2 + var(--gutter));
+  will-change: translate;
+}
+/* Solid brand yellow only so the owner could see the cards while the section was drafted (owner,
+   2026-10-28). */
+.benefit-run-card {
+  flex: none;
+  width: min(20rem, 80vw);
+  min-height: 18rem;
+  padding: 24px;
+  background: var(--color-yellow-splash);
+  color: #000;
+}
+@media (min-width: 64rem) {
+  .benefit-run-track { gap: 24px; }
+  .benefit-run-card { width: 26rem; min-height: min(20rem, 100svh - 56px); padding: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .benefit-run-lane { position: static; }
+  .benefit-run-track { flex-direction: column; width: auto; max-width: var(--shell-max); margin-inline: auto; padding-inline: var(--gutter); }
+  .benefit-run-card { width: auto; }
+}
+
+/*
+ * Shading text (darlings/shading-text.tsx, mounted nowhere), after bymonolog.com: each letter
+ * starts at a fifth of its ink and comes up to full as it passes 70% of the way down the window, in a
+ * soft wave about a tenth of the text wide. The script sets --p, the fraction of the block past that line; each letter knows its
+ * place (--i of --n). With reduced motion everything is at full ink.
+ */
+.shading-word { display: inline-block; white-space: nowrap; }
+.shading-text [style*="--i"] {
+  opacity: clamp(0.2, 0.2 + 0.8 * (var(--p, 2) - var(--i) / var(--n)) / 0.1, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .shading-text [style*="--i"] { opacity: 1; }
+}
 
 /*
  * Faq (faq.tsx): a question's row lights in reversed ink while hovered, focused or open, and its
