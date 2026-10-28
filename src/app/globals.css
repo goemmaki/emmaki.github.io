@@ -847,7 +847,7 @@
   line-height: 1;
   letter-spacing: -0.05em;
   color: var(--color-fg-2);
-  opacity: 0.55;
+  opacity: 0.65;
   transition: color 0.3s ease-out, opacity 0.3s ease-out;
 }
 .services-list:not(:hover) > li:first-child .services-name,
