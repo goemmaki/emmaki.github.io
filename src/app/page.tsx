@@ -5,6 +5,7 @@ import { Services } from "@/components/services";
 export default function Home() {
   return (
     <>
+      <h1 className="sr-only">emmaki</h1>
       <div className="shell py-24 text-center type-meta text-fg-2">Coming soon</div>
       <Services />
     </>
