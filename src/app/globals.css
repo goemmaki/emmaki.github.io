@@ -848,7 +848,8 @@
   width: fit-content;
   font-family: var(--font-heading);
   font-weight: var(--font-weight-announce);
-  font-size: clamp(2.25rem, 6.5vw, 5.5rem);
+  /* 8.6em: the longest name's ink ("AI Content Strategy", 8.5em), so no name wraps on a 320px phone */
+  font-size: min(clamp(2.25rem, 6.5vw, 5.5rem), (100vw - 2 * var(--gutter)) / 8.6);
   line-height: 1;
   letter-spacing: -0.05em;
   color: var(--color-fg-2);
