@@ -1039,7 +1039,8 @@
   --tagline-ink: 14.93; /* the line's measured width in em */
   font-family: var(--nf-geist-pixel);
   font-variation-settings: "ELSH" 20; /* 20 is the dots */
-  font-size: calc(50cqw / var(--tagline-ink));
+  /* half the width, but never under the meta size: on phones half would be 10-12px of dots */
+  font-size: max(var(--type-meta-default-size), 50cqw / var(--tagline-ink));
   white-space: nowrap;
 }
 .blog-cover-name {
