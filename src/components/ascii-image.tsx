@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
  * its preview image; none of its code is used). The picture is averaged down to a grid of cells.
  * An ordered (Bayer) dither decides which cells get a mark, so tone becomes density. Strong edges
  * get a line character along the edge (- | / \), very bright cells a +, the rest a small square.
- * Dark mode draws the picture's own colours on black; light mode draws its shadows in ink on
+ * Dark mode draws the picture's own colors on black; light mode draws its shadows in ink on
  * white, like a print. The characters are drawn once (again on resize or a theme change) into an
  * offscreen canvas. Each frame copies it to the screen like a worn VHS tape: now and then a few
  * horizontal bands jump sideways by a pixel or three, rarely a thin band tears further, the
@@ -16,11 +16,11 @@ import { useEffect, useRef } from "react";
  * to load, nothing is drawn.
  */
 
-// The picture's colour, a little dimmed and lifted towards a soft grey (not white) as the cell
+// The picture's color, a little dimmed and lifted toward a soft gray (not white) as the cell
 // brightens, so highlights glow without glaring.
 const lift = (c: number, tone: number) => Math.round(c * 0.9 + (220 - c * 0.9) * tone * 0.3);
 
-// 4x4 Bayer matrix: the thresholds, spread so neighbouring cells differ.
+// 4x4 Bayer matrix: the thresholds, spread so neighboring cells differ.
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 // Gradient strength (0-1 luminance per cell) that counts as an edge.
 const EDGE = 0.45;
@@ -112,10 +112,10 @@ export function AsciiImage({
           const gy = lum(x - 1, y + 1) + 2 * lum(x, y + 1) + lum(x + 1, y + 1) - lum(x - 1, y - 1) - 2 * lum(x, y - 1) - lum(x + 1, y - 1);
           const strength = Math.hypot(gx, gy) / 4;
 
-          const colour = light
+          const color = light
             ? `rgb(17 17 17 / ${0.55 + 0.45 * tone})`
             : `rgb(${lift(cells[i], tone)} ${lift(cells[i + 1], tone)} ${lift(cells[i + 2], tone)})`;
-          ctx.fillStyle = ctx.strokeStyle = colour;
+          ctx.fillStyle = ctx.strokeStyle = color;
           const cx = x * cw + cw / 2;
           const cy = y * ch + ch / 2;
 

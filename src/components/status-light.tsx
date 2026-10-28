@@ -1,9 +1,8 @@
 import { AVAILABILITY, type Availability } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-// The availability status: an outlined badge with a small glowing light in the traffic-light colours,
-// and its words (the light alone means nothing). After grafit.agency's header status. One component,
-// so a change here or in AVAILABILITY shows everywhere it's used.
+// The availability status, after grafit.agency's header status: a light and its words, since the
+// light alone means nothing.
 const LABEL: Record<Availability, string> = {
   open: "Open for work",
   limited: "Limited availability",

@@ -79,9 +79,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             className={`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2`}
           >
             {/* Diagonal stripes lit around the title and fading out into the page, kept within the
-                headline column and just past the author line: texture, not light (owner, 2026-10-25).
-                Light mode shows them at half strength with a softer fade, dark mode at 70% so they
-                don't compete with the title (owner, 2026-10-26). */}
+                headline column and just past the author line: texture, not light, so they don't
+                compete with the title. */}
             <div aria-hidden className="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] opacity-70 light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
               <StripedPattern className="stroke-[0.75] text-fg-muted" />
             </div>
@@ -138,7 +137,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
 
         <div className={`pb-e3 ${postGrid}`}>
-          {/* pt-1 centres the read time on the intro's first line. */}
+          {/* pt-1 centers the read time on the intro's first line. */}
           <aside aria-labelledby="toc-title" className="hidden pt-1 lg:col-start-1 lg:row-start-1 lg:block">
             <div className="sticky top-24">
               <p className="mb-8 flex items-center gap-2 type-meta text-fg-2">

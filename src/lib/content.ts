@@ -14,10 +14,9 @@ export const WORK_HOURS = { timeZone: "Europe/Athens", days: [1, 2, 3, 4, 5], st
 // for its name on hover. Leave it out for a black (or near-black) brand: its name keeps the page's ink.
 export type Brand = { name: string; color?: string };
 
-// The owner's clients, in alphabetical order; the owner adds to them. Colors are each brand's accent from
-// Brandfetch (2026-10-27), except Harvard's (its crimson) and TV Tropes' (its blue: the accent is a
-// yellow too close to emmaki's); never fetch anything from Fiverr itself. Every client here
-// is confirmed (owner, 2026-10-27).
+// The owner's clients, in alphabetical order. Colors are each brand's accent from Brandfetch, except
+// Harvard's (its crimson) and TV Tropes' (its blue: the accent is a yellow too close to emmaki's);
+// never fetch anything from Fiverr itself. Every client here is confirmed.
 export const BRANDS: Brand[] = [
   { name: "Accredible", color: "#5B4DFC" },
   { name: "Arc4dia", color: "#317DB3" },
@@ -36,8 +35,7 @@ export const BRANDS: Brand[] = [
 ];
 
 
-// The owner's services: one per Fiverr gig, in the gig index's order (Second Brain
-// business/emmaki/fiverr/gigs/index.md, 2026-10-28).
+// One per Fiverr gig, in the gig index's order (Second Brain business/emmaki/fiverr/gigs/index.md).
 export const SERVICES = [
   "Website Copy",
   "Sales Copy",

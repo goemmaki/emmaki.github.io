@@ -12,11 +12,8 @@ export const metadata: Metadata = {
   description: "Placeholder description of Crossed Wires.",
 };
 
-// The blog, Crossed Wires. The cover fills the window, under the header, with the comedy and tragedy
-// masks redrawn in dithered characters. The name runs edge to edge with a quarter of its letters
-// below the window, shown on scroll; the tagline sits just above it. On wide windows the masks move
-// to the right and the tagline goes flush left (globals.css, "Blog index cover"). The H1 will go
-// below the fold (owner, 2026-10-26).
+// The blog, Crossed Wires: a full-window cover ("Blog index cover" in globals.css). The H1 will go
+// below the fold.
 export default function BlogIndex() {
   return (
     <section className={`blog-cover relative -mt-16 overflow-x-clip ${geistPixel.variable}`}>
@@ -38,7 +35,7 @@ export default function BlogIndex() {
         <p className="blog-cover-name text-fg-max">Crossed Wires</p>
       </div>
       <div className="blog-cover-overhang" aria-hidden />
-      {/* Placeholder until the index below the fold is designed (owner, 2026-10-27). */}
+      {/* Placeholder until the index below the fold is designed. */}
       <div className="shell py-24 text-center type-meta text-fg-2">Coming soon</div>
     </section>
   );

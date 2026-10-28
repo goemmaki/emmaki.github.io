@@ -16,7 +16,7 @@ export default function NotFound() {
     // field's glow is on the left (above, on phones); the text takes the right-hand column, clear of it.
     <div data-not-found data-under-header className="relative -mt-16 flex min-h-[calc(100dvh-2.5rem)] [--color-focus:#fff]">
       <NebulaField />
-      {/* Phones: centred just under the glow. From md: the right-hand column, centred in the window. */}
+      {/* Phones: centered just under the glow. From md: the right-hand column, centered in the window. */}
       <div className="shell relative grid justify-items-center pt-[60svh] md:grid-cols-[3fr_2fr] md:items-center md:justify-items-start md:pt-0">
         {/* "404" and the link share one width at every size: their font sizes are that width
             divided by their measured widths in em (Plex Mono "404" 1.68em, the link 10.27em). */}

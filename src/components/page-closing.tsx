@@ -6,9 +6,8 @@ import { FloodButton } from "@/components/flood-button";
 import { StatusLight } from "@/components/status-light";
 import { FIVERR_PROFILE_URL } from "@/lib/content";
 
-// Every main page closes the same way: the availability status, the owner's two-line ask, then the
-// Fiverr button and a small note saying where it goes and what to send. Messaging
-// first is the ask (CRO research, 2026-10-27): design work needs scoping before an order.
+// Every main page closes the same way. The ask is to message first: design work needs scoping
+// before an order.
 export function PageClosing() {
   const sectionRef = useRef<HTMLElement>(null);
   const askRef = useRef<HTMLSpanElement>(null);
@@ -36,7 +35,7 @@ export function PageClosing() {
     <section ref={sectionRef} className="shell py-32">
       {/* The availability status leads the ask, as a kicker. */}
       <StatusLight className="mb-6" />
-      {/* Two tones: the setup in grey, the ask in white. The brighter line is the one that matters. */}
+      {/* The brighter line is the one that matters. */}
       <p className="type-h2 text-balance">
         <span className="block text-fg-2">Got something important to say?</span>
         <span ref={askRef} className="block text-fg-max">Hire someone who knows how to say it.</span>

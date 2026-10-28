@@ -5,11 +5,8 @@ import { Minus, Plus } from "lucide-react";
 
 export type FaqItem = { question: string; answer: string };
 
-// The site's FAQ (blog posts, About). After grafit.agency's article FAQs: hairline-divided rows, the
-// question as an h3 button with the icon on the right, and the answer opening to its height. + opens,
-// − closes. After bymonolog.com's FAQ: hovering, focusing or opening a question lights its row in
-// reversed ink and steps the text in ("Faq" in globals.css). Closed answers stay in the page
-// (hidden="until-found"), so find-in-page still reaches them.
+// The site's FAQ, after grafit.agency's article FAQs and bymonolog.com's lit rows ("FAQ" in
+// globals.css). Closed answers stay in the page (hidden="until-found"), so find-in-page reaches them.
 export function Faq({ faqs, bodyText }: { faqs: FaqItem[]; bodyText: string }) {
   return (
     <Accordion.Root multiple hiddenUntilFound className="mt-2">

@@ -3,9 +3,8 @@ import { PageClosing } from "@/components/page-closing";
 import { PageCover } from "@/components/page-cover";
 import { BRANDS } from "@/lib/content";
 
-// The intro and the note are drafts for the owner (2026-10-27), written to name who emmaki is, who
-// it writes for, what it does and that these are its clients, for readers and search alike. The
-// intro is the owner's (2026-10-27).
+// The note is a draft for the owner, written to name who emmaki is, who it writes for, what it does
+// and that these are its clients, for readers and search alike. The intro is the owner's.
 export default function BrandsPage() {
   return (
     <>

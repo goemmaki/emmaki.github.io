@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, type PointerEvent, type ReactNode } from "react";
 
-// The footer's dot field and big "*try*emmaki" wordmark ("try" set like the hero's "vituperative"),
-// above the black bar (children). The field and wordmark are decorative: the © line names emmaki. Two copies of the field drift in step: the plain dots,
-// and the yellow spotlight shown only under a mouse in dark mode. Styles: the "Footer" block in
-// globals.css.
+// The footer's dot field and "*try*emmaki" wordmark above the black bar (children). Both are
+// decorative: the © line names emmaki. Two copies of the field drift in step: the plain dots and the
+// dark-mode spotlight. Styles: "Footer" in globals.css.
 export function FooterWordmark({ children }: { children: ReactNode }) {
   const footer = useRef<HTMLDivElement>(null);
   const frame = useRef(0);

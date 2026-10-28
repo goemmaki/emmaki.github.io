@@ -5,9 +5,9 @@ import { useEffect, useRef } from "react";
 /*
  * The 404 background, after 21st.dev's "Neon Nebula" ASCII effect (its preview video): a sparse
  * grid of small hollow squares on black, lit by a soft glow that wobbles and drifts, with cells
- * twinkling on and off as a wave passes through them. Recoloured from violet to the site yellow,
- * kept dim. The glow sits left of centre from md (the 404 is in the right-hand column) and above
- * the text on phones. Each 16px cell samples an animated radial gradient at its centre; dim cells
+ * twinkling on and off as a wave passes through them. Recolored from violet to the site yellow,
+ * kept dim. The glow sits left of center from md (the 404 is in the right-hand column) and above
+ * the text on phones. Each 16px cell samples an animated radial gradient at its center; dim cells
  * are left out, which is what makes it sparse. Film grain, halftone, scan lines and vignette as in
  * the preset. Reduced motion gets one still frame, also when it's switched on mid-visit.
  */
@@ -41,7 +41,7 @@ function gradientAt(pos: number): [number, number, number] {
   return [0, 1, 2].map((k) => ca[k] + (cb[k] - ca[k]) * t) as [number, number, number];
 }
 
-// Where the glow sits and how far it reaches, in px: left of centre beside the text from md,
+// Where the glow sits and how far it reaches, in px: left of center beside the text from md,
 // above it on phones.
 function glowFor(width: number, height: number) {
   return width >= 768

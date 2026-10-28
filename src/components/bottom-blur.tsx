@@ -2,12 +2,10 @@
 
 import { type CSSProperties, useEffect, useState } from "react";
 
-// The window's bottom edge goes soft as the page scrolls under it (after supersolid.agency). Eight
-// layers, each blurring harder than the one before and masked to a band 12.5% lower, so the blur
-// builds toward the edge. The stack hangs a third below the window, so only its gentler bands show.
-// It blurs the footer too, until the page can scroll no further: once scrolling has settled there,
-// the blur eases off so the footer pulls into focus, and scrolling back up eases it straight back
-// (owner, 2026-10-28). CSS runs both through a blur radius transition: "Bottom blur" in globals.css.
+// The window's bottom edge goes soft as the page scrolls under it (after supersolid.agency). Each
+// layer blurs harder and is masked to a band 12.5% lower; the stack hangs a third below the window, so
+// only its gentler bands show. Once scrolling settles at the page's end the footer pulls into focus
+// ("Bottom blur" in globals.css).
 const LAYERS = [0.75, 0.875, 1.125, 2.25, 4.5, 9, 18, 48];
 const SETTLE_MS = 250;
 

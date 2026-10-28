@@ -20,7 +20,7 @@ const nav = [
   { href: "/about", label: "About" },
 ];
 
-// Menu opening, in seconds. Yellow, grey and the panel slide in one after another, a beat apart,
+// Menu opening, in seconds. Yellow, gray and the panel slide in one after another, a beat apart,
 // with a hard-decelerating ease (the reference menu's timings). Closing is instant.
 const REVEAL_EASE = "cubic-bezier(0.65, 0.01, 0.05, 0.99)";
 const REVEAL = {
@@ -141,7 +141,7 @@ export function SiteHeader() {
                 className="fixed inset-0 z-[60] bg-black/55 backdrop-blur-sm dark:bg-black/30 transition-opacity data-[starting-style]:opacity-0"
                 style={{ transitionDuration: `${REVEAL.backdrop}s`, transitionTimingFunction: REVEAL_EASE }}
               />
-              {/* Opening: yellow, then grey, then the panel, each filling the menu's space. Closing is instant. */}
+              {/* Opening: yellow, then gray, then the panel, each filling the menu's space. Closing is instant. */}
               <Dialog.Popup ref={menuPanelRef} className="fixed inset-y-0 right-0 z-[61] h-dvh w-full max-w-[720px] overflow-clip outline-none">
                 <div
                   aria-hidden

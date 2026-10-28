@@ -3,14 +3,11 @@
 import Image from "next/image";
 import { useEffect, useRef, type ReactNode } from "react";
 
-// A post's full-screen cover: the photo under a shade of the page colour (black, or white in light
-// mode), with the title centred on it, left-aligned. The site header sits over it, transparent
-// (data-under-header, read by site-header.tsx). In dark mode the photo is grayscale and under a
-// mouse or finger the shade clears in a spotlight, using the footer's settings, showing its colour. Scrolling
-// plays a parallax, the title rises and fades, and the photo pixelates and dissolves into the page
-// (in dark mode as the spotlight splutters and dies). Styles: the "Post cover" block in globals.css.
-// The photo's pixelation: block sizes in CSS px, stepped like a censor's mosaic, over
-// this stretch of scrolling, in screen heights (the timings in globals.css, "Post cover").
+// A post's full-screen cover; the site header sits over it, transparent (data-under-header). The
+// choreography and its timings: "Post cover" in globals.css.
+
+// The photo's pixelation: block sizes in CSS px, stepped like a censor's mosaic, over this stretch
+// of scrolling, in screen heights.
 const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
 const PIXEL_FROM = 0.3;
 const PIXEL_TO = 0.85;
@@ -84,8 +81,8 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     };
   }, []);
 
-  // A wrapped title's box keeps its full max-width, so centring it would push the lines left. Shrink
-  // the box to its longest line on every resize so the block centres on what you see.
+  // A wrapped title's box keeps its full max-width, so centering it would push the lines left. Shrink
+  // the box to its longest line on every resize so the block centers on what you see.
   useEffect(() => {
     const title = content.current?.firstElementChild as HTMLElement | null;
     if (!title) return;
@@ -105,12 +102,10 @@ export function PostCover({ src, children }: { src: string; children: ReactNode 
     return () => observer.disconnect();
   }, []);
 
-  // The mouse, or on touch screens a finger while it is down, is followed on the whole window, not
-  // the cover, so the spotlight keeps working under the site header, which overlaps the cover's top
-  // and takes its pointer events. It is placed in
-  // the photo frame's coordinates, so it is placed again on scroll to stay under a mouse that isn't
-  // moving. While a live spotlight reaches the header, data-cover-torch on <html> turns the header's
-  // buttons white so the lit photo doesn't swallow them (globals.css).
+  // The pointer is followed on the whole window, not the cover, so the spotlight keeps working under
+  // the header, which overlaps the cover and takes its pointer events. It is placed in the photo
+  // frame's coordinates, so again on scroll to stay under a still mouse. While it reaches the header,
+  // data-cover-torch on <html> turns the header's buttons white.
   useEffect(() => {
     const el = cover.current;
     const view = photo.current;
