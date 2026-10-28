@@ -848,6 +848,10 @@
   line-height: 0.9;
   letter-spacing: -0.06em;
 }
+/* Three across: a third of the row, less padding, holds about 2.3em of ink ("000" is about 2em). */
+@container (width >= 36rem) {
+  .figures-value { font-size: min(clamp(4rem, 9vw, 8.5rem), 12cqi); }
+}
 
 /* Testimonials (testimonials.tsx): the 7s fill moves to the next quote and holds while [data-held].
    The deck under the card is hairline shadows (line, then canvas 1px inside it), stepping in from
