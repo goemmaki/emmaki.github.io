@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Breadcrumb } from "@/components/breadcrumb";
 import { CaseFrame } from "@/components/case-frame";
+import { CaseStudyTools } from "@/components/case-study-tools";
 import { PageClosing } from "@/components/page-closing";
 import { BRANDS } from "@/lib/content";
 
@@ -48,6 +49,9 @@ export default function ProofPlaceholderPage() {
               </div>
             ))}
           </dl>
+          <div className="mt-8">
+            <CaseStudyTools title={TITLE} facts={FACTS} sections={SECTIONS} />
+          </div>
         </aside>
         <div className="max-w-[700px] lg:col-span-8 lg:col-start-5">
           {SECTIONS.map(({ heading, paragraphs }, i) => (
