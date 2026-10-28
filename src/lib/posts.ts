@@ -1,3 +1,5 @@
+import type { FaqItem } from "@/components/faq";
+
 /** A run of paragraph text, or an inline link. */
 export type PostInline = string | { text: string; href: string };
 /** A paragraph: plain text, or runs with inline links. */
@@ -8,7 +10,6 @@ export type PostBlock =
   | { level: 3 | 4 | 5 | 6; text: string }
   | { image: string; width: number; height: number; alt: string; caption?: string };
 export type PostSection = { heading: string; blocks: PostBlock[] };
-export type PostFaq = { question: string; answer: string };
 
 export type Post = {
   slug: string;
@@ -27,7 +28,7 @@ export type Post = {
   intro: string;
   tldr: string[];
   sections: PostSection[];
-  faqs: PostFaq[];
+  faqs: FaqItem[];
 };
 
 const placeholderParagraphs: PostParagraph[] = [

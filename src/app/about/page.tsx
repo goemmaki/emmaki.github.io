@@ -1,8 +1,9 @@
-import { Hero } from "@/components/hero";
+import { AboutConcepts } from "@/components/about-concepts";
 import { PageClosing } from "@/components/page-closing";
 import { PageCover } from "@/components/page-cover";
 
-// Placeholders until the owner writes the intro, the closing line and the button label.
+// Placeholder intro until the owner writes it. The sections between the cover and the closing are
+// layout concepts under review (about-concepts.tsx).
 export default function AboutPage() {
   return (
     <>
@@ -11,8 +12,8 @@ export default function AboutPage() {
         ink={2.613}
         intro="Owner’s intro: one or two lines on what this page is and who it’s for."
       />
-      <Hero />
-      <PageClosing line="Owner’s closing line: the ask, in one sentence." cta="Owner’s CTA label" />
+      <AboutConcepts />
+      <PageClosing />
     </>
   );
 }

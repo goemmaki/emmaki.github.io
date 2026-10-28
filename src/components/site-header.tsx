@@ -8,6 +8,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { FiverrLogo } from "@/components/fiverr-logo";
+import { LocalClock } from "@/components/local-clock";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Wordmark } from "@/components/wordmark";
 
@@ -52,11 +53,17 @@ export function SiteHeader() {
   useEffect(() => {
     let last = window.scrollY;
     let frame = 0;
+    let resetHidden = true;
     const media = document.querySelector("[data-under-header]");
     const cover = document.querySelector("[data-covers-media]");
     const onScroll = () => {
-      cancelAnimationFrame(frame);
+      if (frame) return;
       frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (resetHidden) {
+          setHidden(false);
+          resetHidden = false;
+        }
         setOverMedia(
           !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64),
         );
@@ -100,12 +107,15 @@ export function SiteHeader() {
   }, [open]);
 
   return (
+    // Keyboard focus inside keeps it in view; a click doesn't, so a clicked toggle or the menu
+    // button (focused again when the menu closes) can't pin it there.
     <header
       data-site-header
       data-over-media={overMedia || undefined}
       className={cn(
-        "sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out focus-within:translate-y-0",
-        !overMedia && "bg-bg/70 backdrop-blur-md",
+        "sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out has-focus-visible:translate-y-0",
+        // The bottom blur's strongest layer (bottom-blur.tsx), under a lighter tint kept for contrast.
+        !overMedia && "bg-bg/50 backdrop-blur-[48px]",
         hidden && !open && "-translate-y-full",
       )}
     >
@@ -116,6 +126,7 @@ export function SiteHeader() {
 
         {/* -mr-3: the menu glyph, not its 44px target, sits on the gutter */}
         <div className="-mr-3 flex items-center">
+          <LocalClock className="mr-4 hidden sm:flex" />
           <ThemeToggle />
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger
@@ -193,7 +204,7 @@ export function SiteHeader() {
                                   active ? "text-fg-max" : "text-fg-2",
                                 )}
                               >
-                                {label}
+                                <span className="menu-link-label">{label}</span>
                               </Link>
                             </li>
                           );

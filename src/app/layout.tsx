@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { BottomBlur } from "@/components/bottom-blur";
 
 const geist = Geist({ subsets: ["latin"], variable: "--nf-geist" });
 const plexSans = IBM_Plex_Sans({ subsets: ["latin"], variable: "--nf-plex-sans" });
@@ -30,7 +31,7 @@ const bootScript = `(function(){try{var d=document.documentElement;var t=localSt
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="en-US"
       data-theme="dark"
       suppressHydrationWarning
       className={cn(geist.variable, plexSans.variable, plexMono.variable, sourceSerif.variable)}
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SiteHeader />
         <main id="content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
         <SiteFooter />
+        <BottomBlur />
       </body>
     </html>
   );

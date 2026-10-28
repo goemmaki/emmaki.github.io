@@ -1,40 +1,41 @@
-import { BrandWall, type Brand } from "@/components/brand-wall";
+import { BrandWall } from "@/components/brand-wall";
 import { PageClosing } from "@/components/page-closing";
 import { PageCover } from "@/components/page-cover";
+import { BRANDS } from "@/lib/content";
 
-// The owner's clients, in alphabetical order; the owner adds to them.
-// Colours are each brand's accent from
-// Brandfetch (2026-10-27), except Harvard's (its crimson) and TV Tropes' (its blue: the accent is a
-// yellow too close to emmaki's); never fetch anything from Fiverr itself. Every client here
-// is confirmed (owner, 2026-10-27).
-const brands: Brand[] = [
-  { name: "Accredible", color: "#5B4DFC" },
-  { name: "Arc4dia", color: "#317DB3" },
-  { name: "Compoundly", color: "#0EB400" },
-  { name: "Design Bundles", color: "#4CC5FB" },
-  { name: "Fiverr", color: "#1DBF73" },
-  { name: "HackerRank", color: "#1BA94C" },
-  { name: "Harvard University", color: "#A51C30" },
-  { name: "Marco Polo", color: "#1DA2C7" },
-  { name: "MHC Digital Group", color: "#AB5DE3" },
-  { name: "Quartile", color: "#FF9900" },
-  { name: "SellersFi", color: "#FCB337" },
-  { name: "Spectral Core", color: "#17B3D0" },
-  { name: "Tenity", color: "#993744" },
-  { name: "TV Tropes", color: "#006BB1" },
-];
-
-// Placeholders until the owner writes the intro, the closing line and the button label.
+// The intro and the note are drafts for the owner (2026-10-27), written to name who emmaki is, who
+// it writes for, what it does and that these are its clients, for readers and search alike. The
+// intro is the owner's (2026-10-27).
 export default function BrandsPage() {
   return (
     <>
       <PageCover
         word="Brands"
         ink={2.973}
-        intro="Owner’s intro: one or two lines on what this page is and who it’s for."
+        intro="I’m Emmaki, a B2B copywriter and AI content strategist with 20+ years’ experience turning complex ideas into simple messages for brands around the world."
       />
-      <BrandWall brands={brands} />
-      <PageClosing line="Owner’s closing line: the ask, in one sentence." cta="Owner’s CTA label" />
+      <BrandWall
+        brands={BRANDS}
+        note={
+          <>
+            <section className="flex flex-col gap-2">
+              <h2 className="type-meta text-fg-max">Select clients</h2>
+              <p>
+                I work with brands whose products are smarter than their messaging. I turn what you do into a
+                message your buyers understand, remember, and repeat to whoever signs off.
+              </p>
+            </section>
+            <section className="flex flex-col gap-2">
+              <h2 className="type-meta text-fg-max">Industries</h2>
+              <p>
+                I mostly work with B2B brands in technology, cybersecurity, fintech and media. After 20+ years,
+                there’s a good chance I’ve written for your industry too.
+              </p>
+            </section>
+          </>
+        }
+      />
+      <PageClosing />
     </>
   );
 }

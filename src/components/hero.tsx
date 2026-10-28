@@ -2,7 +2,9 @@ import { SparklesText } from "@/components/ui/sparkles-text";
 import { RectFit } from "@/components/rect-fit";
 import { MotionProvider } from "@/components/motion-provider";
 
-// The About page's poster, below the cover (on Home until 2026-10-27). Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
+// Kept as a snippet, mounted nowhere: the owner took the poster off About on 2026-10-28 and saved it
+// for a "killing your darlings" piece (journal). It ran on Home until 2026-10-27, then on About.
+// Hello runs the height of the block. The question on two lines and the justified H1 beside it close the
 // rectangle on lines the headline draws; rect-fit.tsx does the measuring.
 export function Hero() {
   return (

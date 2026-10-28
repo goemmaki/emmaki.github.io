@@ -10,6 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Owner rules
 
+- **American English only** (owner, 2026-10-27): site copy, drafts, comments and docs use en-US spelling and usage (organizations, color, optimize). Never en-GB.
 - When the owner rejects a change ("this sucks", "hideous", "no"), stop all work on it at once, including any running agent, audit or verification, and revert to the last approved state. Do not iterate on, test or polish the rejected version; ask what to do next.
 
 ## Settled owner decisions (do not reopen or re-propose)
@@ -23,5 +24,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## Next action
 
-- Blog post page, cover, refactor and current branch state: resume from [docs/handoffs/20261026-site.md](docs/handoffs/20261026-site.md).
+- Ideas kept for later: [docs/ideas.md](docs/ideas.md).
+- Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
 - Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.
