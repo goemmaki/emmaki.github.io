@@ -850,10 +850,10 @@
 }
 
 /* Testimonials (testimonials.tsx): the 7s fill moves to the next quote and holds while [data-held].
-   The deck behind the card steps in from both sides, so it never widens the card on a phone. */
+   The deck under the card is hairline shadows (line, then canvas 1px inside it), stepping in from
+   both sides so it never widens the card on a phone. */
 .testimonials {
   position: relative;
-  isolation: isolate;
   display: flex;
   flex-direction: column;
   min-height: 22rem;
@@ -862,22 +862,11 @@
   border: 1px solid var(--color-line);
   border-radius: var(--shape-control-radius);
   background: var(--color-canvas-secondary);
-}
-.testimonials::before,
-.testimonials::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset-block: 0 -8px;
-  inset-inline: 12px;
-  border: 1px solid var(--color-line);
-  border-radius: inherit;
-  background: var(--color-canvas);
-}
-.testimonials::after {
-  z-index: -2;
-  inset-block-end: -16px;
-  inset-inline: 24px;
+  box-shadow:
+    0 20px 0 -13px var(--color-canvas),
+    0 20px 0 -12px var(--color-line),
+    0 40px 0 -25px var(--color-canvas),
+    0 40px 0 -24px var(--color-line);
 }
 .testimonials-line {
   position: absolute;
