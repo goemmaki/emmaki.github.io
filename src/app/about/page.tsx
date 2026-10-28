@@ -20,7 +20,7 @@ export default function AboutPage() {
       />
       <SectionRow n="01" label="Owner’s label: who I am">
         <div className="grid gap-e1 md:grid-cols-9 md:gap-x-(--gutter)">
-          <div className="grid aspect-[4/5] max-w-80 place-items-center border border-line p-6 text-center type-meta text-fg-2 md:col-span-3">
+          <div className="grid aspect-[4/5] max-w-64 place-items-center md:max-w-80 border border-line p-6 text-center type-meta text-fg-2 md:col-span-3">
             Portrait (owner’s photo)
           </div>
           <div className="flex flex-col gap-6 md:col-span-6">
