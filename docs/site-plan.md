@@ -23,7 +23,15 @@ The design must never get in the way of any of these. The site can stay a distin
 
 1. **Hero.** A full first screen with only the button. The giant word was dropped on 2026-10-28.
 2. **Client logos.** The slot strip, starting at the fold so it shows within the first few pixels of scrolling. Fiverr is first and always rolls last.
-3. **Closing.** The Fiverr invitation every main page shares (`PageClosing`).
+3. **Who I am, with the case studies in it.** A kicker and a positioning line ("I help X and Y to A, B, C, without FGH.", a placeholder). A, B and C each link to a case study. Under a mouse, a preview card trails the pointer showing the result as a figure, a line on the work, and the client. This follows grafit.agency's "Who we are"; the behavior was studied, no code or assets were copied. Fiverr may be one of the case studies in a few weeks (owner, 2026-10-28).
+4. **Why me** (owner, 2026-10-28). The "Why me" kicker, then the credibility boxes on one-pixel rules, after grafit.agency's "Why Us": four squares, then three wider boxes, at the original grid's height. Squares: Top Rated Seller (since 2015, the most prestigious, so first), 4.8k orders, 2.6k clients, and years on Fiverr (joined December 2013, so it goes up every January 1). Wider boxes: Pro Verified (since 2017), the Tel Aviv invitation ("Invited to Tel Aviv to deliver leadership feedback", labeled "In 2018"), and Cannon Brooke's review with his photo, gray until hover. Counts are from the owner's Fiverr profile on 2026-10-28; the labels are Claude's stand-ins for the owner's copy.
+   - **Grouped Swiss treatment (2026-10-28):** each figure and label stay together with a 12px gap. Top Rated Seller sits bottom left, orders in the middle, clients bottom left in lighter type, and years top left. Pro Verified sits at the top of its wider box; the Tel Aviv sentence and date sit together in the middle. Cannon's quote leads a vertical stack: square photo, name, role and company on separate lines. The wider boxes have 32px desktop insets to separate the invitation and quote. Type scales with its box; below 64rem the squares form two columns and the wider boxes span both. Hover gently scales each figure/label block inward as a unit, only Top Rated Seller fills yellow with black text, and Cannon's photo comes out of grayscale. Motion is limited to a fine pointer with hover support and stops under reduced motion.
+   - **Hover posters (2026-10-28):** typography, spacing and copy stay fixed. Seven hover-only Swiss poster compositions sit behind the type: a cropped black disk and slash on yellow for Top Rated Seller; sliding moiré lines for orders; cursor-driven halftone dots for clients; concentric rings for years; sweeping diagonal bars for Pro Verified; a staggered modular grid for Tel Aviv; and a massive cropped quotation shape revealed through an SVG mask for Cannon. A soft halo of the box color behind the figures and quote, and a strip of it behind each mono label, protect their contrast (the opaque backings were too heavy, owner, 2026-10-28). Geometry uses the theme’s foreground ink, inverting in light mode; yellow retains black ink. Graphics are clipped to their cell, hidden on touch and under reduced motion. CSS timelines and the halftone frame loop stop on leave; the halftone also stops when motion/pointer preferences change or the tab is hidden. No new headings, copy, dependencies, images or fonts.
+   - References were studied for behavior only; no code, text or assets copied.
+   - **Cut the same evening, kept as darlings** in `src/components/darlings/`: the testimonial box, the reveal text beside it and the sideways benefit cards (journal, "Killing your darlings").
+   - **Benefits content (Claude's recommendation, 2026-10-28):** client-focused. Each benefit takes one buyer worry (understanding the product, voice, effort, reliability, results) and says what the client gets.
+5. **The old "Why me" placeholder,** kept until the owner decides whether section 4 replaces it.
+6. **Closing.** The Fiverr invitation every main page shares (`PageClosing`).
 
 The services list (`services.tsx`) was on Home under the logos. The owner removed it on 2026-10-28 because it was too big for Home, and kept it unmounted as a darling to revive elsewhere. Services still belong on Home, in a smaller form (below).
 
@@ -44,6 +52,20 @@ Recommended by the owner's research (next section):
 Logos, work and testimonials make three layers of proof: who (logos), what (work) and how it was to work together (testimonials).
 
 **Test, don't assume, the order of Services and logos.** Compare Hero → Services → Logos against Hero → Logos → Services once traffic allows. The evidence favors Services first, but no controlled test shows which wins for a portfolio.
+
+## Proof
+
+Final design for now (owner, 2026-10-29). The cover reads "Proof." with a yellow full stop (the owner hasn't decided on the yellow yet), the owner's intro beside it, then the index and the shared closing. The index holds six placeholder case studies; each row links to `/proof` until the case-study pages exist.
+
+- **List:** after gorantrickovski.design's works list. Full-ink one-pixel rules and tight rows. Client, Project and Work labels head the columns. Client names are in the Brands typography at 4rem at full width, scaling down with the list. Project and work are 20px bold white, after supersolid.agency's list.
+- **Hover or keyboard focus:** an arrow slides in before the name, a word space from it, pushing the name over. The name fills with the brand-to-companion gradient with moving grain. A faint gray dot screen swells around the pointer behind the row, after shortscut.com. Effects come on in 0.2s and fade over 0.5s, so a pointer run down the list leaves a short trail.
+- **Touch:** the arrows always show and the metadata sits under the name on phones.
+- **Reduced motion:** a still gradient and dot frame, no movement.
+- **Tried and dropped (2026-10-29):** a trailing preview card (every design rejected), six name sizes and six dot screens compared row by row (the 4rem name and the pointer screen won), an "All success stories (6)" heading, and the closing scrolling over the end of the list (it hid the last row).
+
+## Case study template
+
+`/proof/placeholder` (2026-10-29) is blocked out to design the case-study pages from, after grafit.agency's case studies. It has the breadcrumb (the shared `Breadcrumb`, also on blog posts), a lorem headline at the blog title's size, and a frame of lines in grafit's proportions. The frame starts just over halfway down the first screen and runs past it, to invite the scroll. Below it are a sticky column of placeholder facts and placeholder sections in the blog's sizes. Not indexed by search engines.
 
 ## The research behind the order (owner, 2026-10-28)
 
@@ -127,4 +149,11 @@ The main commercial outcomes are qualified inquiries and Fiverr orders that can 
   - two rows on phones
 
   Decide by looking at both in the browser.
+- **Sideways swipes in the Why me section.** Only vertical scrolling drives it. Claude tested this on 2026-10-28 with emulated touch in Chrome at 375px:
+  - Vertical swipes advance it and take it back.
+  - Diagonal swipes lock to their main axis.
+  - Straight sideways swipes do nothing.
+  - The page never scrolls sideways.
+
+  A visitor who instinctively swipes left gets no response. The option, not built: map a sideways swipe inside the section to the same progress as a vertical one. Real iPhone Safari is untested.
 - **Where the personal introduction goes** on Home before the About preview exists.
