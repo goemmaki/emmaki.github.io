@@ -21,6 +21,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Development journal
 
 - At the end of every working session, append a dated entry to `docs/journal/` (rules in its `README.md`). It is the evidence base for the owner's case study about building this site: facts and commit hashes, every rejected or reversed idea, measured numbers, agent mistakes. No marketing prose; the owner writes the case study.
+- **Always write a handoff with the journal entry** (owner, 2026-10-29), without being asked: `docs/handoffs/YYYYMMDD-<slug>.md` per the `session-handoff` skill, linked under "Next action" below. Delete or mark superseded any older handoff it replaces.
 
 ## Next action
 
@@ -28,5 +29,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
 - New client or a logo to replace: follow [.claude/skills/client-logo/SKILL.md](.claude/skills/client-logo/SKILL.md).
 - Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
-- Home redesign in progress ("Who I am", "Why me"): resume from [docs/handoffs/20261028-home-why-me.md](docs/handoffs/20261028-home-why-me.md).
+- Proof, the case-study template and Home (latest, 2026-10-29): resume from [docs/handoffs/20261029-proof-case-study.md](docs/handoffs/20261029-proof-case-study.md).
 - Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.
