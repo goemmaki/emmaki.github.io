@@ -16,8 +16,6 @@ function Logo({ brand }: { brand: Brand }) {
   const { light, dark } = brand.logo;
   return (
     <span className="client-slot-logo">
-      <img src={`/clients/${light}`} alt="" className="client-logo-on-light client-logo-color" />
-      <img src={`/clients/${dark}`} alt="" className="client-logo-on-dark client-logo-color" />
       <img src={`/clients/${light}`} alt="" className="client-logo-on-light" />
       <img src={`/clients/${dark}`} alt="" className="client-logo-on-dark" />
     </span>
