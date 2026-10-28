@@ -988,6 +988,11 @@
   --inner: calc(min(100cqw, var(--shell-max)) - 2 * var(--gutter));
   --tagline-pb: clamp(1rem, 3vw, 2.5rem);
 }
+/* The masks can scroll behind a revealed header. A 70% canvas tint keeps its controls
+   above 3:1 even over the opposite theme's brightest or darkest pixels. */
+:root:has(.blog-cover) [data-site-header] {
+  background-color: rgb(from var(--color-bg) r g b / 0.7);
+}
 .blog-cover-tagline-box { container-type: inline-size; }
 /*
  * The masks: centred in the window, or raised just enough to clear the tagline when they'd reach it.
