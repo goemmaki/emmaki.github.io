@@ -1444,9 +1444,18 @@
 }
 .case-frame-quote { display: flex; flex-direction: column; justify-content: center; gap: 32px; min-width: 0; min-height: 16rem; padding: 40px; }
 .case-frame-quote blockquote { max-width: 44ch; font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.03em; }
-.case-frame-quote figcaption { width: var(--case-quote-width, 100%); max-width: 100%; }
-.case-frame-name-line { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.case-frame-logo { flex: none; width: calc(20px * 373.9 / 93.9); height: 20px; background: currentColor; mask: url("/clients/harvard-on-dark.svg") center / contain no-repeat; }
+/* Avatar, person and logo share the two lines' height: 1rem and 0.875rem at 1.5 leading. */
+.case-frame-quote figcaption {
+  --case-caption: calc(1.5rem + 1.3125rem);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: var(--case-quote-width, 100%);
+  max-width: 100%;
+}
+.case-frame-avatar { flex: none; width: var(--case-caption); height: var(--case-caption); border-radius: 2px; background: color-mix(in srgb, var(--color-text-maximum) 18%, transparent); }
+.case-frame-person { min-width: 0; margin-right: auto; }
+.case-frame-logo { flex: none; width: calc(var(--case-caption) * 373.9 / 93.9); height: var(--case-caption); background: currentColor; mask: url("/clients/harvard-on-dark.svg") right center / contain no-repeat; }
 .case-frame-name { display: block; font-size: 1rem; font-weight: 500; line-height: 1.5; }
 .case-frame-role { display: block; color: var(--case-soft-ink); font-size: 0.875rem; line-height: 1.5; }
 @media (width < 48rem) {

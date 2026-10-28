@@ -5,9 +5,9 @@ import { Menu } from "@base-ui/react/menu";
 import { Bot, Copy, FileText, Link2, Share2 } from "lucide-react";
 import { AI_LOGO_PATHS } from "@/components/blog/ai-logos";
 
-// Copy page, Share and Ask AI for any page: blog posts open Ask AI as a menu, case studies show the
-// assistants as a row of badges, after grafit.agency's "Explore AI Summary" (owner, 2026-10-29).
-// Each page can open the assistants on its own question.
+// Copy page, Share and Ask AI for any page, each page opening the assistants on its own question.
+// Case studies show the assistants alone, as a row of badges (AiBadges), after grafit.agency's
+// "Explore AI Summary" (owner, 2026-10-29).
 
 // Keyboard focus takes the site's focus ring, drawn inside the item; the highlight alone is too faint
 // to see (WCAG 2.4.7). A mouse doesn't trigger :focus-visible, so hover is unchanged.
@@ -93,7 +93,7 @@ function aiLinks(pageUrl: string, aiQuestion?: string): ToolLink[] {
 const noSubscription = () => () => {};
 
 // The badges are links on the page, so they need the address from the first client render.
-function AiBadges({ aiQuestion }: { aiQuestion?: string }) {
+export function AiBadges({ aiQuestion }: { aiQuestion?: string }) {
   const pageUrl = useSyncExternalStore(noSubscription, () => window.location.href, () => "");
   const links = aiLinks(pageUrl, aiQuestion);
   return (
@@ -122,14 +122,12 @@ export function PageTools({
   title,
   markdown,
   aiQuestion,
-  ai = "menu",
 }: {
   title: string;
   /** The page as Markdown, for "Copy as .md", given the page's address. */
   markdown: (url: string) => string;
   /** The question the assistants open with, about this page. */
   aiQuestion?: string;
-  ai?: "menu" | "badges";
 }) {
   const [pageUrl, setPageUrl] = useState("");
   const [copyStatus, setCopyStatus] = useState("");
@@ -155,38 +153,33 @@ export function PageTools({
   ] : [];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="relative">
-        <div className="flex items-center gap-2">
-          <ToolMenu label="Copy page" icon={Copy} onOpen={() => setPageUrl(window.location.href)}>
-            <Menu.Item onClick={() => void copyText(window.location.href, "Link copied")} className={itemClass}>
-              <Link2 className="icon-muted" aria-hidden />
-              Copy link
-            </Menu.Item>
-            <Menu.Item onClick={() => void copyText(markdown(window.location.href), "Markdown copied")} className={itemClass}>
-              <FileText className="icon-muted" aria-hidden />
-              Copy as .md
-            </Menu.Item>
-          </ToolMenu>
-          <ToolMenu label="Share" icon={Share2} onOpen={() => setPageUrl(window.location.href)}>
-            {shareLinks.map((link) => <MenuItemLink key={link.label} {...link} />)}
-          </ToolMenu>
-          {ai === "menu" && (
-            <ToolMenu label="Ask AI" icon={Bot} onOpen={() => setPageUrl(window.location.href)}>
-              {aiLinks(pageUrl, aiQuestion).map((link) => <MenuItemLink key={link.label} {...link} />)}
-            </ToolMenu>
-          )}
-        </div>
-        {/* Floats under the buttons so showing it doesn't move the page. */}
-        <div
-          role="status"
-          aria-live="polite"
-          className={copyStatus ? "absolute left-0 top-full z-10 mt-2 whitespace-nowrap rounded-sm bg-raised px-2 py-1 type-meta text-fg" : "sr-only"}
-        >
-          {copyStatus}
-        </div>
+    <div className="relative">
+      <div className="flex items-center gap-2">
+        <ToolMenu label="Copy page" icon={Copy} onOpen={() => setPageUrl(window.location.href)}>
+          <Menu.Item onClick={() => void copyText(window.location.href, "Link copied")} className={itemClass}>
+            <Link2 className="icon-muted" aria-hidden />
+            Copy link
+          </Menu.Item>
+          <Menu.Item onClick={() => void copyText(markdown(window.location.href), "Markdown copied")} className={itemClass}>
+            <FileText className="icon-muted" aria-hidden />
+            Copy as .md
+          </Menu.Item>
+        </ToolMenu>
+        <ToolMenu label="Share" icon={Share2} onOpen={() => setPageUrl(window.location.href)}>
+          {shareLinks.map((link) => <MenuItemLink key={link.label} {...link} />)}
+        </ToolMenu>
+        <ToolMenu label="Ask AI" icon={Bot} onOpen={() => setPageUrl(window.location.href)}>
+          {aiLinks(pageUrl, aiQuestion).map((link) => <MenuItemLink key={link.label} {...link} />)}
+        </ToolMenu>
       </div>
-      {ai === "badges" && <AiBadges aiQuestion={aiQuestion} />}
+      {/* Floats under the buttons so showing it doesn't move the page. */}
+      <div
+        role="status"
+        aria-live="polite"
+        className={copyStatus ? "absolute left-0 top-full mt-2 whitespace-nowrap rounded-sm bg-raised px-2 py-1 type-meta text-fg" : "sr-only"}
+      >
+        {copyStatus}
+      </div>
     </div>
   );
 }

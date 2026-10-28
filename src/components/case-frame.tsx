@@ -113,12 +113,15 @@ export function CaseFrame({ brandColor, clientName }: { brandColor: string; clie
           <p ref={quoteRef}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
         </blockquote>
+        {/* The person, then the client's logo at the height of their two lines, its right edge on
+            the quote's longest line (owner, 2026-10-29). */}
         <figcaption>
-          <span className="case-frame-name-line">
-            <span className="case-frame-name">{clientName}</span>
-            <span className="case-frame-logo" aria-hidden="true" />
+          <span className="case-frame-avatar" aria-hidden="true" />
+          <span className="case-frame-person">
+            <span className="case-frame-name">Name Surname</span>
+            <span className="case-frame-role">Role</span>
           </span>
-          <span className="case-frame-role">Placeholder attribution</span>
+          <span className="case-frame-logo" role="img" aria-label={clientName} />
         </figcaption>
       </figure>
     </div>
