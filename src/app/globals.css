@@ -906,26 +906,34 @@
   transition: translate 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .client-slot-logo {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   height: 120px;
   align-items: center;
-  justify-content: center;
+  justify-items: center;
   padding-inline: 20px;
 }
 .client-slot-logo img {
+  grid-area: 1 / 1;
   height: 28px;
   width: auto;
   max-width: min(100%, 150px);
   object-fit: contain;
   filter: brightness(0) invert(1);
-  transition: filter 0.2s ease-out;
+  transition: opacity 0.4s ease-out;
 }
 .client-slot-logo .client-logo-on-light { display: none; }
 [data-theme="light"] .client-strip { --client-line: rgb(0 0 0 / 0.16); }
 [data-theme="light"] .client-slot-logo img { filter: brightness(0); }
 [data-theme="light"] .client-slot-logo .client-logo-on-light { display: block; }
 [data-theme="light"] .client-slot-logo .client-logo-on-dark { display: none; }
-.client-slot:hover .client-slot-logo img { filter: none; }
+/* Crossfade the two inks without interpolating through the filter's gray midpoint. */
+.client-slot-logo img.client-logo-color { filter: none; opacity: 0; }
+.client-slot:hover .client-slot-logo img.client-logo-color { opacity: 1; transition-duration: 0.18s; }
+.client-slot:hover .client-slot-logo img:not(.client-logo-color) { opacity: 0; transition-duration: 0.18s; }
+@media (prefers-reduced-motion: reduce) {
+  .client-slot-logo img { transition: none !important; }
+}
 
 /* About concepts (about-concepts.tsx): a figure set huge in the covers' Geist 600. */
 .about-figure {
