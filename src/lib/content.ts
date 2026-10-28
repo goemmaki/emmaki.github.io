@@ -49,6 +49,25 @@ export const BRANDS: Brand[] = [
   { name: "TV Tropes", color: "#006BB1", logo: { light: "tv-tropes.png", dark: "tv-tropes-on-dark.png" } },
 ];
 
+// The client strip's order: the names a buyer is most likely to know first, so the first row, before
+// any cell rolls, leads with them (owner, 2026-10-28). A client missing here goes last.
+export const CLIENT_STRIP_ORDER = [
+  "Fiverr",
+  "Harvard University",
+  "HackerRank",
+  "TV Tropes",
+  "Marco Polo",
+  "Accredible",
+  "Design Bundles",
+  "Quartile",
+  "SellersFi",
+  "Tenity",
+  "Spectral Core",
+  "MHC Digital Group",
+  "Compoundly",
+  "Arc4dia",
+];
+
 // The owner's services: one per Fiverr gig, in the gig index's order (Second Brain
 // business/emmaki/fiverr/gigs/index.md, 2026-10-28).
 export const SERVICES = [

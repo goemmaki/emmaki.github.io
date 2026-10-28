@@ -1,13 +1,13 @@
 "use client";
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { BRANDS, type Brand } from "@/lib/content";
+import { BRANDS, type Brand, CLIENT_STRIP_ORDER } from "@/lib/content";
 
 // The client strip, after grafit.agency's home page: a row of cells between full-bleed hairlines, each
 // a slot-machine reel of client logos, monochrome until hovered, when the logo shows its own colors.
-// One cell rolls to its next logo at a time, left to right, so the row never changes all at once. Two
-// cells on phones, three on tablets, five on desktops; the clients are dealt across the cells in turn.
-// Rolling stops while the strip is off screen or hovered, and never starts with reduced motion.
+// One cell rolls at a time, in a random order each round, so the row never changes all at once. Two
+// cells on phones, three on tablets, five on desktops; the clients are dealt across the cells in strip
+// order. Rolling stops while the strip is off screen or hovered, and never starts with reduced motion.
 // Styles: "Client slots" in globals.css.
 
 /* eslint-disable @next/next/no-img-element -- small trimmed logos in a static export: next/image would only add sizing */
@@ -22,6 +22,23 @@ function Logo({ brand }: { brand: Brand }) {
   );
 }
 const STEP_MS = 1400;
+
+const rank = (b: Brand) => {
+  const i = CLIENT_STRIP_ORDER.indexOf(b.name);
+  return i < 0 ? Infinity : i;
+};
+const CLIENTS = [...BRANDS].sort((a, b) => rank(a) - rank(b));
+
+// One round: every cell rolls once, one at a time, in a random order, except the first cell (it opens
+// on Fiverr), which always rolls last (owner, 2026-10-28).
+function roundOrder(cols: number) {
+  const rest = Array.from({ length: cols - 1 }, (_, i) => i + 1);
+  for (let i = rest.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [rest[i], rest[j]] = [rest[j], rest[i]];
+  }
+  return [...rest, 0];
+}
 
 function useColumns() {
   const [cols, setCols] = useState(5);
@@ -73,7 +90,9 @@ function Slot({ reel, rolls }: { reel: Brand[]; rolls: number }) {
 export function ClientSlots({ className }: { className?: string }) {
   const cols = useColumns();
   const ref = useRef<HTMLDivElement>(null);
-  const [step, setStep] = useState(0);
+  // How many times each cell has rolled, for the column count they were counted under.
+  const [rolls, setRolls] = useState({ cols, counts: [] as number[] });
+  const queue = useRef({ cols, cells: [] as number[] });
   const [running, setRunning] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -87,11 +106,19 @@ export function ClientSlots({ className }: { className?: string }) {
 
   useEffect(() => {
     if (!running || hovered) return;
-    const id = setInterval(() => setStep((s) => s + 1), STEP_MS);
+    const id = setInterval(() => {
+      if (queue.current.cols !== cols || !queue.current.cells.length) queue.current = { cols, cells: roundOrder(cols) };
+      const cell = queue.current.cells.shift()!;
+      setRolls((r) => {
+        const counts = r.cols === cols ? [...r.counts] : [];
+        counts[cell] = (counts[cell] ?? 0) + 1;
+        return { cols, counts };
+      });
+    }, STEP_MS);
     return () => clearInterval(id);
-  }, [running, hovered]);
+  }, [running, hovered, cols]);
 
-  const reels = Array.from({ length: cols }, (_, c) => BRANDS.filter((_, i) => i % cols === c));
+  const reels = Array.from({ length: cols }, (_, c) => CLIENTS.filter((_, i) => i % cols === c));
 
   return (
     <div
@@ -101,14 +128,13 @@ export function ClientSlots({ className }: { className?: string }) {
       onPointerLeave={() => setHovered(false)}
     >
       <ul className="sr-only">
-        {BRANDS.map((b) => (
+        {CLIENTS.map((b) => (
           <li key={b.name}>{b.name}</li>
         ))}
       </ul>
       <ul className="client-slots" style={{ "--cols": cols } as CSSProperties} aria-hidden>
         {reels.map((reel, c) => (
-          // Cell c has rolled once for every full pass of the row that has reached it.
-          <Slot key={`${cols}-${c}`} reel={reel} rolls={Math.floor((step + cols - 1 - c) / cols)} />
+          <Slot key={`${cols}-${c}`} reel={reel} rolls={(rolls.cols === cols && rolls.counts[c]) || 0} />
         ))}
       </ul>
     </div>
