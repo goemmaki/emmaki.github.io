@@ -840,8 +840,8 @@
 }
 .client-slot:hover .client-slot-name { color: var(--brand, var(--color-fg-max)); }
 
-/* About concepts (about-concepts.tsx): a figure set huge in the covers' Geist 600. */
-.about-figure {
+/* Figures (figures.tsx): set huge in the covers' Geist 600. */
+.figures-value {
   font-family: var(--font-heading);
   font-weight: var(--font-weight-announce);
   font-size: clamp(4rem, 9vw, 8.5rem);
@@ -849,8 +849,40 @@
   letter-spacing: -0.06em;
 }
 
-/* Testimonials (testimonials.tsx): the 7s fill moves to the next quote and holds while [data-held]. */
+/* Testimonials (testimonials.tsx): the 7s fill moves to the next quote and holds while [data-held].
+   The deck behind the card steps in from both sides, so it never widens the card on a phone. */
+.testimonials {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 22rem;
+  margin-block-end: 16px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--color-line);
+  border-radius: var(--shape-control-radius);
+  background: var(--color-canvas-secondary);
+}
+.testimonials::before,
+.testimonials::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset-block: 0 -8px;
+  inset-inline: 12px;
+  border: 1px solid var(--color-line);
+  border-radius: inherit;
+  background: var(--color-canvas);
+}
+.testimonials::after {
+  z-index: -2;
+  inset-block-end: -16px;
+  inset-inline: 24px;
+}
 .testimonials-line {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
   height: 1px;
   overflow: hidden;
   background: var(--color-line);

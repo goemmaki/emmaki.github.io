@@ -6,19 +6,11 @@ import { cn } from "@/lib/utils";
 
 export type Testimonial = { quote: string; name: string; role: string };
 
-// Client quotes on a timer, after bymonolog.com: a hairline fills left to right, and when it's full
-// the next quote rises in. Arrows step by hand, with a mono count beside them. The timer holds while
-// the quotes are hovered, focused or off screen; with reduced motion there's no timer and no rise,
-// only the arrows. Styles: "Testimonials" in globals.css.
-export function Testimonials({
-  items,
-  size = "sm",
-  className,
-}: {
-  items: Testimonial[];
-  size?: "sm" | "lg";
-  className?: string;
-}) {
+// Client quotes on a timer, as a card on a short deck: a hairline along the card's foot fills left
+// to right (after bymonolog.com), and when it's full the next quote rises in. The timer holds while
+// the card is hovered, focused or off screen; reduced motion leaves only the arrows. Styles:
+// "Testimonials" in globals.css.
+export function Testimonials({ items, className }: { items: Testimonial[]; className?: string }) {
   const [index, setIndex] = useState(0);
   const [held, setHeld] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -44,15 +36,10 @@ export function Testimonials({
       onFocus={() => setHeld(true)}
       onBlur={() => setHeld(false)}
     >
-      <div className="testimonials-line">
-        <span
-          key={index}
-          className="testimonials-fill"
-          data-held={held || !visible || undefined}
-          onAnimationEnd={() => go(1)}
-        />
-      </div>
-      <div className="mt-4 flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
+        <p className="type-meta text-fg-2">
+          {pad(index + 1)} / {pad(items.length)}
+        </p>
         <div className="flex gap-2">
           <button type="button" className="testimonials-button" aria-label="Previous quote" onClick={() => go(-1)}>
             <ArrowLeft className="size-4" aria-hidden />
@@ -61,17 +48,21 @@ export function Testimonials({
             <ArrowRight className="size-4" aria-hidden />
           </button>
         </div>
-        <p className="type-meta text-fg-2">
-          {pad(index + 1)} / {pad(items.length)}
-        </p>
       </div>
-      <div key={index} className="testimonials-quote">
-        <blockquote className={cn("mt-8 text-fg-max", size === "lg" ? "type-h3" : "type-editorial")}>
-          “{quote}”
-        </blockquote>
-        <figcaption className="mt-6 type-secondary text-fg-2">
-          <span className="text-fg-max">{name}</span>, {role}
+      <div key={index} className="testimonials-quote flex flex-1 flex-col justify-between gap-e1 pt-e1">
+        <blockquote className="type-h3 text-fg-max">“{quote}”</blockquote>
+        <figcaption className="type-secondary text-fg-2">
+          <span className="block text-fg-max">{name}</span>
+          {role}
         </figcaption>
+      </div>
+      <div className="testimonials-line">
+        <span
+          key={index}
+          className="testimonials-fill"
+          data-held={held || !visible || undefined}
+          onAnimationEnd={() => go(1)}
+        />
       </div>
     </figure>
   );
