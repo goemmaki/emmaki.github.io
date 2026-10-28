@@ -67,6 +67,8 @@ Final design for now (owner, 2026-10-29). The cover reads "Proof." with a yellow
 
 `/proof/placeholder` (2026-10-29) is blocked out to design the case-study pages from, after grafit.agency's case studies. It has the breadcrumb (the shared `Breadcrumb`, also on blog posts), a lorem headline at the blog title's size, and a frame of lines in grafit's proportions. The frame starts just over halfway down the first screen and runs past it, to invite the scroll. Below it are a sticky column of placeholder facts and placeholder sections in the blog's sizes. Not indexed by search engines.
 
+- **Note (owner, 2026-10-29):** the frame gets the Proof index's noisy, moving gradient across the whole grid, in each case study's client brand color, with faint lines over it. The design may take a few rounds.
+
 ## The research behind the order (owner, 2026-10-28)
 
 Published case studies the owner found. Claude hasn't checked the sources. Each one changed several things at once, so none isolates a single change, and they measured different outcomes on different sites.

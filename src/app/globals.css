@@ -1403,21 +1403,61 @@
 }
 
 /*
- * Case frame (proof/placeholder/page.tsx): one-pixel lines in grafit.agency's case-study proportions,
- * three stacked cells over five of twelve columns beside one over the other seven. Phones stack them.
+ * Case frame: one continuous brand field under faint hairlines, in grafit.agency's proportions.
+ * The frame scopes the canonical dark palette in either page theme; Geist figures and Plex prose.
  */
 .case-frame {
+  --case-line: color-mix(in srgb, var(--color-text-maximum) 16%, transparent);
+  --case-soft-ink: #f0e2e0;
+  /* Proof's analogous salmon companion, shaded with the crimson to reserve contrast for grain. */
+  --case-base: color-mix(in srgb, var(--case-brand) 85%, var(--color-canvas));
+  --case-companion: color-mix(in srgb, #e39380 40%, var(--color-canvas));
   display: grid;
-  grid-template-rows: repeat(3, 5rem) 16rem;
-  gap: 1px;
-  border: 1px solid var(--color-line);
-  background: var(--color-line);
+  border: 1px solid var(--case-line);
+  border-radius: 2px;
+  color: var(--color-text-maximum);
+  font-family: var(--font-body);
+  background-color: var(--color-canvas);
+  background-image: var(--case-noise, linear-gradient(transparent, transparent)), linear-gradient(115deg in srgb, var(--case-base) 10%, var(--case-companion) 55%, var(--case-base) 90%);
+  background-size: 96px 64px, 220% 100%;
+  background-position: 0 0, 50% 50%;
+  background-blend-mode: soft-light, normal;
 }
-.case-frame > div { background: var(--color-bg); }
+.case-frame-metrics { display: grid; grid-template-rows: repeat(3, minmax(0, 1fr)); }
+.case-frame-metric {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--case-line);
+}
+.case-frame-metric dt { color: var(--case-soft-ink); font-size: 1rem; line-height: 1.5; }
+.case-frame-metric dd {
+  order: -1;
+  font-family: var(--font-heading);
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+.case-frame-quote { display: flex; flex-direction: column; justify-content: center; gap: 32px; min-width: 0; min-height: 16rem; padding: 40px; }
+.case-frame-quote blockquote { max-width: 44ch; font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.03em; }
+.case-frame-quote figcaption { width: var(--case-quote-width, 100%); max-width: 100%; }
+.case-frame-name-line { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.case-frame-logo { flex: none; width: calc(20px * 373.9 / 93.9); height: 20px; background: currentColor; mask: url("/clients/harvard-on-dark.svg") center / contain no-repeat; }
+.case-frame-name { display: block; font-size: 1rem; font-weight: 500; line-height: 1.5; }
+.case-frame-role { display: block; color: var(--case-soft-ink); font-size: 0.875rem; line-height: 1.5; }
+@media (width < 48rem) {
+  .case-frame-metric { padding-inline: 24px; }
+  .case-frame-quote { padding: 32px 24px; }
+}
 @media (width >= 64rem) {
-  .case-frame { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); height: clamp(20rem, 46svh, 30rem); }
-  .case-frame > div { grid-column: 1 / span 5; }
-  .case-frame > div:last-child { grid-column: 6 / -1; grid-row: 1 / -1; }
+  .case-frame { grid-template-columns: repeat(12, minmax(0, 1fr)); min-height: clamp(20rem, 46svh, 30rem); }
+  .case-frame-metrics { grid-column: 1 / span 5; border-right: 1px solid var(--case-line); }
+  .case-frame-metric:last-child { border-bottom: 0; }
+  .case-frame-quote { grid-column: 6 / -1; }
 }
 
 /*
