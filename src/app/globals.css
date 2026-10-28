@@ -367,8 +367,6 @@
   font-size: min(9.5cqi, 5.5rem);
   line-height: 0.95;
   letter-spacing: -0.06em;
-}
-.brand-wall-name {
   transition: color 0.2s ease-out;
 }
 .brand-wall-name:hover {
