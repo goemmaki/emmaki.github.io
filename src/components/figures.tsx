@@ -11,7 +11,7 @@ export function Figures() {
             key={f.label}
             className="flex flex-col-reverse gap-2 border-b border-line py-6 last:border-b-0 @xl:border-b-0 @xl:border-r @xl:px-6 @xl:first:pl-0 @xl:last:border-r-0"
           >
-            <dt className="type-secondary text-fg-2">{f.label}</dt>
+            <dt className="type-secondary text-balance text-fg-2">{f.label}</dt>
             <dd className="figures-value text-fg-max">{f.value}</dd>
           </div>
         ))}
