@@ -34,6 +34,13 @@ Out of scope for stages 1–2: every other route, MDX and Content Collections, i
 - [x] M6 (2026-10-31): Home (`/`) reproduced and compared at wide/mobile, dark/light; browser interactions, check/build, invariant diff, and payload evidence recorded. Stop before M7.
 - [x] M7 (2026-10-31): About, Proof, Proof placeholder, Blog index, 404 and favicon implemented and compared in Firefox; all Next HTML routes and public assets have Astro output counterparts. Final check/build, route captures, payload and invariant evidence are recorded below. Residuals and the additional React islands are listed in Outcomes; stop for owner review.
 
+- [x] (2026-10-31, Owner) Approved: fix the logo hover flash and the four startup changes found in `runtime/flash/report.md`; build the parity tool and `astro/CONVENTIONS.md`. The microscopic refresh text flash stays unresolved (owner's Chrome layer-borders/paint-flashing test found no culprit).
+- [x] (2026-10-31, Codex) First version of `astro/scripts/parity.mjs` and `astro/CONVENTIONS.md` written; parity not yet calibrated (Firefox 3/32 pass, Chromium 0/32, partly Astro dev 504s, since cleared by a dev-server restart).
+- [ ] M8a: parity tool calibrated: pages already accepted as matching pass; real differences still fail.
+- [ ] M8b: dark-mode logo hover crossfade without the gray dip, on every page that shows client logos.
+- [ ] M8c: clock, case-frame grain, case-frame attribution width and bottom blur correct from first paint.
+- [ ] M8d: verified in Chromium and Firefox, both themes, both sizes; stop for owner review.
+
 ## Surprises & Discoveries
 
 - 2026-10-31: Node is now `22.23.4`, removing Astro 7.4.4's Node gate. Claude fixed the build by adding `@base-ui/react@1.8.0`, `lucide-react@1.48.0`, and dev dependency `@astrojs/check@0.9.12`; deduping React, React DOM, lucide-react, and Base UI; and setting Astro `publicDir` to the repository root `public/`. Duplicate React resolution had caused a `useContext`-of-null build crash. The correct `astro check` invocation now reports zero diagnostics; the earlier apparent pass was an interactive install prompt, not a check.
@@ -56,6 +63,7 @@ Out of scope for stages 1–2: every other route, MDX and Content Collections, i
 - 2026-10-31, M7: Headings matched for all five visual routes at wide/mobile and dark/light. About's quote carousel showed different timed quotes in two independent browser visits, causing the only main-text mismatch; all other route/theme main text matched. Settled Blog mobile measurements matched. Final full-page captures recorded a 6 px total-document-height difference on About mobile/dark (+6 Astro) and mobile/light (-6 Astro), Proof mobile/light (+6 Astro), and Proof placeholder mobile/dark (-6 Astro); main boxes matched, and no content/layout defect was isolated. Keep these small footer/document-height deltas open for owner review. `astro-island` wrappers and asset class names differ structurally from Next; they do not change the measured main boxes.
 - 2026-10-31, M7: Blog tagline visibility varied between captures (Astro/Next alternated which screenshot showed it), although the element and its measured box exist in both DOMs. Treat this as an unresolved capture-timing/overlay question, not a confirmed source-copy difference; review the final Blog screenshot pair if it is visually material.
 - 2026-10-31, M7: Firefox again reports the known Astro dev-toolbar request failure (`NS_ERROR_CORRUPTED_CONTENT` with an empty MIME type) and console error on each Astro route. Next has no equivalent. Page-level errors were absent; this is dev-only and not part of the static build.
+- 2026-10-31: Added `astro/scripts/parity.mjs` and `astro/CONVENTIONS.md`; README and this orientation link to the conventions. Full Firefox parity capture covered all eight HTML routes (including a not-found request), both themes and both sizes: 3/32 rows passed. Full Chromium capture also loaded, but 0/32 passed; its log records Astro dev-server 504 `Outdated Optimize Dep` errors, so Chromium pixel results are contaminated by dev-server asset failures. Firefox's remaining mismatches include pixels beyond the documented volatile masks and proof-placeholder mobile geometry; the six-pixel height and Blog tagline exceptions are reported separately. Reports are `runtime/parity/2026-10-31-final-firefox/summary.md` and `runtime/parity/2026-10-31-final-chromium/summary.md`. Do not treat these runs as full parity acceptance. A Chromium `FRAMES=1` smoke capture recorded and acknowledged three frames per site and wrote the changed-pixel timeline under `runtime/parity/frames-smoke/`; CDP frame capture is Chromium-only and viewport-sized.
 
 ## Decision Log
 
@@ -99,6 +107,8 @@ M7's source intentionally retains these client-rendered React islands: `SiteHead
 
 Checks for M7: `run-check -- pnpm --dir astro --ignore-workspace run check` passed with 0 errors/warnings/hints (`runtime/checks/20261031T202524Z-3-pnpm.log`); build passed (`runtime/checks/20261031T202531Z-99-pnpm.log`); final Firefox acceptance passed (`runtime/checks/20261031T202914Z-2-node.log`); static route/payload audit passed (`runtime/checks/20261031T202712Z-2-node.log`); the additional Blog diagnostic passed (`runtime/checks/20261031T202817Z-2-node.log`); Next-owned source/config/root-lock invariant diff passed empty (`runtime/checks/20261031T203121Z-3-bash.log`); `git diff --check` passed (`runtime/checks/20261031T203121Z-12-git.log`); favicon byte comparison passed (`runtime/checks/20261031T203121Z-2-cmp.log`). Earlier failed/interrupted attempts are retained in `runtime/checks/` and superseded by these final passes. No commit was made. This task's explicit write limit excluded `docs/journal/` and `docs/handoffs/`, so the repository-mandated journal entry and handoff were not written. The session-added ignored root `.pnpm-store/` artifact was removed; final `git status` contains only the allowed Astro and ExecPlan changes.
 
+Parity-tool checks for 2026-10-31: `run-check -- node --check astro/scripts/parity.mjs` passed (`runtime/checks/20261031T214926Z-3-node.log`); `run-check -- git diff --check` passed (`runtime/checks/20261031T214926Z-18-git.log`). Full Firefox parity exited 1 after 3/32 rows passed (`runtime/checks/20261031T213853Z-2-env.log`); full Chromium parity exited 1 after 0/32 rows passed (`runtime/checks/20261031T214352Z-2-env.log`). Chromium `FRAMES=1` smoke exercised the timeline output but the parity command exited 1 for the row's visual differences (`runtime/checks/20261031T214901Z-2-env.log`). The last focused Firefox proof-placeholder mobile capture also exited 1 on visual/geometry differences (`runtime/checks/20261031T214926Z-2-env.log`). These failures are evidence, not passing acceptance checks.
+
 M7 JavaScript estimate (external bundle files plus inline executable scripts; gzip is summed per file/block and is not observed transfer size):
 
 | Route | Astro files | Astro raw / gzip | Next files | Next raw / gzip |
@@ -116,6 +126,8 @@ M7 JavaScript estimate (external bundle files plus inline executable scripts; gz
 
 Where it runs: repository `goemmaki/emmaki.github.io`, worktree `/home/emma/worktrees/fiverr-portfolio/astro-migration-20261031`, branch `design/astro-migration-20261031`. If the worktree is missing:
 
+For Astro-specific implementation and parity conventions, read [`astro/CONVENTIONS.md`](../../astro/CONVENTIONS.md).
+
     git -C /home/emma/fiverr-portfolio worktree add ~/worktrees/fiverr-portfolio/astro-migration-20261031 design/astro-migration-20261031
 
 Resume routine, before any new work:
@@ -125,6 +137,8 @@ Resume routine, before any new work:
     # read Progress above, then run the latest completed milestone's checks again
 
 Orientation (read these before editing):
+
+- `astro/CONVENTIONS.md`: Astro implementation and parity rules.
 
 - `AGENTS.md`: owner rules (American English; settled motion decisions; gsap stays installed). Its auto-generated Next.js block applies to the Next app only.
 - `docs/design-system/DESIGN.md` ("Motion") and `docs/design-system/ARCHITECTURE.md`.
@@ -231,6 +245,29 @@ Proof as in M3/M4: Firefox screenshots 1440×900 and 390×844, both themes, into
 Proof per route as in M6, into `runtime/astro-migration/m7/`. Finally list every route in `../a11y-20261028/out/` and confirm each has an Astro counterpart in `astro/dist/`, with a JS-size table for all routes.
 
 Then stop and update `Outcomes & Retrospective` for stage 3, including the full list of React islands that remain.
+
+### M8: Parity tool calibration, logo hover and first-paint fixes
+
+These are deliberate improvements over Next: after M8, Astro's **settled** pages must still match Next, but its first frames and logo hover intentionally differ. Evidence and the browser-only prototypes are in `runtime/flash/report.md` (`hover-additive.mjs`, the `initial-grain` and `initial-blur` capture modes).
+
+**M8a, calibrate `astro/scripts/parity.mjs` first.** A tool that reports almost everything as different hides real regressions. Make it pass on pages already accepted as matching (Brands, the article, Home) and still fail on a deliberately injected 1 px shift or color change (prove both). Likely causes to check: continuous motion not masked or not paused (status pulse, client-logo reel, grain, footer drift, nebula, ASCII), captures before entrance effects settle, scroll position, dev overlays, sub-pixel antialiasing noise thresholds. Prefer pausing animations deterministically (`document.getAnimations()` paused at a fixed time, a fixed seed or frozen `requestAnimationFrame` for canvases) over masking large regions; keep masks small and listed at the top of the script. Allow comparing against production builds too (`REF=http://127.0.0.1:3006`, `NEW=http://127.0.0.1:3005`; 3006 is a 2026-10-29 Next export and may be slightly stale). The six-pixel mobile height deltas recorded in M7 may remain as declared known differences.
+
+**M8b, logo hover (dark theme only; light theme stays exactly as it is).** Fill animation is not possible: most dark-theme logo files are PNGs. Implement the isolated additive crossfade Codex measured: a second copy of the same image at identical position and size, the monochrome copy keeping today's `brightness(0) invert(1)` filter, the color copy unfiltered, complementary opacities over the existing 0.2 s ease-out, both copies in an isolated group with `mix-blend-mode: plus-lighter`. Keep the original artwork, `alt`/decorative semantics, the hover pause and resume of the reel, reel timing, any hover movement and reduced-motion behavior. No new image requests for the copy. It must work everywhere client logos appear: Home (`astro/src/components/ClientSlots.astro`) and About (`AboutConcepts` island, which uses `src/components/client-slots.tsx`). Do not edit `src/`: put CSS in `astro/src/styles/site.css` and, if About needs a markup change, fork the needed component into `astro/` with a Decision Log entry (About is on the no-React list anyway).
+
+**M8c, first paint equals the settled page:**
+
+- Clock (header island via `src/components/local-clock.tsx`, and any footer clock): the text and status must be in the first paint. Use markup plus a tiny inline script immediately after the element that computes the same value synchronously (same time zone, format and online/offline rule), and make sure hydration or the later timer does not clear or re-insert it. If the header island prevents this, move the clock out of the island into Astro markup at the identical position, or fork, with a Decision Log entry.
+- Case-frame grain (`/proof/placeholder`): noisy from the first paint. Supply an initial noise tile with the same size, alpha and blend as the live one (as `initial-grain` proved), then let the existing 20 Hz update take over unchanged.
+- Case-frame attribution width (`--case-quote-width`, longest quote line): correct before first paint on a warm reload. Measure in an inline script right after the element (same Range-based method), and re-measure on `document.fonts.ready` and resize as now. Porting `CaseFrame` to `.astro` plus vanilla TypeScript is allowed here (it is on the no-React list); keep the grain algorithm and timing.
+- Bottom blur: emit the eight layers in `Base.astro` markup as Next's `bottom-blur.tsx` does; the script only manages behavior.
+
+**M8d, verify:** Chromium (headless shell) and Firefox, both themes, 1440×900 and 390×844:
+
+- `FRAMES=1` warm-reload timelines on `/`, `/proof/placeholder` and the article: clock, grain texture, attribution and bottom blur do not change after the first captured frame (except the grain's normal ongoing animation, compare against the `runtime/flash/` before-captures).
+- Hover: rerun the fixed-pixel measurement (`runtime/flash/hover-fixed-pixels.mjs` approach) on Home and About, dark and light: dark has no gray dip, light is unchanged from before, endpoints match today's.
+- Calibrated parity of settled pages against Next for all routes; `astro check`, build, invariant diff.
+
+Then stop for the owner's review in Chrome.
 
 ## Validation and Acceptance
 
