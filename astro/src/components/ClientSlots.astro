@@ -29,7 +29,9 @@ if (strip && list) {
     reel.replaceChildren(...[brands[shown[c] % brands.length], brands[(shown[c] + 1) % brands.length]].map((brand) => {
       const logo = document.createElement('span'); logo.className = 'client-slot-logo';
       for (const [file, cls] of [[brand.logo.light, 'client-logo-on-light'], [brand.logo.dark, 'client-logo-on-dark']]) {
-        const img = document.createElement('img'); img.src = `/clients/${file}`; img.alt = ''; img.className = cls; logo.append(img);
+        const img = document.createElement('img'); img.src = `/clients/${file}`; img.alt = ''; img.className = cls;
+        const copy = img.cloneNode(false) as HTMLImageElement; copy.classList.add('client-logo-color-copy'); copy.setAttribute('aria-hidden', 'true'); copy.dataset.colorCopy = '';
+        logo.append(img, copy);
       }
       return logo;
     }));

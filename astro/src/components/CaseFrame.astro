@@ -1,0 +1,56 @@
+---
+interface Props { brandColor: string; clientName: string }
+const { brandColor, clientName } = Astro.props;
+const metrics = [
+  { value: '00%', label: 'Lorem ipsum dolor sit amet' },
+  { value: '000', label: 'Consectetur adipiscing elit' },
+  { value: '00 → 00', label: 'Sed do eiusmod tempor' },
+];
+---
+<div data-case-frame data-theme="dark" class="case-frame mt-e2" style={`--case-brand:${brandColor}`}>
+  <dl class="case-frame-metrics" aria-label="Placeholder results">
+    {metrics.map(({ value, label }) => <div class="case-frame-metric"><dt>{label}</dt><dd>{value}</dd></div>)}
+  </dl>
+  <figure class="case-frame-quote">
+    <blockquote><p data-case-quote>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p></blockquote>
+    <figcaption>
+      <span class="case-frame-avatar" aria-hidden="true"></span>
+      <span class="case-frame-person"><span class="case-frame-name">Name Surname</span><span class="case-frame-role">Role</span></span>
+      <span class="case-frame-logo" role="img" aria-label={clientName}></span>
+    </figcaption>
+  </figure>
+</div>
+<script is:inline>
+  (function(){var field=document.querySelector('[data-case-frame]'),quote=document.querySelector('[data-case-quote]');if(!field||!quote)return;
+  function noise(){var c=document.createElement('canvas');c.width=96;c.height=64;var x=c.getContext('2d');if(!x)return;var p=x.createImageData(96,64);var seed=123456;for(var i=0;i<p.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)>>>0;var g=seed>>>24;p.data[i]=p.data[i+1]=p.data[i+2]=g;p.data[i+3]=64}x.putImageData(p,0,0);field.style.setProperty('--case-noise','url("'+c.toDataURL()+'")')}
+  function measure(){var range=document.createRange();range.selectNodeContents(quote);var rects=Array.from(range.getClientRects());if(rects.length)field.style.setProperty('--case-quote-width',Math.max.apply(null,rects.map(function(r){return r.width}))+'px')}
+  noise();measure();document.fonts.load('400 20px "IBM Plex Sans"',quote.textContent||'').then(measure);document.fonts.ready.then(measure);addEventListener('resize',measure,{passive:true})})();
+</script>
+<script>
+  const field = document.querySelector<HTMLElement>('[data-case-frame]');
+  if (field) {
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const tile = document.createElement('canvas'); tile.width = 96; tile.height = 64;
+    const ctx = tile.getContext('2d');
+    if (ctx) {
+      const pixels = ctx.createImageData(tile.width, tile.height);
+      let frame = 0, last = -Infinity, visible = false;
+      function paint(time: number) {
+        for (let i = 0; i < pixels.data.length; i += 4) {
+          const gray = Math.floor(Math.random() * 256);
+          pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = gray; pixels.data[i + 3] = 64;
+        }
+        ctx!.putImageData(pixels, 0, 0);
+        field!.style.setProperty('--case-noise', `url("${tile.toDataURL()}")`);
+        field!.style.backgroundPosition = `0 0, ${50 + Math.sin(time / 1600) * 45}% 50%`;
+      }
+      function draw(time: number) { if (time - last >= 50) { last = time; paint(time); } frame = requestAnimationFrame(draw); }
+      const stop = () => { cancelAnimationFrame(frame); frame = 0; };
+      const sync = () => { stop(); if (visible && !document.hidden && !motion.matches) { last = -Infinity; frame = requestAnimationFrame(draw); } };
+      paint(0);
+      const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }); observer.observe(field);
+      document.addEventListener('visibilitychange', sync); motion.addEventListener('change', sync);
+    }
+  }
+</script>

@@ -21,6 +21,18 @@
   font-weight: 100 900;
   src: url("../../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2-variations");
 }
+
+/* Additive logo fill crossfade: the monochrome and color artwork share one isolated cell. */
+.client-slot-logo { position: relative; isolation: isolate; }
+.client-slot-logo img { transition: filter 0.2s ease-out, opacity 0.2s ease-out; }
+.client-slot-logo img.client-logo-color-copy { mix-blend-mode: plus-lighter; }
+:root:not([data-theme="light"]) .client-slot-logo img:not(.client-logo-color-copy) { mix-blend-mode: plus-lighter; }
+.client-slot-logo img.client-logo-color-copy { position: absolute; inset: 0; margin: auto; filter: none; opacity: 0; }
+.client-slot:hover .client-slot-logo img:not(.client-logo-color-copy) { opacity: 0; }
+.client-slot:hover .client-slot-logo img.client-logo-color-copy { opacity: 1; }
+[data-theme="light"] .client-slot-logo img.client-logo-color-copy { display: none; }
+[data-theme="light"] .client-slot:hover .client-slot-logo img:not(.client-logo-color-copy) { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .client-slot-logo img { transition-duration: 0s; } }
 @font-face {
   font-family: "Source Serif 4 Variable";
   font-style: italic;

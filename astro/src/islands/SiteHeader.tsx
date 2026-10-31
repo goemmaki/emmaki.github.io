@@ -6,7 +6,6 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { FiverrLogo } from "@/components/fiverr-logo";
-import { LocalClock } from "@/components/local-clock";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Wordmark } from "@/components/wordmark";
 
@@ -123,7 +122,10 @@ export function SiteHeader({ pathname }: { pathname: string }) {
 
         {/* -mr-3: the menu glyph, not its 44px target, sits on the gutter */}
         <div className="-mr-3 flex items-center">
-          <LocalClock className="mr-4 hidden sm:flex" />
+          <span data-local-clock className="items-baseline gap-1.5 whitespace-nowrap font-heading text-sm mr-4 hidden sm:flex">
+            <span data-local-clock-value className="font-medium text-fg-max" suppressHydrationWarning><span data-local-clock-time className="tabular-nums" suppressHydrationWarning>00:00</span>{' '}EET</span>
+            <span data-local-clock-status className="font-thin uppercase text-fg-max" suppressHydrationWarning>Offline</span>
+          </span>
           <ThemeToggle />
           <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger

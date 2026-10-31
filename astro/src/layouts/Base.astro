@@ -1,6 +1,7 @@
 ---
 import { SiteHeader } from '../islands/SiteHeader.tsx';
 import { BackToTop } from '../islands/BackToTop.tsx';
+import plexSans400 from '../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
 import '../styles/site.css';
 
 interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string }
@@ -15,6 +16,7 @@ const pathname = Astro.url.pathname;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
+    <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" />
     <meta name="description" content={description} />
     <title>{title}</title>
@@ -24,6 +26,7 @@ const pathname = Astro.url.pathname;
   <body class="flex min-h-dvh flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
     <SiteHeader pathname={pathname} client:load />
+    <script is:inline>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:'Europe/Athens',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=day>=1&&day<=5&&hour>=10&&hour<18?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
     <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
     <footer>
       <div class="footer relative overflow-hidden" data-footer>
@@ -49,7 +52,12 @@ const pathname = Astro.url.pathname;
         </div>
       </div>
     </footer>
-    <div aria-hidden="true" class="bottom-blur" data-bottom-blur></div>
+    <div aria-hidden="true" class="bottom-blur" data-bottom-blur>
+      { [0.75, 0.875, 1.125, 2.25, 4.5, 9, 18, 48].map((radius, i) => {
+        const at = (n: number) => `${Math.min(100, Math.max(0, n * 12.5))}%`;
+        return <div style={`--blur:${radius}px;--a:${at(i)};--b:${at(i + 1)};--c:${at(i + 2)};--d:${at(i + 3)}`} />;
+      }) }
+    </div>
   <script>
   const footer = document.querySelector<HTMLElement>('[data-footer]');
   const verb = footer?.querySelector<HTMLElement>('[data-footer-verb]');
@@ -87,15 +95,8 @@ const pathname = Astro.url.pathname;
   const years = document.querySelector<HTMLElement>('[data-copyright-years]');
   if (years && now > 2026) years.textContent = `2026–${now}`;
 
-  const layers = [0.75, 0.875, 1.125, 2.25, 4.5, 9, 18, 48];
   const blur = document.querySelector<HTMLElement>('[data-bottom-blur]');
   if (blur) {
-    for (const [i, radius] of layers.entries()) {
-      const at = (n: number) => `${Math.min(100, Math.max(0, n * 12.5))}%`;
-      const layer = document.createElement('div');
-      layer.style.cssText = `--blur:${radius}px;--a:${at(i)};--b:${at(i + 1)};--c:${at(i + 2)};--d:${at(i + 3)}`;
-      blur.append(layer);
-    }
     let settle = 0;
     const atEnd = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
     const update = () => {

@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageClosing from '../../components/PageClosing.astro';
-import { CaseFrame } from '@/components/case-frame';
+import CaseFrame from '../../components/CaseFrame.astro';
 import { AiBadges } from '@/components/page-tools';
 import { BRANDS, FIVERR_PROFILE_URL } from '@/lib/content';
 const client = BRANDS.find((brand) => brand.name === 'Harvard University');
@@ -17,7 +17,7 @@ const sectionHeading = 'font-heading font-normal text-(length:--type-heading-h3-
   <section class="shell pt-[clamp(8rem,20svh,11rem)]">
     <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li class="shrink-0"><a href="/proof" class="quiet-link">Case studies</a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">Placeholder</li></ol></nav>
     <h1 class="mt-8 max-w-[22ch] font-heading font-normal text-[clamp(2rem,2.8vw,2.5rem)] leading-[1.15] tracking-[-0.03em] text-fg-max text-pretty">{TITLE}</h1>
-    <CaseFrame brandColor={client.color} clientName={client.name} client:load />
+    <CaseFrame brandColor={client.color} clientName={client.name} />
   </section>
   <div class="shell mt-e3 grid gap-y-e1 lg:grid-cols-12">
     <aside class="lg:col-span-3 lg:self-start lg:sticky lg:top-28">
