@@ -40,6 +40,12 @@ Out of scope for stages 1–2: every other route, MDX and Content Collections, i
 - [x] M8b (2026-11-01): dark-only additive logo crossfade verified on Home and About in Chromium and Firefox at both themes and sizes. About now pairs both source variants; 20 color copies pair with 20 originals across 10 slots, including after concept switching. Screenshots and computed endpoints: `runtime/astro-migration/m8/hover-evidence/` and `hover-evidence.json`.
 - [x] M8c (2026-11-01): first-paint clock placeholders, deterministic initial grain, font-aware attribution remeasurement, and eight static bottom-blur layers implemented. The 24-case FCP probe passes 23/24; one Firefox light/mobile case still measures fallback-font quote width at FCP (294.78 px) before settling to 286.27 px. This remains an explicit residual, not a full first-frame pass.
 - [x] M8d (2026-11-01): current build checked in both engines, both themes and sizes; detailed residuals and Chrome owner checks are below. Stop for owner review.
+- [x] (2026-11-01, Owner) M8 reviewed in Chrome: pixelation and the case-card gradient are fixed; the refresh glitch, dark logo hover and several new glitches remain. All recorded in the owner's words in `docs/visual-polish-backlog.md`, to fix **after** the migration merges; none blocks it. Owner: finish the no-React work, verify, merge.
+- [ ] M9a: small widgets without React (clock hours, back-to-top tooltip, page and post tools, AI badges).
+- [ ] M9b: FAQ, header menu dialog and About without React.
+- [ ] M9c: Proof index, ASCII image and 404 nebula in vanilla TypeScript; React removed from `astro/`.
+- [ ] M10: retire the Next app; Astro becomes the site.
+- [ ] M11: full verification, owner review, fast-forward `design/foundation`.
 
 ## Surprises & Discoveries
 
@@ -286,6 +292,32 @@ These are deliberate improvements over Next: after M8, Astro's **settled** pages
 - Calibrated parity of settled pages against Next for all routes; `astro check`, build, invariant diff.
 
 Then stop for the owner's review in Chrome.
+
+### M9: No React
+
+Goal: `astro/` ships no React, `@astrojs/react`, Base UI or lucide-react, with every widget behaving, looking and announcing exactly as on Next (port 3003). Rules for all of M9, also in `astro/CONVENTIONS.md`:
+
+- `.astro` markup plus small vanilla TypeScript (`<script>` modules, or `is:inline` only where first paint needs it). Native HTML first: `<dialog>`, `<details>`/`hidden="until-found"`, the popover API, `inert`. Icons: inline the same lucide SVG paths (same size, stroke, `aria-hidden`), no icon package.
+- Keyboard, focus order, focus return, Escape, ARIA roles/names/states, reduced motion and timings must match the Next widget. Read the Base UI behavior from the Next DOM in the browser, not from memory.
+- First paint equals the settled page; no hydration step means no post-load swap.
+- Do not edit `src/` (the Next app stays untouched until M10). Shared data stays imported from `src/lib`; forked components live in `astro/src/`.
+- Lumos v1.0.2's Modal and Dropdown (`~/studio/runtime/lumos-eval-20261031/vendor/lumos-v1.0.2`) may be read as references for native patterns; copy no code or styles.
+- The visual-polish backlog (`docs/visual-polish-backlog.md`) is out of scope: do not try to fix those glitches, but report if a replacement visibly changes one (for example items 4 and 5 involve the header menu).
+- Per milestone: `astro check`, build, invariant diff, calibrated `parity.mjs` for the touched routes (production builds, Chromium and Firefox, both themes, 1440×900 and 390×844), and a Playwright keyboard/ARIA script for each replaced widget run against both Next (3003) and Astro, comparing results. Evidence under `runtime/astro-migration/m9*/`.
+
+**M9a.** (1) The inline clock in `Base.astro` hardcodes Mon–Fri 10–18 Europe/Athens; take the values from `WORK_HOURS` in `src/lib/content.ts` (e.g. `define:vars`) so there is one source. (2) `BackToTop` and its delayed tooltip (`src/components/tooltip-link.tsx`): same delay, placement, animation and accessible name. (3) `PostTools` / `PageTools` menus (copy Markdown, open in AI tools) and `AiBadges` on `/proof/placeholder`: popover plus a small keyboard menu script (arrow keys, Home/End, Escape, focus return, typeahead only if Base UI has it there).
+
+**M9b.** (1) FAQ (`src/components/faq.tsx`): `<details>`-free or `<details>`, whichever keeps the current animation and `hidden="until-found"` find-in-page (Ctrl+F opens the answer) identical. (2) Header menu dialog in `SiteHeader`: native `<dialog>` (or equivalent) with the same open/close animation, blur overlay, focus trap, Escape, focus return and scroll lock; the clock and theme toggle become Astro markup. (3) `AboutConcepts`: concept switching, testimonials, query concepts and the paired logo copies from M8b.
+
+**M9c.** Port `ProofIndex`, `AsciiImage` (blog index masks) and `NebulaField` (404) to `.astro` plus vanilla TypeScript, same algorithms, timings, seeds and reduced-motion behavior. Then remove `@astrojs/react`, react, react-dom, `@types/react*`, Base UI and lucide-react from `astro/package.json`, the `react()` integration and the dedupe list, and prove no `.tsx` is imported by `astro/` and the built `dist/` contains no React.
+
+### M10: Retire Next
+
+Astro becomes the only site. Move `astro/` to the repository root (its `package.json`, lockfile, config, `src/`, scripts, CONVENTIONS) and the still-needed shared modules from `src/lib` into Astro's `src/lib`; delete the Next app, its config, dependencies and lockfile, and any `src/` module nothing imports. Keep `public/` at the root as Astro's normal `public/`. Update `AGENTS.md`, `README.md`, `docs/design-system/ARCHITECTURE.md`, `docs/checks/`, skills that name Next paths or commands, and `parity.mjs` defaults (reference stays the Next a11y worktree on 3003; new is the root Astro build). Build output must be static files GitHub Pages can serve; record the deploy step the owner will need (there is no workflow today), but change no deploy settings. The Next invariant is retired with this milestone.
+
+### M11: Verify and merge
+
+Full calibrated parity on every route against Next 3003, keyboard/ARIA scripts, `astro check`, build, both engines, themes and sizes; owner reviews in Chrome. On the owner's "merge": fast-forward `design/foundation` (never `main`). The primary checkout `~/fiverr-portfolio` has uncommitted changes on `design/foundation`, so the fast-forward is done without disturbing them, with the owner's agreement.
 
 ## Validation and Acceptance
 
