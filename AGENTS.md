@@ -27,6 +27,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
+- Visual glitches and polish to fix after the Astro migration merges, in the owner's words: [docs/visual-polish-backlog.md](docs/visual-polish-backlog.md).
 - New client or a logo to replace: follow [.claude/skills/client-logo/SKILL.md](.claude/skills/client-logo/SKILL.md).
 - Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
 - Astro migration (latest, 2026-10-31, branch `design/astro-migration-20261031`): resume from [docs/handoffs/20261031-astro-migration.md](docs/handoffs/20261031-astro-migration.md).
