@@ -1,0 +1,41 @@
+---
+interface Entry { id: string; text: string }
+const { entries } = Astro.props as { entries: Entry[] };
+const ticks = (entries.length - 1) * 6 + 1;
+---
+<nav aria-label="On this page" class="relative pl-10" data-post-toc>
+  <div aria-hidden="true" class="absolute left-0 top-[8.5px] flex flex-col gap-[5px]" data-toc-rail>
+    {Array.from({length:ticks}, () => <div class="h-px w-3 origin-left bg-(--toc-tick)"></div>)}
+  </div>
+  <ol class="flex flex-col gap-[18px] font-sans text-sm leading-[18px]" data-toc-list>
+    {entries.map(({id,text}) => <li><a href={`#${id}`} data-toc-link={id} class="block truncate [color:color-mix(in_oklab,var(--color-fg-max)_calc(var(--near,0)*100%),var(--color-fg-2))] hover:text-fg-max focus-visible:text-fg-max">{text}</a></li>)}
+  </ol>
+</nav>
+<script>
+const nav = document.querySelector<HTMLElement>('[data-post-toc]');
+if (nav) {
+  const ticks = [...nav.querySelectorAll<HTMLElement>('[data-toc-rail] > div')];
+  const links = [...nav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')];
+  const headings = links.map(link => document.getElementById(link.dataset.tocLink!));
+  if (headings.some(heading => !heading)) throw new Error('PostToc: a heading id is missing from the page');
+  const progress = () => {
+    const y = scrollY + 112; const tops = headings.map(heading => heading!.getBoundingClientRect().top + scrollY); const last = tops.length - 1;
+    if (y <= tops[0]) return 0; if (y >= tops[last]) return last;
+    let i = 0; for (let n=1;n<tops.length;n++) { if (tops[n] <= y) i=n; else break; }
+    return i + (y - tops[i]) / Math.max(1, tops[i+1] - tops[i]);
+  };
+  let frame = 0;
+  const update = () => {
+    frame = 0; const p = progress();
+    ticks.forEach((tick,r) => { const w = Math.max(0,1-Math.abs(r-p*6)/3)**3; tick.style.backgroundColor = `color-mix(in oklab,var(--color-fg-max) ${w*100}%,var(--toc-tick))`; tick.style.transform = `scaleX(${1+w})`; });
+    links.forEach((link,k) => { link.style.setProperty('--near',String(Math.max(0,1-Math.abs(k-p))**2)); if(k===Math.round(p)) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current'); });
+  };
+  const schedule = () => { if (!frame) frame=requestAnimationFrame(update); };
+  update(); addEventListener('scroll',schedule,{passive:true}); addEventListener('resize',schedule,{passive:true});
+  links.forEach(link => link.addEventListener('click',event => {
+    const heading = document.getElementById(link.dataset.tocLink!); if (!heading) return;
+    event.preventDefault(); scrollTo({top:heading.getBoundingClientRect().top+scrollY-112,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    history.replaceState(null,'',`#${link.dataset.tocLink}`); heading.focus({preventScroll:true});
+  }));
+}
+</script>

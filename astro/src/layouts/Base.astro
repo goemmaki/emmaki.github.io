@@ -3,10 +3,10 @@ import { SiteHeader } from '../islands/SiteHeader.tsx';
 import { BackToTop } from '../islands/BackToTop.tsx';
 import '../styles/site.css';
 
-interface Props { pageTitle?: string; description?: string }
+interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string }
 
-const { pageTitle, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.' } = Astro.props;
-const title = pageTitle ? `${pageTitle} — Emmaki` : 'Emmaki — Senior copy & AI content strategy';
+const { pageTitle, pageTitleAbsolute = false, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.' } = Astro.props;
+const title = pageTitle ? (pageTitleAbsolute ? pageTitle : `${pageTitle} — Emmaki`) : 'Emmaki — Senior copy & AI content strategy';
 const pathname = Astro.url.pathname;
 ---
 <!doctype html>
@@ -17,6 +17,7 @@ const pathname = Astro.url.pathname;
     <meta name="darkreader-lock" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <slot name="head" />
     <script is:inline>(function(){try{var d=document.documentElement;var t=localStorage.getItem("emmaki-theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}})()</script>
   </head>
   <body class="flex min-h-dvh flex-col">

@@ -1,0 +1,8 @@
+---
+interface Props { name: 'home'|'chevron'|'clock'|'list' }
+const { name } = Astro.props;
+---
+{name === 'home' && <svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-8h6v8"/></svg>}
+{name === 'chevron' && <svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>}
+{name === 'clock' && <svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>}
+{name === 'list' && <svg viewBox="0 0 24 24" class="size-4 text-fg-2" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l5 5v13H3V3z"/><path d="M8 3v6h8V3M8 14h8m-8 4h8"/></svg>}

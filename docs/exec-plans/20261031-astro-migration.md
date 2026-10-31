@@ -1,4 +1,4 @@
-# Migrate the emmaki site to Astro, stage 1: scaffold, shared shell and Brands
+# Migrate the emmaki site to Astro: scaffold, shell, Brands, then the placeholder article
 
 This ExecPlan is a living document. Keep `Progress`, `Surprises & Discoveries`, `Decision Log` and `Outcomes & Retrospective` current as work proceeds.
 
@@ -12,9 +12,11 @@ The long-term target is Astro with no React. The route there is staged:
 2. Components whose behavior is plain DOM or canvas code inside React effects are ported to vanilla TypeScript in `.astro` components as they are migrated.
 3. Components built on Base UI widgets (`site-header.tsx` dialog, `faq.tsx` accordion, `tooltip-link.tsx`, `page-tools.tsx` menus), and anything that contains one, stay React islands for now. Replacing them is a later stage the owner will decide on.
 
-**This stage ends when the Brands page (`/brands`) renders in Astro inside the full site shell (header, footer, bottom blur, page closing, theme) and looks and behaves the same as the Next version, and the Next version still works unchanged.** Then work stops so the owner can compare the two live: Next on port 3003 (the a11y worktree, already running) and Astro on port 3004.
+**Stage 1 (M1–M3, done and owner-approved 2026-10-31, commit `1b7f7980`) ended when the Brands page (`/brands`) renders in Astro inside the full site shell (header, footer, bottom blur, page closing, theme) and looks and behaves the same as the Next version, and the Next version still works unchanged.** Then work stops so the owner can compare the two live: Next on port 3003 (the a11y worktree, already running) and Astro on port 3004.
 
-Out of scope for this stage: every other route, MDX and Content Collections, image pipeline, video, removing React islands, deleting the Next app, deployment changes.
+**Stage 2 (M4) ends when the placeholder article (`/blog/placeholder-post`) renders in Astro and looks and behaves the same as the Next version** (`http://localhost:3003/blog/placeholder-post`). Then work stops again for owner review.
+
+Out of scope for stages 1–2: every other route, MDX and Content Collections, image pipeline, video, removing React islands, deleting the Next app, deployment changes.
 
 ## Progress
 
@@ -23,6 +25,8 @@ Out of scope for this stage: every other route, MDX and Content Collections, ima
 - [x] M1 (2026-10-31): Node is `22.23.4`; isolated Astro check reports 0 errors/warnings/hints, build emits `/brands` and `/`, both local sites respond, and the Next invariant diff is empty.
 - [x] M2 (2026-10-31): Playwright Firefox acceptance completed against Astro `:3004` and Next `:3003`: menu focus/Escape, both theme toggles and reload persistence, clock/footer/back-to-top, and reduced motion match. No page or console errors.
 - [x] M3 (2026-10-31): Brands screenshots captured at both requested viewport sizes and themes. Brand hover color, sticky note, fonts-ready page-closing width, and footer interactions match. Static route JS was counted in both builds. No parity fix was needed; stop here for owner comparison.
+- [x] (2026-10-31, Owner) Stage 1 reviewed live and approved; committed as `1b7f7980`.
+- [x] M4 (2026-10-31): `/blog/placeholder-post` is statically emitted and matches the Next article in Firefox at both viewport sizes and themes, including content, geometry, TOC, FAQ keyboard open/close, menus, copied Markdown, touch spotlight, reduced motion, and sticky-frame geometry. Check/build, browser acceptance, payload and invariant checks pass. Differences and limits are recorded below; stop for owner review.
 
 ## Surprises & Discoveries
 
@@ -43,6 +47,12 @@ Out of scope for this stage: every other route, MDX and Content Collections, ima
 - 2026-10-31, Codex: The exact exported Next `/brands` metadata is the site default title `Emmaki — Senior copy & AI content strategy` and description `Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.` The Astro Brands route uses these unchanged values.
 - 2026-10-31, Claude: `astro/src/islands/SiteHeader.tsx` is a temporary fork of `src/components/site-header.tsx`; only Next-specific `next/link` and `usePathname` integrations were replaced. Keep the fork visible for synchronization or eventual replacement as the owner advances the no-React migration.
 - 2026-10-31, Codex: Astro build must dedupe `react`, `react-dom`, `lucide-react`, and `@base-ui/react` because shared imports resolve through the repository root alias; without dedupe, a second React copy breaks Base UI context. Astro points `publicDir` at the existing root `public/`, avoiding copied assets.
+- 2026-10-31, Claude: `<main id="content" tabindex="-1">` stays, although Astro's dev-toolbar audit flags it. It is the focus target for the skip link and back-to-top (same as the Next layout); `-1` is the audit's own recommended form, and the toolbar is dev-only. Owner confirmed keyboard behavior works.
+- 2026-10-31, Claude: While the Next app still exists, shared content stays in `src/lib/` (`content.ts`, `posts.ts`, `post-format.ts`) and Astro imports it. Moving posts to Content Collections/MDX is a later stage, after Next is retired, so there is never a second authority for a post.
+- 2026-10-31, Codex: Firefox reports `CSS.supports('animation-timeline: scroll()') === false` on both live sites, so both intentionally show the non-pixelated cover fallback in this browser. Sticky photo-frame geometry matched at scroll positions 0, 200, 405, 600, 899, and 1200 px. Pixelation cannot be visually compared in Firefox.
+- 2026-10-31, Codex: Spotlight exit did not match in the Playwright Firefox probe: Astro cleared `cover-lit`/`data-cover-torch`, while Next retained `cover-lit` after the pointer left. The copied handler follows the same pointer bounds and event approach; left as an owner-review difference pending confirmation with a real pointer/device.
+- 2026-10-31, Codex: Both live pages render FAQ answers with Base UI `hidden="until-found"`; keyboard Enter opens/closes them on both. Firefox's scripted `window.find`/Playwright find probe did not reliably exercise browser find-in-page or expose an opened panel, so native find-in-page behavior remains unverified.
+- 2026-10-31, Codex: Astro's dev toolbar client request fails in Firefox (`NS_ERROR_CORRUPTED_CONTENT`, empty MIME type) and logs a console error; Next has no such error. This is dev-only toolbar code; production Astro check/build pass and article interactions work. Do not interpret it as an article parity failure.
 
 ## Outcomes & Retrospective
 
@@ -118,6 +128,40 @@ Proof, against the Next page on `http://localhost:3003/brands`:
 
 Then stop. Fill in `Outcomes & Retrospective`, including what the owner should look at and any open decisions.
 
+### M4: Placeholder article
+
+`astro/src/pages/blog/[slug].astro` with `getStaticPaths()` over `posts` from `src/lib/posts.ts`, reproducing `src/app/blog/[slug]/page.tsx`: title (`absolute`, no template), heading styles, TOC targets, every section, image, TL;DR, FAQ and CTA, using `src/lib/post-format.ts` helpers unchanged.
+
+- Static to `.astro`: `breadcrumb`, `flood-button`, `text-link`, `ui/striped-pattern` (unique pattern IDs), lucide icons as inline SVG or `lucide-react` rendered statically (no hydration).
+- Ported to vanilla TypeScript: `blog/post-cover.tsx` (pixelating sticky cover, spotlight, font-fit measurement, header coordination; the hardest piece — keep its algorithm and timings exactly) and `blog/post-toc.tsx` (rail progress, 112 px offset, hash replacement, heading focus). Keep the DOM structure CSS relies on, e.g. `globals.css` `.post-cover + .post-card` (an island or wrapper element between them breaks it).
+- React islands (Base UI): `faq.tsx` (accordion) and `page-tools.tsx` menus. `PostTools` passes a function prop, which islands cannot take: compute the Markdown at build time with `postMarkdown` and pass a string, through a thin wrapper in `astro/src/islands/` that rebuilds the `(url) => string` function for `PageTools` (keep the copied URL the page's real URL). Do not edit `src/`.
+- Images: same files from `public/blog/` with the same rendered attributes as the Next export (sizes, loading, priority). No AVIF pipeline yet.
+
+Proof, against `http://localhost:3003/blog/placeholder-post`:
+
+- Playwright Firefox screenshots, 1440×900 and 390×844, dark and light, into `runtime/astro-migration/m4/`.
+- Cover: pixelation, sticky behavior through scroll, spotlight on pointer and touch, header coordination. TOC: rail progress at several scroll positions, click lands headings 112 px from the top, hash updates, focus moves. FAQ: open/close, keyboard, find-in-page (`hidden="until-found"`). Page tools: each menu item, keyboard navigation, copied Markdown identical to Next's for the same URL. Reduced motion. Page interaction errors are reported; note the Astro dev-toolbar request failure in Surprises.
+- JS loaded on the article in both builds (`astro/dist/blog/placeholder-post/index.html` vs `../a11y-20261028/out/blog/placeholder-post.html`).
+- `astro check` and build pass; the invariant diff check is empty.
+
+Then stop and update `Outcomes & Retrospective` for stage 2.
+
+### M4 outcome (2026-10-31)
+
+The page is generated at `astro/dist/blog/placeholder-post/index.html`; shared post data and formatting remain owned by `src/lib/posts.ts` and `src/lib/post-format.ts`. The Astro article has the same title and description, 18 headings, 8 article sections, image paths/alt text/dimensions/loading attributes, seven TOC links, nine accordion buttons, and adjacent cover/card DOM as Next. The wide (1440×900) and mobile (390×844) dark/light Firefox screenshots are in `runtime/astro-migration/m4/`. Computed style and geometry diagnostics found the same typography, article height, and TL;DR/section/card positions. TOC progress and click behavior match; clicking lands its heading at 112 px and updates focus/hash. FAQ keyboard open/close, all three menu item sets and ArrowDown focus, Markdown copy (4,588 characters; identical after normalizing the page origin), touch spotlight, header coordination, and reduced-motion behavior match.
+
+Remaining differences/limits for owner review:
+
+- In the Firefox pointer-exit probe, Astro clears the cover spotlight while Next retains its lit class. Confirm on a real pointer before deciding whether to adjust the port.
+- Firefox lacks the scroll-timeline support used by the cover pixelation; both render the same static fallback, so pixelation parity was not exercised.
+- The FAQ DOM has `hidden="until-found"` on both sites, but Firefox's scripted find-in-page attempt did not verify reveal behavior.
+- The Astro dev-only toolbar client fails to load in Firefox with `NS_ERROR_CORRUPTED_CONTENT` and an empty MIME type; the page itself builds and its tested interactions run.
+- Hex color token serialization uses uppercase hex in Astro and lowercase in Next in some computed-style diagnostics; resolved RGB values and geometry are equal.
+
+JS payload measurements are in `runtime/astro-migration/m4/payload.json`. The article totals Astro 423,934 raw bytes / 151,891 gzip-summed bytes (12 external assets plus 6 inline scripts); Next totals 911,640 raw / 291,734 gzip-summed bytes (13 external assets plus 3 inline scripts). Gzip figures sum independent per-file/per-script compression and are not observed transfer sizes. Astro is about 53.5% smaller raw and 47.9% smaller by this gzip-sum estimate.
+
+Owner review: compare the eight screenshots and decide whether the spotlight exit discrepancy needs a change; confirm whether native FAQ find-in-page behavior matters for this article. Pixelation should be reviewed in a scroll-timeline-capable browser later. Stage 2 stops here; no M5 work is started.
+
 ## Validation and Acceptance
 
 Run every check as `run-check -- <command>` and judge its final `run-check: PASS|FAIL` line. Never claim a check that did not run.
@@ -126,13 +170,23 @@ The Codex sandbox may block binding ports (`EPERM`), which stops dev servers and
 
 ## Idempotence and Recovery
 
-All work is in `astro/`, this plan and the ignored `runtime/`. Redo a milestone by restoring `astro/` (`git checkout -- astro` or delete untracked files under it). Nothing is pushed, merged or deployed.
+All work is in `astro/`, this plan and the ignored `runtime/`. Stage 1 is committed (`1b7f7980`); to redo stage 2, `git checkout 1b7f7980 -- astro` and delete untracked files under `astro/`. Nothing is pushed, merged or deployed.
 
 ## Artifacts and Notes
 
 - `runtime/astro-migration/m1-check-final.log`: `run-check: PASS (exit 0)`, 0 errors, warnings, or hints.
 - `runtime/astro-migration/m1-build-final.log`: `run-check: PASS (exit 0)`, two static routes emitted.
 - `runtime/astro-migration/next-invariant-final.log`: `run-check: PASS (exit 0)`, Next-owned tracked files/config/root lockfile unchanged from `e504a4bd`.
+- M4 final `run-check -- pnpm --dir astro --ignore-workspace run check`: `PASS (exit 0)`, 0 errors/warnings/hints, log `runtime/checks/20261031T192816Z-3-pnpm.log`.
+- M4 final `run-check -- pnpm --dir astro --ignore-workspace run build`: `PASS (exit 0)`, log `runtime/checks/20261031T192822Z-2-pnpm.log`.
+- M4 Playwright Firefox acceptance: `PASS (exit 0)`, log `runtime/checks/20261031T193037Z-2-node.log`; findings and screenshots in `runtime/astro-migration/m4/`.
+- M4 payload calculation: `PASS (exit 0)`, log `runtime/checks/20261031T193032Z-2-node.log`; gzip totals are independent-file estimates.
+- M4 Next invariant diff: `PASS (exit 0)`, log `runtime/checks/20261031T192842Z-2-bash.log`.
+- M4 computed-style diagnostic: `PASS (exit 0)`, log `runtime/checks/20261031T193209Z-2-node.log`.
+- M4 corrected sticky/FAQ/pointer probe: `PASS (exit 0)`, log `runtime/checks/20261031T193257Z-2-node.log`; sticky geometry matched, FAQ `hidden="until-found"` structure matched, pointer-exit difference observed.
+- Earlier M4 Astro check attempts: initial JSX-in-frontmatter run failed and was corrected; one intermediate check passed with an unused hint later cleaned. The final check above is clean. Browser runs also had an initial Firefox clipboard-permission rejection and a stale Next selector; the test shim/selector were corrected before the final acceptance pass.
+- `runtime/astro-migration/m4/payload.json`: Astro 12 external assets, 412,005 B raw / 146,729 B gzip-summed, plus 6 inline scripts, 11,929 B raw / 5,162 B gzip-summed; Next 13 external assets, 874,873 B raw / 284,835 B gzip-summed, plus 3 inline executable scripts, 36,767 B raw / 6,899 B gzip-summed.
+- `runtime/astro-migration/m4/findings.json`, `markdown-astro.md`, `markdown-next.md`, eight screenshots, `style-diagnostic.mjs`, and `final-probe.mjs`: M4 comparison evidence. Markdown strings compare equal after replacing each server origin with the same placeholder.
 - Final Firefox screenshots: `astro-wide-{dark,light}.png`, `astro-mobile-{dark,light}.png`, `next-wide-{dark,light}.png`, `next-mobile-{dark,light}.png`.
 - `runtime/astro-migration/browser-findings.json` and `.log`: final browser observations for interactions, theme-at-first-contentful-paint, layout, and errors.
 - `runtime/astro-migration/browser-check-final.log`: final Firefox acceptance run through `run-check`, `PASS (exit 0)`.

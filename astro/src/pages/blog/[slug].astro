@@ -1,0 +1,66 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCover from '../../components/blog/PostCover.astro';
+import PostToc from '../../components/blog/PostToc.astro';
+import PostIcon from '../../components/blog/PostIcon.astro';
+import { Faq } from '@/components/faq';
+import { PostTools } from '../../islands/PostTools';
+import { posts } from '@/lib/posts';
+import { formatPublished, headingId, readingMinutes, postMarkdown, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from '@/lib/post-format';
+
+export function getStaticPaths() {
+  return posts.map(post => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const minutes = readingMinutes(post);
+const toc = [{id:POST_TLDR_ID,text:POST_TLDR_LABEL}, ...post.sections.map(({heading}) => ({id:headingId(heading),text:heading})), {id:headingId(POST_FAQ_LABEL),text:POST_FAQ_LABEL}];
+const headingStyle = {
+  1:'font-heading font-normal text-[clamp(2rem,2.8vw,2.5rem)] leading-[1.15] tracking-[-0.03em]',
+  2:'font-heading font-normal text-(length:--type-heading-h3-size) leading-(--type-heading-h3-leading) tracking-(--type-heading-h3-tracking)',
+  3:'font-heading font-normal text-xl leading-[1.3] tracking-[-0.01em]',
+  4:'font-heading font-normal text-lg leading-[1.35]',
+  5:'font-heading font-normal text-base leading-[1.4]',
+  6:'font-heading font-normal text-sm leading-[1.43] uppercase tracking-[0.04em]',
+};
+const tocTarget = 'scroll-mt-28';
+const sectionHeadingClass = `${headingStyle[2]} text-fg-max ${tocTarget}`;
+const postGrid = 'shell lg:grid lg:grid-cols-[240px_minmax(0,700px)] lg:gap-x-e1 xl:grid-cols-[288px_minmax(0,700px)] xl:gap-x-e2';
+const bodyText = 'font-sans text-base leading-[1.625] text-fg-2';
+const patternId = `post-title-stripes-${post.slug}`;
+const markdown = postMarkdown(post, '__PAGE_URL__');
+---
+<Base pageTitle={post.title} pageTitleAbsolute>
+  {post.cover && <link slot="head" rel="preload" as="image" href={post.cover} />}
+  <article class="overflow-x-clip">
+    {post.cover && <PostCover src={post.cover}><h1 class="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">{post.title}</h1></PostCover>}
+    <div data-covers-media class="post-card relative z-10 bg-bg">
+      <div class:list={[`pt-e2 pb-e2 ${postGrid}`]}>
+        <header class:list={[`relative isolate grid max-w-[700px] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-8 [grid-template-areas:'breadcrumb_breadcrumb'_'title_title'_'author_author'_'date_tools'] md:gap-x-4 md:[grid-template-areas:'breadcrumb_tools'_'title_title'_'meta_meta'] lg:col-start-2`]}>
+          <div aria-hidden="true" class="pointer-events-none absolute -inset-x-e1 -inset-y-e1 -z-10 [mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85)_15%,transparent)] opacity-70 light:opacity-50 light:[mask-image:radial-gradient(ellipse_closest-side_at_50%_45%,rgb(0_0_0/0.85),transparent)]">
+            <svg aria-hidden="true" class="pointer-events-none absolute inset-0 h-full w-full stroke-[0.5] stroke-[0.75] text-fg-muted" xmlns="http://www.w3.org/2000/svg"><defs><pattern id={patternId} width="10" height="10" patternUnits="userSpaceOnUse"><line x1="0" y1="10" x2="10" y2="0" stroke="currentColor"/><line x1="-10" y1="10" x2="0" y2="0" stroke="currentColor"/><line x1="10" y1="10" x2="20" y2="0" stroke="currentColor"/></pattern></defs><rect width="100%" height="100%" fill={`url(#${patternId})`}/></svg>
+          </div>
+          <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2 [grid-area:breadcrumb]"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><PostIcon name="home"/></a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li class="shrink-0"><a href="/blog" class="quiet-link">Blog</a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li></ol></nav>
+          <div class="justify-self-end [grid-area:tools]"><PostTools post={post} markdown={markdown} client:load /></div>
+          <p aria-hidden="true" class:list={[`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`]}>{post.title}</p>
+          <div class="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]"><div class="flex items-center gap-3 [grid-area:author]"><div aria-hidden="true" class="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">ER</div><span class="font-sans text-sm font-medium text-fg-max">{post.author}</span></div><div class="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end"><time datetime={post.published}><span class="hidden sm:inline">Published </span>{formatPublished(post.published)}</time>{post.updated && <span>Updated <time datetime={post.updated}>{formatPublished(post.updated)}</time></span>}<span class="lg:hidden">{minutes} min read</span></div></div>
+        </header>
+      </div>
+      <div class:list={[`pb-e3 ${postGrid}`]}>
+        <aside aria-labelledby="toc-title" class="hidden pt-1 lg:col-start-1 lg:row-start-1 lg:block"><div class="sticky top-24"><p class="mb-8 flex items-center gap-2 type-meta text-fg-2"><PostIcon name="clock"/>{minutes} min read</p><h2 id="toc-title" class="sr-only">On this page</h2><PostToc entries={toc}/></div></aside>
+        <div class="max-w-[700px] lg:col-start-2 lg:row-start-1">
+          <p class={bodyText}>{post.intro}</p>
+          <section aria-labelledby={POST_TLDR_ID} class="mt-e1 rounded-sm border border-line bg-surface p-6"><div class="mb-4 flex items-center gap-2"><PostIcon name="list"/><h2 id={POST_TLDR_ID} tabindex="-1" class:list={[`${headingStyle[5]} text-fg-max ${tocTarget}`]}>{POST_TLDR_LABEL}</h2></div><ul class="list-disc space-y-2 pl-5 font-sans text-sm leading-normal text-fg-2">{post.tldr.map(item=><li>{item}</li>)}</ul></section>
+          {post.sections.map(({heading,blocks})=><section aria-labelledby={headingId(heading)} class="mt-e1"><h2 id={headingId(heading)} tabindex="-1" class={sectionHeadingClass}>{heading}</h2><div class:list={[`mt-6 space-y-6 ${bodyText}`]}>{blocks.map(block=>{
+            if (typeof block==='string') return <p>{block}</p>;
+            if (Array.isArray(block)) return <p>{block.map(run=>typeof run==='string'?run:<a href={run.href} class="text-link">{run.text}</a>)}</p>;
+            if ('image' in block) return <figure class="!my-8"><img src={block.image} width={block.width} height={block.height} alt={block.alt} loading="lazy" decoding="async" class="w-full rounded-sm"/>{block.caption && <figcaption class="mt-3 text-center font-sans text-sm text-fg-2">{block.caption}</figcaption>}</figure>;
+            const Tag = `h${block.level}` as 'h3'|'h4'|'h5'|'h6'; return <Tag class:list={[`!mt-8 ${headingStyle[block.level]} text-fg-max`]}>{block.text}</Tag>;
+          })}</div></section>)}
+          <div class="mt-e2"><a href={post.cta.href} class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">{post.cta.label}</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a></div>
+          <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={post.faqs} bodyText={bodyText} client:load /></section>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>

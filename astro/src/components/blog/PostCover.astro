@@ -1,0 +1,77 @@
+---
+interface Props { src: string }
+const { src } = Astro.props;
+---
+<section data-post-cover data-under-header class="post-cover relative -mt-16 h-svh min-h-[32rem] bg-bg">
+  <div data-post-photo class="sticky top-0 h-svh min-h-[32rem] overflow-hidden">
+    <div class="post-cover-media absolute inset-0">
+      <img src={src} alt="" decoding="async" class="absolute inset-0 size-full object-cover" />
+      <canvas data-post-mosaic hidden aria-hidden="true" class="absolute inset-0 size-full [image-rendering:pixelated]"></canvas>
+    </div>
+    <div aria-hidden="true" class="post-cover-shade absolute inset-0"></div>
+    <div aria-hidden="true" class="post-cover-dim absolute inset-0 bg-bg"></div>
+    <div aria-hidden="true" class="post-cover-fade absolute inset-x-0 bottom-0 h-3/5"></div>
+    <div data-post-title class="post-cover-title shell relative flex h-full items-center justify-center pt-16 text-left"><slot /></div>
+  </div>
+<script is:inline>
+const cover = document.querySelector('[data-post-cover]');
+const view = cover?.querySelector('[data-post-photo]');
+const img = view?.querySelector('img');
+const canvas = view?.querySelector('[data-post-mosaic]');
+const titleContent = cover?.querySelector('[data-post-title]');
+if (cover && view && img && canvas && titleContent) {
+  const context = canvas.getContext('2d');
+  const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
+  const draw = () => {
+    const supported = CSS.supports('animation-timeline: scroll()');
+    const active = supported && matchMedia('(prefers-reduced-motion: no-preference)').matches;
+    const at = (scrollY / view.offsetHeight - 0.3) / (0.85 - 0.3);
+    const step = !active || at <= 0 || !img.complete || !img.naturalWidth ? 0 : Math.min(PIXEL_STEPS.length - 1, 1 + Math.floor(at * (PIXEL_STEPS.length - 1)));
+    canvas.hidden = step === 0;
+    if (!step || !context) return;
+    const box = canvas.getBoundingClientRect();
+    const block = PIXEL_STEPS[step];
+    const w = Math.max(1, Math.round(box.width / block));
+    const h = Math.max(1, Math.round(box.height / block));
+    const scale = Math.max(box.width / img.naturalWidth, box.height / img.naturalHeight);
+    const sw = box.width / scale;
+    const sh = box.height / scale;
+    canvas.width = w; canvas.height = h;
+    context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
+    context.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, 0, 0, w, h);
+  };
+  let queued = 0;
+  const scheduleDraw = () => { cancelAnimationFrame(queued); queued = requestAnimationFrame(draw); };
+  draw(); addEventListener('scroll', scheduleDraw, { passive: true }); addEventListener('resize', scheduleDraw); img.addEventListener('load', scheduleDraw);
+
+    const title = titleContent.firstElementChild;
+  if (title) {
+    const fit = () => {
+      title.style.width = '';
+      const range = document.createRange(); range.selectNodeContents(title);
+      const lines = [...range.getClientRects()];
+      if (lines.length) title.style.width = `${Math.ceil(Math.max(...lines.map(line => line.right)) - Math.min(...lines.map(line => line.left)))}px`;
+    };
+    fit(); const observer = new ResizeObserver(fit); observer.observe(titleContent); document.fonts.ready.then(fit);
+  }
+
+  let pointer = null;
+  const shade = view.querySelector('.post-cover-shade');
+  const place = () => {
+    cancelAnimationFrame(queued);
+    queued = requestAnimationFrame(() => {
+      const box = view.getBoundingClientRect(); const p = pointer;
+      const inside = !!p && p.x >= box.left && p.x < box.right && p.y >= box.top && p.y < box.bottom;
+      cover.classList.toggle('cover-lit', inside);
+      const power = parseFloat(getComputedStyle(shade).getPropertyValue('--cover-power'));
+      document.documentElement.toggleAttribute('data-cover-torch', inside && p.y < 214 && power > 0.3);
+      if (inside) { cover.style.setProperty('--cover-x', `${p.x - box.left}px`); cover.style.setProperty('--cover-y', `${p.y - box.top}px`); }
+    });
+  };
+  const move = event => { if (event.pointerType === 'mouse') { pointer = {x:event.clientX,y:event.clientY}; place(); } };
+  const leave = () => { pointer = null; place(); };
+  const touch = event => { const p = event.touches[0]; pointer = p ? {x:p.clientX,y:p.clientY} : null; place(); };
+  addEventListener('pointermove', move, {passive:true}); addEventListener('touchstart', touch, {passive:true}); addEventListener('touchmove', touch, {passive:true}); addEventListener('touchend', touch, {passive:true}); addEventListener('touchcancel', touch, {passive:true}); addEventListener('scroll', place, {passive:true}); document.documentElement.addEventListener('pointerleave', leave);
+}
+</script>
+</section>
