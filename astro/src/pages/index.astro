@@ -1,6 +1,36 @@
 ---
 import Base from '../layouts/Base.astro';
+import ClientSlots from '../components/ClientSlots.astro';
+import Statement from '../components/Statement.astro';
+import WhyMe from '../components/WhyMe.astro';
+import PageClosing from '../components/PageClosing.astro';
+import { FIVERR_PROFILE_URL } from '@/lib/content';
+const links = [
+  { text: 'A', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
+  { text: 'B', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
+  { text: 'C', href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
+];
+const credibility = [
+  { kind: 'figure' as const, figure: 'Top Rated Seller', label: 'On Fiverr since 2015', accent: true },
+  { kind: 'figure' as const, figure: '4.8k', label: 'Orders' },
+  { kind: 'figure' as const, figure: '2.6k', label: 'Clients' },
+  { kind: 'figure' as const, figure: '13', label: 'Years on Fiverr', dynamicYear: true },
+  { kind: 'figure' as const, figure: 'Pro Verified', label: 'On Fiverr since 2017' },
+  { kind: 'note' as const, text: 'Selected to give feedback to Fiverr leadership in Tel Aviv', label: 'In 2018' },
+  { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: 'cannon-brooke.webp' } },
+];
 ---
-<Base pageTitle="Astro shell">
-  <section class="shell py-32"><h1 class="type-h1">Astro shell preview</h1><p class="type-lead">Shared shell stub.</p></section>
+<Base>
+  <h1 class="sr-only">emmaki</h1>
+  <section class="shell -mt-16 flex min-h-svh items-center justify-center pt-16">
+    <a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">Lorem ipsum</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
+  </section>
+  <section>
+    <p class="shell mb-10 text-center type-meta text-fg-2 uppercase">Brands I’ve written for</p>
+    <ClientSlots class="shell" />
+  </section>
+  <Statement kicker="Who I am" before="I help X and Y to" {links} after=", without FGH." />
+  <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
+  <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
+  <PageClosing />
 </Base>

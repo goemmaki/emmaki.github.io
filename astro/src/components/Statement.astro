@@ -1,0 +1,40 @@
+---
+interface Link { text: string; href: string; metric: string; summary: string; client: string }
+interface Props { kicker: string; before: string; links: Link[]; after: string }
+const { kicker, before, links, after } = Astro.props;
+const firstAfter = after.match(/^\S*/)?.[0] ?? '';
+---
+<section class="shell pt-32" data-statement>
+  <p class="type-meta text-fg-2 uppercase">{kicker}</p>
+  <h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">{before}{' '}{links.map((link, i) => {
+    const last = i === links.length - 1; const mark = last ? firstAfter : ',';
+    return <Fragment><span class="whitespace-nowrap"><a href={link.href} class="statement-link" data-statement-link data-index={i} data-metric={link.metric} data-summary={link.summary} data-client={link.client}>{link.text}<svg class="statement-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg><span class="sr-only"> (case study: {link.metric}, {link.summary}, {link.client})</span></a>{mark}</span>{last ? after.slice(mark.length) : ' '}</Fragment>;
+  })}</h2>
+  <div class="statement-preview" data-statement-preview aria-hidden="true"><div class="statement-preview-inner"><p class="type-h3" data-preview-metric></p><p class="mt-1 type-secondary" data-preview-summary></p><p class="mt-auto type-meta uppercase" data-preview-client></p></div></div>
+</section>
+<script>
+const section = document.querySelector<HTMLElement>('[data-statement]');
+const card = section?.querySelector<HTMLElement>('[data-statement-preview]');
+let frame = 0, x = 0, y = 0, tx = 0, ty = 0, placed = false, active: HTMLElement | null = null;
+if (section && card) {
+  const setActive = (link: HTMLElement | null) => {
+    active = link; card.toggleAttribute('data-open', !!link);
+    card.querySelector('[data-preview-metric]')!.textContent = link?.dataset.metric ?? '';
+    card.querySelector('[data-preview-summary]')!.textContent = link?.dataset.summary ?? '';
+    card.querySelector('[data-preview-client]')!.textContent = link?.dataset.client ?? '';
+  };
+  const move = (event: PointerEvent) => {
+    if (event.pointerType !== 'mouse') return;
+    tx = Math.min(event.clientX + 20, innerWidth - card.offsetWidth - 16); ty = Math.min(event.clientY + 20, innerHeight - card.offsetHeight - 16);
+    if (!placed) { x = tx; y = ty; placed = true; }
+    const k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 0.16;
+    const tick = () => { x += (tx - x) * k; y += (ty - y) * k; card!.style.translate = `${x}px ${y}px`; frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(tick) : 0; };
+    if (!frame) frame = requestAnimationFrame(tick);
+  };
+  section.addEventListener('pointermove', move);
+  for (const link of section.querySelectorAll<HTMLElement>('[data-statement-link]')) {
+    link.addEventListener('pointerenter', (event) => { if (event.pointerType !== 'mouse') return; setActive(link); });
+    link.addEventListener('pointerleave', () => { if (active === link) setActive(null); });
+  }
+}
+</script>

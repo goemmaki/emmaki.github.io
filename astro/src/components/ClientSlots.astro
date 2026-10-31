@@ -1,0 +1,48 @@
+---
+import { BRANDS, CLIENT_STRIP_ORDER } from '@/lib/content';
+const clients = [...BRANDS].sort((a, b) => CLIENT_STRIP_ORDER.indexOf(a.name) - CLIENT_STRIP_ORDER.indexOf(b.name));
+---
+<div class="client-strip shell" data-client-strip>
+  <ul class="sr-only">{clients.map((brand) => <li>{brand.name}</li>)}</ul>
+  <ul class="client-slots" data-client-slots style="--cols:5" aria-hidden="true"></ul>
+</div>
+<script>
+import { BRANDS, CLIENT_STRIP_ORDER } from '@/lib/content';
+const strip = document.querySelector<HTMLElement>('[data-client-strip]');
+const list = strip?.querySelector<HTMLElement>('[data-client-slots]');
+if (strip && list) {
+  const clients = [...BRANDS].sort((a, b) => CLIENT_STRIP_ORDER.indexOf(a.name) - CLIENT_STRIP_ORDER.indexOf(b.name));
+  let cols = 5, shown: number[] = [], queue: number[] = [], hovered = false, visible = false, timer = 0;
+  const reels: HTMLElement[] = [];
+  const updateCols = () => {
+    const next = matchMedia('(min-width: 64rem)').matches ? 5 : matchMedia('(min-width: 40rem)').matches ? 3 : 2;
+    if (next === cols && reels.length) return;
+    cols = next; shown = Array(cols).fill(0); queue = []; list.style.setProperty('--cols', String(cols)); list.replaceChildren(); reels.length = 0;
+    for (let c = 0; c < cols; c++) {
+      const li = document.createElement('li'); li.className = 'client-slot';
+      const reel = document.createElement('div'); reel.className = 'client-slot-reel'; li.append(reel); list.append(li); reels.push(reel); render(c);
+    }
+  };
+  const render = (c: number) => {
+    const reel = reels[c]; if (!reel) return;
+    const brands = clients.filter((_, i) => i % cols === c);
+    reel.replaceChildren(...[brands[shown[c] % brands.length], brands[(shown[c] + 1) % brands.length]].map((brand) => {
+      const logo = document.createElement('span'); logo.className = 'client-slot-logo';
+      for (const [file, cls] of [[brand.logo.light, 'client-logo-on-light'], [brand.logo.dark, 'client-logo-on-dark']]) {
+        const img = document.createElement('img'); img.src = `/clients/${file}`; img.alt = ''; img.className = cls; logo.append(img);
+      }
+      return logo;
+    }));
+  };
+  const order = () => { const rest = Array.from({length: cols - 1}, (_, i) => i + 1); for (let i = rest.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]]; } return [...rest, 0]; };
+  const stop = () => { clearInterval(timer); timer = 0; };
+  const start = () => { if (!visible || hovered || timer) return; timer = window.setInterval(() => { if (!queue.length) queue = order(); const c = queue.shift()!; const reel = reels[c]; reel.dataset.rolling = ''; reel.ontransitionend = (event) => { if (event.target !== reel) return; shown[c]++; delete reel.dataset.rolling; render(c); }; }, 1400); };
+  updateCols();
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; visible ? start() : stop(); }); observer.observe(strip);
+    strip.addEventListener('pointerenter', () => { hovered = true; stop(); }); strip.addEventListener('pointerleave', () => { hovered = false; start(); });
+  }
+  for (const query of ['(min-width: 64rem)', '(min-width: 40rem)']) matchMedia(query).addEventListener('change', () => { updateCols(); stop(); start(); });
+  window.addEventListener('resize', () => { updateCols(); });
+}
+</script>

@@ -22,7 +22,11 @@ const titleContent = cover?.querySelector('[data-post-title]');
 if (cover && view && img && canvas && titleContent) {
   const context = canvas.getContext('2d');
   const PIXEL_STEPS = [0, 6, 10, 16, 26, 40, 64];
+  let mosaicFrame = 0;
+  let spotlightFrame = 0;
   const draw = () => {
+    cancelAnimationFrame(mosaicFrame);
+    mosaicFrame = requestAnimationFrame(() => {
     const supported = CSS.supports('animation-timeline: scroll()');
     const active = supported && matchMedia('(prefers-reduced-motion: no-preference)').matches;
     const at = (scrollY / view.offsetHeight - 0.3) / (0.85 - 0.3);
@@ -39,10 +43,9 @@ if (cover && view && img && canvas && titleContent) {
     canvas.width = w; canvas.height = h;
     context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high';
     context.drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, 0, 0, w, h);
+    });
   };
-  let queued = 0;
-  const scheduleDraw = () => { cancelAnimationFrame(queued); queued = requestAnimationFrame(draw); };
-  draw(); addEventListener('scroll', scheduleDraw, { passive: true }); addEventListener('resize', scheduleDraw); img.addEventListener('load', scheduleDraw);
+  draw(); addEventListener('scroll', draw, { passive: true }); addEventListener('resize', draw); img.addEventListener('load', draw);
 
     const title = titleContent.firstElementChild;
   if (title) {
@@ -58,8 +61,8 @@ if (cover && view && img && canvas && titleContent) {
   let pointer = null;
   const shade = view.querySelector('.post-cover-shade');
   const place = () => {
-    cancelAnimationFrame(queued);
-    queued = requestAnimationFrame(() => {
+    cancelAnimationFrame(spotlightFrame);
+    spotlightFrame = requestAnimationFrame(() => {
       const box = view.getBoundingClientRect(); const p = pointer;
       const inside = !!p && p.x >= box.left && p.x < box.right && p.y >= box.top && p.y < box.bottom;
       cover.classList.toggle('cover-lit', inside);
