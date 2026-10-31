@@ -1,0 +1,35 @@
+---
+import { AVAILABILITY, FIVERR_PROFILE_URL } from '@/lib/content';
+import type { Availability } from '@/lib/content';
+const labels: Record<Availability, string> = { open: 'Open for work', limited: 'Limited availability', full: 'Fully booked' };
+---
+<section class="shell py-32" data-page-closing>
+  <span class="status-badge type-meta text-fg-2 mb-6"><span class="status-light" data-status={AVAILABILITY} aria-hidden="true"></span>{labels[AVAILABILITY]}</span>
+  <p class="type-h2 text-balance">
+    <span class="block text-fg-2">Got something important to say?</span>
+    <span class="block text-fg-max" data-page-closing-ask>Hire someone who knows how to say it.</span>
+  </p>
+  <div class="mt-8 flex max-w-(--ask-width) flex-col items-start gap-6 sm:flex-row sm:items-baseline sm:justify-between">
+    <a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button">
+      <span class="flood-button__layout"><span class="flood-button__label">Message me</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span>
+    </a>
+    <p class="min-w-0 text-balance type-secondary text-fg-2 sm:text-right"><svg class="mr-2 inline-block size-[1.1em] align-[-0.2em]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>Opens my Fiverr profile. Hit Contact and send your brief, timeline and budget.</p>
+  </div>
+</section>
+<script>
+  const section = document.querySelector<HTMLElement>('[data-page-closing]');
+  const ask = section?.querySelector<HTMLElement>('[data-page-closing-ask]');
+  if (section && ask) {
+    const measure = () => {
+      const range = document.createRange();
+      range.selectNodeContents(ask);
+      const rects = Array.from(range.getClientRects());
+      const width = Math.max(0, ...rects.map((rect) => rect.width));
+      section.style.setProperty('--ask-width', `${Math.ceil(width)}px`);
+    };
+    measure();
+    document.fonts.ready.then(measure);
+    const observer = new ResizeObserver(measure);
+    observer.observe(section);
+  }
+</script>

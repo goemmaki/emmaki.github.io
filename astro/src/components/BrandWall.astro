@@ -1,0 +1,22 @@
+---
+import type { Brand } from '@/lib/content';
+interface Props { brands: Brand[] }
+const { brands } = Astro.props;
+---
+<section class="py-32">
+  <div class="shell grid gap-e1 lg:grid-cols-[2fr_1fr]">
+    <aside class="flex max-w-[48ch] flex-col gap-6 rounded-(--shape-control-radius) border border-line p-6 text-base text-fg-2 lg:sticky lg:max-w-none lg:top-24 lg:order-2 lg:self-start">
+      <section class="flex flex-col gap-2">
+        <h2 class="type-meta text-fg-max">Select clients</h2>
+        <p>I work with brands whose products are smarter than their messaging. I turn what you do into a message your buyers understand, remember, and repeat to whoever signs off.</p>
+      </section>
+      <section class="flex flex-col gap-2">
+        <h2 class="type-meta text-fg-max">Industries</h2>
+        <p>I mostly work with B2B brands in technology, cybersecurity, fintech and media. After 20+ years, there’s a good chance I’ve written for your industry too.</p>
+      </section>
+    </aside>
+    <ul class="brand-wall">
+      {brands.map((brand) => <li class="brand-wall-name" style={brand.color ? `--brand:${brand.color};${brand.hoverInk?.light ? `--brand-hover-light:${brand.hoverInk.light};` : ''}${brand.hoverInk?.dark ? `--brand-hover-dark:${brand.hoverInk.dark};` : ''}` : undefined}>{brand.name}</li>)}
+    </ul>
+  </div>
+</section>

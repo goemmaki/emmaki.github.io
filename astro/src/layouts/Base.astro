@@ -1,0 +1,112 @@
+---
+import { SiteHeader } from '../islands/SiteHeader.tsx';
+import { BackToTop } from '../islands/BackToTop.tsx';
+import '../styles/site.css';
+
+interface Props { pageTitle?: string; description?: string }
+
+const { pageTitle, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.' } = Astro.props;
+const title = pageTitle ? `${pageTitle} — Emmaki` : 'Emmaki — Senior copy & AI content strategy';
+const pathname = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en-US" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="darkreader-lock" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script is:inline>(function(){try{var d=document.documentElement;var t=localStorage.getItem("emmaki-theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}})()</script>
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
+    <SiteHeader pathname={pathname} client:load />
+    <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
+    <footer>
+      <div class="footer relative overflow-hidden" data-footer>
+        <div class="footer-base absolute inset-x-0 bottom-0"></div>
+        <div aria-hidden="true" class="footer-art footer-field footer-field--ink"><div class="footer-dots"></div></div>
+        <div aria-hidden="true" class="footer-art footer-field footer-field--torch"><div class="footer-dots"></div></div>
+        <div aria-hidden="true" class="footer-art relative h-(--footer-field-h) overflow-hidden pointer-events-none">
+          <div class="shell relative h-full">
+            <p class="footer-mark absolute bottom-0 -ml-[0.05em] translate-y-[0.1em] select-none font-heading text-(length:--footer-mark) font-[number:var(--font-weight-announce)] leading-[0.8] tracking-[-0.06em] text-bg"><span data-footer-verb class="font-[family-name:var(--nf-source-serif)] mr-[0.04em] font-light italic tracking-[-0.02em]">try</span>emmaki</p>
+          </div>
+        </div>
+        <div class="footer-bar relative">
+          <div class="shell flex h-full items-center justify-between gap-2 type-meta">
+            <p class="footer-legal">© <span data-copyright-years>2026</span> emmaki | all rights reserved</p>
+            <div class="-mr-[5px] flex shrink-0 sm:-mr-[9px]">
+              <a href="https://www.fiverr.com/emmaki" target="_blank" rel="noopener" aria-label="@emmaki on Fiverr (opens in a new tab)" class="icon-action size-7 sm:size-9">
+                <svg viewBox="0 0 24 24" class="size-[18px]" aria-hidden="true"><mask id="footer-fiverr-mask"><circle cx="12" cy="12" r="12" fill="#fff"/><g fill="#000" transform="translate(7.6 -6.67) scale(1.565)"><path d="M.908 15.44H2.51v-3.558h1.524v3.558h1.591v-4.874H2.51v-.302c0-.332.235-.536.606-.536h.918V8.412H2.85c-1.162 0-1.943.712-1.943 1.755v.4H0v1.316h.908v3.558z"/><circle cx="4.85" cy="9.15" r=".78"/></g></mask><circle cx="12" cy="12" r="12" fill="currentColor" mask="url(#footer-fiverr-mask)"/></svg>
+              </a>
+              <a href="/agents.md" aria-label="View as agent" class="icon-action size-7 sm:size-9"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2m16 0h2m-15-2h.01M17 12h.01M9 16h6"/></svg></a>
+              <BackToTop className="icon-action size-7 sm:size-9" client:load />
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <div aria-hidden="true" class="bottom-blur" data-bottom-blur></div>
+  <script>
+  const footer = document.querySelector<HTMLElement>('[data-footer]');
+  const verb = footer?.querySelector<HTMLElement>('[data-footer-verb]');
+  if (footer && verb) {
+    const words = ['try', 'fly', 'buy'];
+    const choice = words[Math.floor(Math.random() * words.length)];
+    verb.textContent = choice;
+    if (choice === 'buy') footer.style.setProperty('--footer-mark-em', '4.98');
+    const dots = footer.querySelector<HTMLElement>('.footer-dots');
+    const setSteps = () => {
+      if (!dots) return;
+      const tile = dots.offsetWidth - footer.offsetWidth;
+      footer.style.setProperty('--footer-steps', String(Math.max(1, Math.round(tile * devicePixelRatio))));
+    };
+    setSteps();
+    window.addEventListener('resize', setSteps);
+    let frame = 0;
+    footer.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      const box = footer.getBoundingClientRect();
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        footer.style.setProperty('--footer-x', `${event.clientX - box.left}px`);
+        footer.style.setProperty('--footer-y', `${event.clientY - box.top}px`);
+        footer.classList.add('footer-lit');
+      });
+    });
+    footer.addEventListener('pointerleave', () => {
+      cancelAnimationFrame(frame);
+      footer.classList.remove('footer-lit');
+    });
+  }
+
+  const now = new Date().getFullYear();
+  const years = document.querySelector<HTMLElement>('[data-copyright-years]');
+  if (years && now > 2026) years.textContent = `2026–${now}`;
+
+  const layers = [0.75, 0.875, 1.125, 2.25, 4.5, 9, 18, 48];
+  const blur = document.querySelector<HTMLElement>('[data-bottom-blur]');
+  if (blur) {
+    for (const [i, radius] of layers.entries()) {
+      const at = (n: number) => `${Math.min(100, Math.max(0, n * 12.5))}%`;
+      const layer = document.createElement('div');
+      layer.style.cssText = `--blur:${radius}px;--a:${at(i)};--b:${at(i + 1)};--c:${at(i + 2)};--d:${at(i + 3)}`;
+      blur.append(layer);
+    }
+    let settle = 0;
+    const atEnd = () => window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+    const update = () => {
+      clearTimeout(settle);
+      if (!atEnd()) blur.removeAttribute('data-off');
+      else settle = window.setTimeout(() => { if (atEnd()) blur.setAttribute('data-off', ''); }, 250);
+    };
+    const observer = new ResizeObserver(update);
+    observer.observe(document.body);
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+  </script>
+  </body>
+</html>
