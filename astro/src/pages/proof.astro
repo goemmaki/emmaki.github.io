@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import PageCover from '../components/PageCover.astro';
+import PageClosing from '../components/PageClosing.astro';
+import { ProofIndex } from '../islands/ProofIndex';
+---
+<Base>
+  <PageCover word="Proof." ink={2.371} intro="Select copy and AI/automation work for clients, myself, and fun." />
+  <ProofIndex client:load />
+  <PageClosing />
+</Base>

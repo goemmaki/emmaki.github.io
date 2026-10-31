@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { NebulaField } from '@/components/nebula-field';
+---
+<Base pageTitle="Page not found">
+  <meta slot="head" name="robots" content="noindex" />
+  <div data-not-found data-under-header class="relative -mt-16 flex min-h-[calc(100dvh-2.5rem)] [--color-focus:#fff]">
+    <NebulaField client:load />
+    <div class="shell relative grid justify-items-center pt-[60svh] md:grid-cols-[3fr_2fr] md:items-center md:justify-items-start md:pt-0">
+      <div class="flex w-(--w) flex-col gap-3 text-white [--w:clamp(12rem,62vw,20rem)] md:col-start-2"><h1 class="font-mono text-[calc(var(--w)/1.68)] leading-none tracking-[-0.04em]">404<span class="sr-only"> page not found</span></h1><p class="font-sans text-[calc(var(--w)/10.27)] leading-tight"><a href="/" class="text-link">Back to the home page</a></p></div>
+    </div>
+  </div>
+</Base>
