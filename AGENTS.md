@@ -4,6 +4,8 @@
 - Run `pnpm install --frozen-lockfile`, `pnpm run check`, and `pnpm run build` from the repository root. Build output is `dist/`.
 - `pnpm-workspace.yaml` retains pnpm's `allowBuilds` policy (`sharp: false`, `unrs-resolver: false`); it remains needed to control dependency install scripts.
 - Compare production output with `node scripts/parity.mjs`; see `CONVENTIONS.md` for the reference export and browser matrix.
+- Blog posts and work entries are content collections (`src/content.config.ts`, one folder per entry with `index.mdx` and its media). Images, SVGs, screenshots and video follow [docs/media.md](docs/media.md).
+- Integrations researched for later (not installed): studio `docs/research/astro-integrations-20261101.md` (`~/worktrees/studio/main`).
 
 ## Owner rules
 
