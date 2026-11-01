@@ -1,0 +1,15 @@
+---
+import { getCollection, render } from 'astro:content';
+import CaseStudy from '../../layouts/CaseStudy.astro';
+
+export async function getStaticPaths() {
+  return (await getCollection('work')).map(entry => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+// One layout per presentation; add an entry here when a project gets its own treatment.
+const LAYOUTS = { 'case-study': CaseStudy };
+const { entry } = Astro.props;
+const Layout = LAYOUTS[entry.data.presentation];
+const { Content } = await render(entry);
+---
+<Layout entry={entry}><Content /></Layout>
