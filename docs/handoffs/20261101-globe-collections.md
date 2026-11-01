@@ -35,4 +35,4 @@
 SAFE_TO_DELETE: `runtime/*-astro-migration-*.html` and `runtime/*-post-migration-*.html` HTML diffs in the worktree
 SAFE_TO_RETIRE_WORKTREES: none (review in progress)
 KEEP: `runtime/parity/collections/` (parity evidence)
-UNKNOWN: the Python server on 127.0.0.1:3010 serving this worktree's `dist/` (started for parity; can be stopped)
+UNKNOWN: none (the 3010 parity server was stopped)
