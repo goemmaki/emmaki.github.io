@@ -22,6 +22,17 @@
   src: url("../../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2-variations");
 }
 
+.back-to-top-tooltip {
+  @apply absolute z-[70] bottom-[calc(100%+4px)] left-1/2 whitespace-nowrap opacity-0 pointer-events-none -translate-x-1/2 rounded-sm bg-raised px-2 py-1 type-meta text-fg transition-opacity duration-150;
+}
+.back-to-top[data-tooltip-open] .back-to-top-tooltip { @apply opacity-100; }
+.page-tools-menu {
+  @apply fixed inset-auto m-0 translate-x-0 translate-y-0 z-[70];
+}
+.page-tools-menu:not(:popover-open) { display: none; }
+.page-tools-menu-item[data-highlighted],
+.page-tools-menu-item:focus-visible { @apply bg-surface; }
+
 /* Additive logo fill crossfade: the monochrome and color artwork share one isolated cell. */
 .client-slot-logo { position: relative; isolation: isolate; }
 .client-slot-logo img { transition: filter 0.2s ease-out, opacity 0.2s ease-out; }

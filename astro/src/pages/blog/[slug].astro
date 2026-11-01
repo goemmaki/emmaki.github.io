@@ -4,7 +4,7 @@ import PostCover from '../../components/blog/PostCover.astro';
 import PostToc from '../../components/blog/PostToc.astro';
 import PostIcon from '../../components/blog/PostIcon.astro';
 import { Faq } from '@/components/faq';
-import { PostTools } from '../../islands/PostTools';
+import PageTools from '../../components/PageTools.astro';
 import { posts } from '@/lib/posts';
 import { formatPublished, headingId, readingMinutes, postMarkdown, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from '@/lib/post-format';
 
@@ -41,7 +41,7 @@ const markdown = postMarkdown(post, '__PAGE_URL__');
             <svg aria-hidden="true" class="pointer-events-none absolute inset-0 h-full w-full stroke-[0.5] stroke-[0.75] text-fg-muted" xmlns="http://www.w3.org/2000/svg"><defs><pattern id={patternId} width="10" height="10" patternUnits="userSpaceOnUse"><line x1="0" y1="10" x2="10" y2="0" stroke="currentColor"/><line x1="-10" y1="10" x2="0" y2="0" stroke="currentColor"/><line x1="10" y1="10" x2="20" y2="0" stroke="currentColor"/></pattern></defs><rect width="100%" height="100%" fill={`url(#${patternId})`}/></svg>
           </div>
           <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2 [grid-area:breadcrumb]"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><PostIcon name="home"/></a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li class="shrink-0"><a href="/blog" class="quiet-link">Blog</a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">{post.category}</li></ol></nav>
-          <div class="justify-self-end [grid-area:tools]"><PostTools post={post} markdown={markdown} client:load /></div>
+          <div class="justify-self-end [grid-area:tools]"><PageTools title={post.title} markdown={markdown} aiQuestion={post.aiQuestion} /></div>
           <p aria-hidden="true" class:list={[`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`]}>{post.title}</p>
           <div class="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]"><div class="flex items-center gap-3 [grid-area:author]"><div aria-hidden="true" class="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">ER</div><span class="font-sans text-sm font-medium text-fg-max">{post.author}</span></div><div class="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end"><time datetime={post.published}><span class="hidden sm:inline">Published </span>{formatPublished(post.published)}</time>{post.updated && <span>Updated <time datetime={post.updated}>{formatPublished(post.updated)}</time></span>}<span class="lg:hidden">{minutes} min read</span></div></div>
         </header>

@@ -1,0 +1,133 @@
+---
+import { AI_LOGO_PATHS } from '@/components/blog/ai-logos';
+interface Props { title: string; markdown: string; aiQuestion?: string }
+const { title, markdown, aiQuestion } = Astro.props;
+const logos = ['ChatGPT', 'Claude', 'Google AI', 'Grok', 'Perplexity'].map(name => [name, AI_LOGO_PATHS[name]] as const);
+const itemClass = 'page-tools-menu-item flex min-h-8 cursor-default items-center gap-1.5 rounded-sm px-1.5 py-1 font-sans text-sm text-fg outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus-ring data-[highlighted]:bg-surface';
+const prompt = aiQuestion ? `Read __PAGE_URL__, then answer: ${aiQuestion}` : 'Read from __PAGE_URL__ so I can ask questions about it';
+---
+<div class="relative" data-page-tools data-title={title} data-markdown={markdown} data-ai-prompt={prompt}>
+  <div class="flex items-center gap-2">
+    <div class="relative">
+      <button type="button" id="page-tools-copy-trigger" aria-controls="page-tools-menu-copy" aria-haspopup="menu" aria-expanded="false" class="page-tools-menu-trigger flex size-11 items-center justify-center gap-2 rounded-sm border border-line bg-transparent px-2.5 text-fg hover:bg-surface aria-expanded:bg-surface md:h-8 md:w-auto" data-menu-trigger>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path></svg><span class="sr-only md:not-sr-only font-sans text-sm font-medium">Copy page</span>
+      </button>
+      <div id="page-tools-menu-copy" aria-labelledby="page-tools-copy-trigger" tabindex="-1" class="page-tools-menu min-w-40 rounded-sm border border-line bg-bg p-1 text-fg shadow-lg dark:bg-bg-2" role="menu" popover="auto" data-menu>
+        <button type="button" role="menuitem" class={itemClass} data-copy-link><svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Copy link</button>
+        <button type="button" role="menuitem" class={itemClass} data-copy-markdown><svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8m8 4H8m8 4H8"/></svg>Copy as .md</button>
+      </div>
+    </div>
+    {(['Share', 'Ask AI'] as const).map((label) => <div class="relative">
+      <button type="button" id={`page-tools-${label.toLowerCase().replaceAll(' ', '-')}-trigger`} aria-controls={`page-tools-menu-${label.toLowerCase().replaceAll(' ', '-')}`} aria-haspopup="menu" aria-expanded="false" class="page-tools-menu-trigger flex size-11 items-center justify-center gap-2 rounded-sm border border-line bg-transparent px-2.5 text-fg hover:bg-surface aria-expanded:bg-surface md:h-8 md:w-auto" data-menu-trigger>
+        {label === 'Share' ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98m-.01-10.98-6.82 3.98"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2m16 0h2m-15-2h.01M17 12h.01M9 16h6"/></svg>}
+        <span class="sr-only md:not-sr-only font-sans text-sm font-medium">{label}</span>
+      </button>
+      <div id={`page-tools-menu-${label.toLowerCase().replaceAll(' ', '-')}`} aria-labelledby={`page-tools-${label.toLowerCase().replaceAll(' ', '-')}-trigger`} tabindex="-1" class="page-tools-menu min-w-40 rounded-sm border border-line bg-bg p-1 text-fg shadow-lg dark:bg-bg-2" role="menu" popover="auto" data-menu data-menu-kind={label.toLowerCase()}>
+        {label === 'Share' ? <>
+          <a href="#" target="_blank" rel="noopener noreferrer" role="menuitem" class={itemClass} data-share="linkedin"><svg viewBox="0 0 16 16" class="icon-muted" aria-hidden="true" fill="currentColor"><path d="M3.4 5.8H1V15h2.4V5.8ZM2.2 4.6a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8ZM15 9.7c0-2.8-1.5-4.1-3.5-4.1-1.6 0-2.3.9-2.7 1.5V5.8H6.4V15h2.4v-5c0-1.3.3-2.5 1.8-2.5s1.6 1.4 1.6 2.6V15H15V9.7Z"/></svg>Share on LinkedIn</a>
+          <a href="#" target="_blank" rel="noopener noreferrer" role="menuitem" class={itemClass} data-share="x"><svg viewBox="0 0 16 16" class="icon-muted" aria-hidden="true" fill="currentColor"><path d="M12.6 1.5H15l-5.3 6.1L15.9 14h-4.8l-3.8-4.9L3 14H.6l5.7-6.6L.2 1.5h4.9l3.4 4.5 4.1-4.5Zm-.8 11.2h1.3L4.3 2.7H3L11.8 12.7Z"/></svg>Share on X</a>
+        </> : logos.map(([name, path]) => <a href="#" target="_blank" rel="noopener noreferrer" role="menuitem" class={itemClass} data-ai-link={name}><svg viewBox="0 0 24 24" class="icon-muted" aria-hidden="true" fill="currentColor" fill-rule={name === 'Grok' ? 'evenodd' : undefined}><path d={path}/></svg>{name}</a>)}
+      </div>
+    </div>)}
+  </div>
+  <div role="status" aria-live="polite" class="page-tools-copy-status sr-only" data-copy-status></div>
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-page-tools]')) {
+    let typeahead = '';
+    let typeaheadTimer = 0;
+    const triggerFor = (menu: HTMLElement) => menu.parentElement?.querySelector<HTMLButtonElement>('[data-menu-trigger]') ?? null;
+    const itemsFor = (menu: HTMLElement) => [...menu.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+    const setOpen = (menu: HTMLElement, open: boolean, focus: 'first' | 'last' | 'none' = 'none') => {
+      const trigger = triggerFor(menu);
+      if (open) {
+        for (const other of root.querySelectorAll<HTMLElement>('[data-menu]:popover-open')) if (other !== menu) { other.hidePopover(); triggerFor(other)?.setAttribute('aria-expanded', 'false'); }
+        const url = window.location.href;
+        for (const link of menu.querySelectorAll<HTMLAnchorElement>('[data-share]')) {
+          link.href = link.dataset.share === 'linkedin' ? `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(root.dataset.title ?? '')}` : `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(root.dataset.title ?? '')}`;
+        }
+        for (const link of menu.querySelectorAll<HTMLAnchorElement>('[data-ai-link]')) {
+          const prompt = (root.dataset.aiPrompt ?? '').replaceAll('__PAGE_URL__', url);
+          const q = encodeURIComponent(prompt), name = link.dataset.aiLink;
+          link.href = name === 'ChatGPT' ? `https://chatgpt.com/?q=${q}` : name === 'Claude' ? `https://claude.ai/new?q=${q}` : name === 'Google AI' ? `https://www.google.com/search?q=${q}&udm=50` : name === 'Grok' ? `https://grok.com/?q=${q}` : `https://www.perplexity.ai/search/?q=${q}`;
+        }
+        menu.showPopover();
+        if (trigger) {
+          const bounds = trigger.getBoundingClientRect(), popup = menu.getBoundingClientRect();
+          const left = bounds.left + popup.width > innerWidth ? bounds.right - popup.width : bounds.left;
+          menu.style.left = `${Math.max(0, left)}px`;
+          const gap = 4;
+          menu.style.top = `${bounds.bottom + popup.height + gap > innerHeight ? Math.max(0, bounds.top - popup.height - gap) : bounds.bottom + gap}px`;
+        }
+        trigger?.setAttribute('aria-expanded', 'true');
+        if (focus !== 'none') (focus === 'last' ? itemsFor(menu).at(-1) : itemsFor(menu)[0])?.focus();
+      } else {
+        if (menu.matches(':popover-open')) menu.hidePopover();
+        trigger?.setAttribute('aria-expanded', 'false');
+      }
+    };
+    root.addEventListener('toggle', event => {
+      const menu = event.target as HTMLElement;
+      if (!menu.matches('[data-menu]')) return;
+      triggerFor(menu)?.setAttribute('aria-expanded', menu.matches(':popover-open') ? 'true' : 'false');
+    }, true);
+    document.addEventListener('pointerdown', event => {
+      for (const menu of root.querySelectorAll<HTMLElement>('[data-menu]:popover-open')) {
+        if (!menu.contains(event.target as Node) && !triggerFor(menu)?.contains(event.target as Node)) setOpen(menu, false);
+      }
+    }, true);
+    for (const trigger of root.querySelectorAll<HTMLButtonElement>('[data-menu-trigger]')) {
+      const menu = trigger.parentElement?.querySelector<HTMLElement>('[data-menu]');
+      if (!menu) continue;
+      trigger.addEventListener('click', event => setOpen(menu, !menu.matches(':popover-open'), event.detail === 0 ? 'first' : 'none'));
+      trigger.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); setOpen(menu, true, event.key === 'ArrowUp' ? 'last' : 'first'); }
+      });
+      menu.addEventListener('keydown', event => {
+        const items = itemsFor(menu), current = items.indexOf(document.activeElement as HTMLElement);
+        const label = (item: HTMLElement) => item.innerText.trim().toLocaleLowerCase();
+        if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          const key = event.key.toLocaleLowerCase();
+          if (typeahead && typeahead[0] === key) typeahead = '';
+          typeahead += key;
+          window.clearTimeout(typeaheadTimer);
+          typeaheadTimer = window.setTimeout(() => { typeahead = ''; }, 500);
+          const start = current < 0 ? 0 : current + 1;
+          const match = [...items.slice(start), ...items.slice(0, start)].find(item => label(item).startsWith(typeahead));
+          if (match) { event.preventDefault(); match.focus(); }
+          else { typeahead = ''; window.clearTimeout(typeaheadTimer); }
+          return;
+        }
+        let next = -1;
+        if (event.key === 'ArrowDown') next = Math.min(current + 1, items.length - 1);
+        else if (event.key === 'ArrowUp') next = Math.max(current - 1, 0);
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = items.length - 1;
+        else if (event.key === 'Escape') { event.preventDefault(); setOpen(menu, false); trigger.focus(); return; }
+        else if (event.key === 'Tab') {
+          event.preventDefault();
+          return;
+        }
+        else return;
+        event.preventDefault(); items[next]?.focus();
+      });
+      menu.addEventListener('click', event => {
+        const item = (event.target as HTMLElement).closest<HTMLElement>('[role="menuitem"][href]');
+        if (!item) return;
+        window.setTimeout(() => { setOpen(menu, false); trigger.focus(); }, 0);
+      });
+    }
+    const status = root.querySelector<HTMLElement>('[data-copy-status]');
+    let statusTimer = 0;
+    const copy = async (value: string, message: string) => {
+      try { await navigator.clipboard.writeText(value); if (status) status.textContent = message; }
+      catch { if (status) status.textContent = "Couldn't copy"; }
+      if (status) {
+        status.className = 'absolute left-0 top-full mt-2 whitespace-nowrap rounded-sm bg-raised px-2 py-1 type-meta text-fg';
+        window.clearTimeout(statusTimer); statusTimer = window.setTimeout(() => { status.textContent = ''; status.className = 'page-tools-copy-status sr-only'; }, 2000);
+      }
+    };
+    root.querySelector('[data-copy-link]')?.addEventListener('click', event => { void copy(window.location.href, 'Link copied'); const menu = (event.currentTarget as HTMLElement).closest('[data-menu]') as HTMLElement; setOpen(menu, false); triggerFor(menu)?.focus(); });
+    root.querySelector('[data-copy-markdown]')?.addEventListener('click', event => { void copy((root.dataset.markdown ?? '').replaceAll('__PAGE_URL__', window.location.href), 'Markdown copied'); const menu = (event.currentTarget as HTMLElement).closest('[data-menu]') as HTMLElement; setOpen(menu, false); triggerFor(menu)?.focus(); });
+  }
+</script>

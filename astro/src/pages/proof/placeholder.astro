@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PageClosing from '../../components/PageClosing.astro';
 import CaseFrame from '../../components/CaseFrame.astro';
-import { AiBadges } from '@/components/page-tools';
+import AiBadges from '../../components/AiBadges.astro';
 import { BRANDS, FIVERR_PROFILE_URL } from '@/lib/content';
 const client = BRANDS.find((brand) => brand.name === 'Harvard University');
 if (!client?.color) throw new Error("Case study needs Harvard University's brand color");
@@ -29,7 +29,7 @@ const sectionHeading = 'font-heading font-normal text-(length:--type-heading-h3-
         <div class="border-b border-line py-4"><dt class="type-meta uppercase text-fg-2">Annual revenue</dt><dd class="mt-2 font-sans text-base text-fg-max">$5B+</dd></div>
       </dl>
       <div class="mt-8"><a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">Message me</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a></div>
-      <div class="mt-8"><AiBadges client:load /></div>
+      <div class="mt-8"><AiBadges /></div>
     </aside>
     <div class="max-w-[700px] lg:col-span-8 lg:col-start-5">
       {sections.map((heading, i) => <section class:list={[i ? 'mt-e2' : '']}><h2 class={sectionHeading}>{heading}</h2><div class={`mt-6 space-y-6 ${bodyText}`}><p>{LOREM}</p><p>{LOREM}</p></div></section>)}

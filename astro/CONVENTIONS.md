@@ -2,6 +2,7 @@
 
 - Use design tokens from `docs/design-system/` and `globals.css` only. Do not introduce raw color, spacing, type, timing, or motion values.
 - Render static markup in `.astro` files. Put behavior in vanilla TypeScript `<script>`s; do not add React or other framework islands.
+- For small menus and tooltips, keep static controls in `.astro` files and use native popovers plus small TypeScript keyboard/focus handlers. Match the live Next widget's roles, names, states, dismissal and timing before replacing it.
 - The first paint must already look like the settled page. Do not build visible DOM, insert text, or start textures in deferred scripts when HTML, CSS, or a tiny inline script immediately after the element can produce it.
 - Preserve algorithms and timings when porting behavior. Honor reduced motion.
 - Keep shared code in root `src/` until Next is retired. Never fork it without a Decision Log entry in the migration ExecPlan.

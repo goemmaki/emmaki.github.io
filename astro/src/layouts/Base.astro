@@ -1,6 +1,7 @@
 ---
 import { SiteHeader } from '../islands/SiteHeader.tsx';
-import { BackToTop } from '../islands/BackToTop.tsx';
+import BackToTop from '../components/BackToTop.astro';
+import { WORK_HOURS } from '@/lib/content';
 import plexSans400 from '../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
 import '../styles/site.css';
 
@@ -26,7 +27,7 @@ const pathname = Astro.url.pathname;
   <body class="flex min-h-dvh flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
     <SiteHeader pathname={pathname} client:load />
-    <script is:inline>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:'Europe/Athens',weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=day>=1&&day<=5&&hour>=10&&hour<18?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
+    <script is:inline define:vars={{ workHours: WORK_HOURS }}>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:workHours.timeZone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=workHours.days.includes(day)&&hour>=workHours.start&&hour<workHours.end?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
     <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
     <footer>
       <div class="footer relative overflow-hidden" data-footer>
@@ -46,7 +47,7 @@ const pathname = Astro.url.pathname;
                 <svg viewBox="0 0 24 24" class="size-[18px]" aria-hidden="true"><mask id="footer-fiverr-mask"><circle cx="12" cy="12" r="12" fill="#fff"/><g fill="#000" transform="translate(7.6 -6.67) scale(1.565)"><path d="M.908 15.44H2.51v-3.558h1.524v3.558h1.591v-4.874H2.51v-.302c0-.332.235-.536.606-.536h.918V8.412H2.85c-1.162 0-1.943.712-1.943 1.755v.4H0v1.316h.908v3.558z"/><circle cx="4.85" cy="9.15" r=".78"/></g></mask><circle cx="12" cy="12" r="12" fill="currentColor" mask="url(#footer-fiverr-mask)"/></svg>
               </a>
               <a href="/agents.md" aria-label="View as agent" class="icon-action size-7 sm:size-9"><svg viewBox="0 0 24 24" class="size-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2m16 0h2m-15-2h.01M17 12h.01M9 16h6"/></svg></a>
-              <BackToTop className="icon-action size-7 sm:size-9" client:load />
+              <BackToTop class="icon-action size-7 sm:size-9" />
             </div>
           </div>
         </div>
