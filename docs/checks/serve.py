@@ -1,4 +1,4 @@
-# Serves a Next static export like GitHub Pages: /a/b -> a/b.html, / -> index.html, anything missing
+# Serves a static Astro build like GitHub Pages: /a/b -> a/b.html, / -> index.html, anything missing
 # -> 404.html with status 404. Usage: serve.py <dir> <port>
 import http.server, os, sys
 root, port = sys.argv[1], int(sys.argv[2])

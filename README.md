@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Emmaki portfolio site
 
-## Getting Started
+The site is a static Astro project. Its routes and components live in `src/`; shared content and styles are in `src/lib/` and `src/styles/`. The root `public/` directory is copied as-is into the build.
 
-First, run the development server:
+## Develop and build
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+Use pnpm from the repository root:
+
+```sh
+pnpm install --frozen-lockfile
 pnpm dev
-# or
-bun dev
+pnpm run check
+pnpm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Astro serves the development site on port 3004. The static site is written to `dist/`. To serve a build locally, run `python3 docs/checks/serve.py dist 3007`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Visual parity
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`scripts/parity.mjs` compares the static build against the preserved reference export on port 3006. Recreate that export from commit `e504a4bd` with `git worktree add <dir> e504a4bd`, `pnpm install`, and `pnpm build`, then serve its `out/` directory on port 3006. Run the full matrix with `REF=http://127.0.0.1:3006 NEW=http://127.0.0.1:3007 node scripts/parity.mjs`; choose Chromium or Firefox with `BROWSER=chromium` or `BROWSER=firefox`.
 
-## Learn More
+## GitHub Pages
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+There is no deployment workflow yet. Before publishing, add or configure the GitHub Pages deployment step to upload the static root `dist/` artifact produced by `pnpm run build`. No server process is needed at runtime.

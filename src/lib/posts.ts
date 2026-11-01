@@ -1,4 +1,4 @@
-import type { FaqItem } from "@/components/faq";
+type FaqItem = { question: string; answer: string };
 
 /** A run of paragraph text, or an inline link. */
 export type PostInline = string | { text: string; href: string };

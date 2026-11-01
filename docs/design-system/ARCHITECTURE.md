@@ -4,36 +4,19 @@ This document governs how the Emmaki website is implemented and shipped. `DESIGN
 
 ## Current foundation
 
-The portfolio repository is `goemmaki/emmaki.github.io`. The working foundation created on 2026-09-27 is:
+The production site is a static Astro application rooted at the repository top level.
 
-- Next.js App Router 16.3.6
-- React 19.2.8
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui 4.21.0 using Base UI
-- shadcn preset `b3XpCk5D6Y` (Luma, Neutral, IBM Plex Sans body, Geist heading, Lucide, translucent menu, subtle menu accent)
-- Motion 13.4.4
-- GSAP 3.15.0
-- Lucide through the shadcn preset
+- Astro 7
+- TypeScript and vanilla browser scripts
+- Tailwind CSS v4 through Vite
 - pnpm
+- GSAP 3.15.0 remains installed by owner decision; it is currently unused.
 
-The Luma preset is **implementation substrate only**. It does not define Emmaki's color semantics, spacing system, typography roles, radius policy, or visual identity. When Luma/shadcn and the Emmaki design-system docs disagree, the Emmaki docs win.
-
-## Runtime and deployment
-
-The target is a fully static GitHub Pages site.
-
-- Use Next.js App Router with static export enabled (`output: "export"`).
-- Deploy the exported output through GitHub Actions. Visitors must not need a running Node process.
-- `goemmaki/emmaki.github.io` is a GitHub Pages user site, so the production site is expected at the domain root; do not add a project-site `basePath` unless the hosting topology changes.
-- Keep essential content and render-time assets available to the build without runtime CMS/backend dependencies.
-- Use only routes that can be generated at build time; parameterized pages must enumerate their route set during the build.
-
-Do not use SSR, Server Actions, runtime API routes/route handlers, runtime databases, runtime CMS dependencies, server middleware, or any feature requiring a persistent server process.
+The site has no React runtime. Static page markup belongs in `src/pages/`, shared layouts and components in `src/layouts/` and `src/components/`, content in `src/lib/`, and site styles in `src/styles/`.
 
 ## Design-token enforcement
 
-`colors_and_type.css` and `tokens.css` are the reusable implementation foundations. Tailwind/shadcn must consume these roles rather than establishing a competing theme.
+`colors_and_type.css` and `tokens.css` are the reusable implementation foundations. Tailwind utilities must consume these roles rather than establishing a competing theme.
 
 - Neutral canvas, surface, text, and structural-alpha tokens are the default hierarchy.
 - Yellow is authored/brand activity with `8 / 14 / 24%` ghost/motif/active tiers and rare solid `#FFC300` splash. It is not generic `primary`.
@@ -47,24 +30,20 @@ Do not use SSR, Server Actions, runtime API routes/route handlers, runtime datab
 
 ## Components and primitives
 
-Use shadcn/Base UI for appropriate accessible primitives. Install only components the site actually needs; do not copy the catalogue wholesale.
-
-shadcn/Base UI supplies behavior and accessible interaction structure. Emmaki supplies visual identity. Components must consume Emmaki semantic tokens rather than default shadcn palette assumptions.
-
-The current Luma settings — including its translucent menu and spacious component posture — are useful starting behavior, not brand law.
+Use semantic HTML and native browser behavior first. Astro components render static markup; small vanilla TypeScript scripts add the interactions that need them. Keep accessible names, focus behavior, keyboard support, and reduced-motion behavior explicit.
 
 ## Motion responsibilities
 
 - CSS: simple hover/state transitions.
-- Motion: ordinary React/UI transitions.
+- Vanilla TypeScript: DOM interactions and animation state that need scripting.
 - GSAP: bespoke authored choreography that benefits from a timeline, such as a signature/wordmark trace or a controlled entry sequence. Unused for now, and kept installed on purpose (owner, 2026-10-27); do not propose removing it.
-- Do not use Motion and GSAP to drive the same effect.
+- Do not use CSS animation and GSAP to drive the same effect.
 - Respect `prefers-reduced-motion`; the final readable state must be immediately available without animation.
 - The entry may be striking. The interior should become stark, quiet, and controlled.
 
 ## Typography and assets
 
-Use Geist for display, IBM Plex Sans for body/interface copy, and IBM Plex Mono for genuine technical/meta content. The project may use Next/font or committed assets as appropriate, but production rendering must not depend on a runtime remote-font request.
+Use Geist for display, IBM Plex Sans for body/interface copy, and IBM Plex Mono for genuine technical/meta content. Use committed local font assets; production rendering must not depend on a runtime remote-font request.
 
 Use the actual Emmaki SVG wordmark assets when they are added to the repo; do not recreate the wordmark as ordinary text. Use black artwork on light surfaces and white artwork on dark surfaces.
 

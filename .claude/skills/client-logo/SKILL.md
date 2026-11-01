@@ -5,7 +5,7 @@ description: Add a new client to the emmaki site, or replace a client's logo, in
 
 # Add or update a client logo
 
-The client strip on Home (`src/components/client-slots.tsx`) shows every brand in `BRANDS` (`src/lib/content.ts`). At rest the logos are monochrome by CSS filter. On hover each one shows its own file for the current theme, in its real colors. So every client needs two files in `public/clients/`, both trimmed to their ink:
+The client strip on Home (`src/components/ClientSlots.astro`) shows every brand in `BRANDS` (`src/lib/content.ts`). At rest the logos are monochrome by CSS filter. On hover each one shows its own file for the current theme, in its real colors. So every client needs two files in `public/clients/`, both trimmed to their ink:
 
 - `light`: for the light theme, readable on white
 - `dark`: for the dark theme (the default), readable on black

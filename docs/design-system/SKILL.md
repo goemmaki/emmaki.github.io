@@ -14,7 +14,7 @@ Use this system whenever designing or building Emmaki-facing work. Commercial ju
 - `BRAND.md` — color meaning, typography posture, logo, voice, and evidence rules.
 - `colors_and_type.css` — canonical semantic color/type tokens.
 - `tokens.css` — canonical spacing/layout/shape tokens.
-- `ARCHITECTURE.md` — static Next.js/GitHub Pages implementation contract.
+- `ARCHITECTURE.md` — static Astro/GitHub Pages implementation contract.
 - `DESIGN-HANDOFF.md` — agent reading order and conflict resolution.
 
 OpenDesign generated files are provenance/reference only. They do not outrank these files.

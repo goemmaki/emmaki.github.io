@@ -4,7 +4,7 @@ Status: a record of the decisions made while building `/blog/[slug]` (2026-10-25
 
 Reference: grafit.agency's article page, studied for structure, tools, TOC behaviour and the flood button. Nothing was copied from it (code, text or assets); the brand comes from `DESIGN.md`.
 
-Code: `src/app/blog/[slug]/page.tsx`, `src/components/blog/` (`post-cover.tsx`, `post-tools.tsx`, `post-toc.tsx`, `post-faqs.tsx`, `ai-logos.ts`), `src/components/flood-button.tsx`, `src/lib/posts.ts`, and the "Post cover", "Flood button" and TOC tick blocks in `src/app/globals.css`.
+Code: The current implementation is `src/pages/blog/[slug].astro`, `src/components/blog/` (`PostCover.astro`, `PostToc.astro`, `PostIcon.astro`, `ai-logos.ts`), `src/components/PageTools.astro`, `src/lib/posts.ts`, and the "Post cover", "Flood button" and TOC tick blocks in `src/styles/globals.css`.
 
 "Owner" marks a decision the owner asked for or approved; the rest are implementation choices made to fit those decisions.
 
@@ -95,7 +95,7 @@ The call to action after the article, built after grafit's button but in emmaki 
 
 After vercel.com's article links: a link keeps the colour of the text around it and is marked by a 1px underline, 4px below the text, in `fg-muted`. On hover or focus the underline turns `fg-max` (whiter in dark mode, darker in light); the text doesn't change. No blue or purple, and no yellow (`DESIGN.md`).
 
-- One rule: the `text-link` utility in `globals.css`, used through `src/components/text-link.tsx`. Post paragraphs can hold inline links (`PostParagraph` in `posts.ts`); "Copy as .md" writes them as `[text](href)`.
+- One rule: the `text-link` utility in `globals.css`, used through inline Astro markup. Post paragraphs can hold inline links (`PostParagraph` in `posts.ts`); "Copy as .md" writes them as `[text](href)`.
 - **Accessibility:** the underline, not colour, marks the link (WCAG 1.4.1). Underline against the page: 5.85:1 dark, 4.12:1 light. Focus also gets the site's focus ring.
 
 ## FAQs (owner)

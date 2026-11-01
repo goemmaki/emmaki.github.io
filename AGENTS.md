@@ -1,12 +1,9 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Stack and commands
 
-# This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+- The production site is a static Astro project rooted here. Read `CONVENTIONS.md` before changing site code, and check current Astro 7 APIs in the official docs (context7 or docs.astro.build) rather than from memory.
+- Run `pnpm install --frozen-lockfile`, `pnpm run check`, and `pnpm run build` from the repository root. Build output is `dist/`.
+- `pnpm-workspace.yaml` retains pnpm's `allowBuilds` policy (`sharp: false`, `unrs-resolver: false`); it remains needed to control dependency install scripts.
+- Compare production output with `node scripts/parity.mjs`; see `CONVENTIONS.md` for the reference export and browser matrix.
 
 ## Owner rules
 
@@ -30,6 +27,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Visual glitches and polish to fix after the Astro migration merges, in the owner's words: [docs/visual-polish-backlog.md](docs/visual-polish-backlog.md).
 - New client or a logo to replace: follow [.claude/skills/client-logo/SKILL.md](.claude/skills/client-logo/SKILL.md).
 - Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
-- Astro migration (latest, 2026-10-31, branch `design/astro-migration-20261031`): resume from [docs/handoffs/20261031-astro-migration.md](docs/handoffs/20261031-astro-migration.md).
+- Astro migration (latest, M10, 2026-11-01, branch `design/astro-migration-20261031`): resume from [docs/handoffs/20261101-astro-migration-m10.md](docs/handoffs/20261101-astro-migration-m10.md). Earlier context: [20261031-astro-migration.md](docs/handoffs/20261031-astro-migration.md).
 - Proof, the case-study template and Home (2026-10-29): resume from [docs/handoffs/20261029-proof-case-study.md](docs/handoffs/20261029-proof-case-study.md).
 - Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.

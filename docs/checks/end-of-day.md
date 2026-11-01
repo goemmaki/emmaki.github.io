@@ -13,13 +13,13 @@ Codex's sandbox blocks a Turbopack build and Chrome, so those stay with Claude.
   it from another worktree's `runtime/`, or install it there:
   `npm install --prefix runtime/a11y-tools axe-core@^4.14 lighthouse@^13.5`.
   Playwright 1.61 is at `NODE_PATH=/home/emma/.npm/_npx/e41f203b7505f1fb/node_modules`.
-- **Build:** `run-check -- pnpm build` (writes `out/`).
-- **Serve:** `python3 docs/checks/serve.py out 3021` in the background. Stop that PID when done.
+- **Build:** `run-check -- pnpm run build` (writes `dist/`).
+- **Serve:** `python3 docs/checks/serve.py dist 3021` in the background. Stop that PID when done.
 - **Lighthouse:**
   `NODE_PATH=... node docs/checks/lighthouse.cjs runtime/checks-<date> 3021 <pages>`.
   It covers light and dark, desktop and mobile.
   Leave the 404 out: Lighthouse refuses a page with a 404 status (`ERRORED_DOCUMENT_REQUEST`).
-- **Pages:** every route in `src/app`, plus a missing URL (e.g. `/nope`) for the 404.
+- **Pages:** every route in `src/pages`, plus a missing URL (e.g. `/nope`) for the 404.
 - **Brief:** copy the brief below to `runtime/briefs/<date>-end-of-day.md`. Fill in the worktree,
   branch, commit, date and pages.
 
@@ -51,7 +51,7 @@ About a minute after launch, check the log to confirm it is working. Then wait o
 ```markdown
 # Brief: end-of-day accessibility and cross-browser checks (read-only on code)
 
-Repository: `<worktree>` (branch `<branch>`, at `<commit>`). Static Next.js export of the emmaki
+Repository: `<worktree>` (branch `<branch>`, at `<commit>`). Static Astro build of the emmaki
 portfolio site, already built to `out/` and served at http://127.0.0.1:3021 (don't rebuild; the
 sandbox can't).
 
@@ -64,7 +64,7 @@ push or install anything. Write only under `runtime/`. Compare with the last run
 ## Read
 
 `AGENTS.md`, the newest `docs/handoffs/*.md`, `docs/design-system/` (Accessibility sections),
-`src/app/**`, `src/components/**`, `src/lib/**`, `src/app/globals.css`.
+`src/pages/**`, `src/components/**`, `src/lib/**`, `src/styles/globals.css`.
 
 ## Tools (installed; download nothing)
 
