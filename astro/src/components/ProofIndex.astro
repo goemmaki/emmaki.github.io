@@ -1,0 +1,80 @@
+---
+import { BRANDS, SERVICES } from '@/lib/content';
+const projects = [
+  { client: 'Harvard University', project: 'Placeholder 01', work: SERVICES[0], companion: '#E39380', darkInk: '#BE3D50', lightCompanion: '#AD6250' },
+  { client: 'Quartile', project: 'Placeholder 02', work: SERVICES[1], companion: '#C35A32', lightInk: '#B86D00' },
+  { client: 'Accredible', project: 'Placeholder 03', work: SERVICES[4], companion: '#8D9FDC', lightCompanion: '#6274AE' },
+  { client: 'Fiverr', project: 'Placeholder 04', work: 'AI automation', companion: '#247C88', lightInk: '#168852' },
+  { client: 'TV Tropes', project: 'Placeholder 05', work: SERVICES[3], companion: '#78ABB5', lightCompanion: '#467D88' },
+  { client: 'Spectral Core', project: 'Placeholder 06', work: 'AI automation', companion: '#526AB6', lightInk: '#10899F' },
+].map(({ client, ...project }) => {
+  const brand = BRANDS.find((item) => item.name === client);
+  if (!brand?.color) throw new Error(`Proof project needs a brand color: ${client}`);
+  return { ...project, brand };
+});
+---
+<section class="shell proof-index" data-proof-index>
+  <div class="proof-index-head" aria-hidden="true"><span>Client</span><span>Project</span><span>Work</span></div>
+  <ul class="proof-list">
+    {projects.map(({ brand, project, work, companion, lightInk, darkInk, lightCompanion }) => <li>
+      <a href="/proof" class="proof-row" style={`--proof-brand:${brand.color};--proof-companion:${companion};${lightInk ? `--proof-ink-light:${lightInk};` : ''}${darkInk ? `--proof-ink-dark:${darkInk};` : ''}${lightCompanion ? `--proof-companion-light:${lightCompanion};` : ''}`}>
+        <canvas class="proof-screen" aria-hidden="true"></canvas>
+        <span class="proof-client-cell"><svg class="proof-row-arrow" viewBox="6 6 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="proof-client"><span class="proof-client-base">{brand.name}</span><span class="proof-client-gradient" aria-hidden="true">{brand.name}</span></span></span>
+        <span class="proof-project"><span class="sr-only">Project: </span>{project}</span>
+        <span class="proof-work"><span class="sr-only">Work: </span>{work}</span>
+      </a>
+    </li>)}
+  </ul>
+</section>
+<script>
+const FINE_POINTER = '(hover: hover) and (pointer: fine)';
+const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
+const PITCH = 6;
+type Point = { x: number; y: number };
+const pointer: Point = { x: -1, y: -1 };
+let hovered: HTMLElement | null = null;
+let focused: HTMLElement | null = null;
+let grainFrame = 0;
+function dotRadius(x: number, y: number, at: Point) { return 0.35 + 1.9 * Math.max(0, 1 - Math.hypot(x - at.x, y - at.y) / 220); }
+function stopDots(row: HTMLElement) { const frame = Number(row.dataset.dotFrame); if (frame) cancelAnimationFrame(frame); }
+function startDots(row: HTMLElement) {
+  const canvas = row.querySelector<HTMLCanvasElement>('canvas.proof-screen')!;
+  const ctx = canvas.getContext('2d'); if (!ctx) return;
+  const box = row.getBoundingClientRect(), ratio = Math.min(devicePixelRatio || 1, 2), w = box.width, h = box.height;
+  canvas.width = Math.round(w * ratio); canvas.height = Math.round(h * ratio); ctx.setTransform(ratio, 0, 0, ratio, 0, 0); ctx.fillStyle = getComputedStyle(canvas).color;
+  const inside = (p: Point) => p.x >= box.left && p.x <= box.right && p.y >= box.top && p.y <= box.bottom;
+  const local = () => inside(pointer) ? { x: pointer.x - box.left, y: pointer.y - box.top } : { x: w / 2, y: h / 2 };
+  const at = local();
+  const draw = () => { const target = local(); at.x += (target.x - at.x) * 0.2; at.y += (target.y - at.y) * 0.2; ctx!.clearRect(0, 0, w, h); ctx!.beginPath(); for (let y = PITCH / 2; y < h; y += PITCH) for (let x = PITCH / 2; x < w; x += PITCH) { const r = dotRadius(x, y, at); if (r >= 0.1) { ctx!.moveTo(x + r, y); ctx!.arc(x, y, r, 0, Math.PI * 2); } } ctx!.fill(); if (!matchMedia(REDUCED_MOTION).matches && !document.hidden) row.dataset.dotFrame = String(requestAnimationFrame(draw)); };
+  row.dataset.dotFrame = String(requestAnimationFrame(draw));
+}
+function activate(row: HTMLElement | null) {
+  cancelAnimationFrame(grainFrame);
+  grainFrame = 0;
+  document.querySelectorAll<HTMLElement>('.proof-row').forEach((item) => {
+    const active = item === row; item.toggleAttribute('data-active', active);
+    stopDots(item);
+    if (active) startDots(item);
+  });
+  if (!row) return;
+  const name = row.querySelector<HTMLElement>('.proof-client-gradient')!;
+  const motion = matchMedia(REDUCED_MOTION), pointerQuery = matchMedia(FINE_POINTER);
+  const tile = document.createElement('canvas'); tile.width = 96; tile.height = 64;
+  const ctx = tile.getContext('2d'); if (!ctx) return;
+  const pixels = ctx.createImageData(tile.width, tile.height); let last = -Infinity;
+  const draw = (time: number) => { if (time - last >= 50) { last = time; for (let i = 0; i < pixels.data.length; i += 4) { const gray = Math.floor(Math.random() * 256); pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = gray; pixels.data[i + 3] = 64; } ctx!.putImageData(pixels, 0, 0); name.style.setProperty('--proof-noise', `url("${tile.toDataURL()}")`); name.style.backgroundPosition = `0 0, ${50 + Math.sin(time / 1600) * 45}% 50%`; } grainFrame = requestAnimationFrame(draw); };
+  // One active row at a time; listeners stay on the page for pointer, visibility and motion changes.
+  if (!document.hidden && !motion.matches && (!hovered || pointerQuery.matches)) { last = -Infinity; grainFrame = requestAnimationFrame(draw); }
+}
+const rows = [...document.querySelectorAll<HTMLElement>('[data-proof-index] .proof-row')];
+for (const row of rows) {
+  row.addEventListener('pointerenter', (event) => { const e = event as PointerEvent; if (e.pointerType !== 'mouse' || !matchMedia(FINE_POINTER).matches) return; pointer.x = e.clientX; pointer.y = e.clientY; hovered = row; activate(hovered ?? focused); });
+  row.addEventListener('pointermove', (event) => { const e = event as PointerEvent; pointer.x = e.clientX; pointer.y = e.clientY; });
+  row.addEventListener('pointerleave', () => { hovered = null; activate(focused); }); row.addEventListener('pointercancel', () => { hovered = null; activate(focused); });
+  row.addEventListener('focus', () => { if (row.matches(':focus-visible')) { focused = row; activate(hovered ?? focused); } });
+  row.addEventListener('blur', () => { focused = null; activate(hovered); });
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(grainFrame); grainFrame = 0; rows.forEach(stopDots); } else activate(hovered ?? focused); });
+matchMedia(REDUCED_MOTION).addEventListener('change', () => activate(hovered ?? focused));
+matchMedia(FINE_POINTER).addEventListener('change', () => activate(hovered ?? focused));
+</script>

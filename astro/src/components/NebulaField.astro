@@ -1,0 +1,33 @@
+---
+---
+<div aria-hidden="true" class="fixed inset-0" data-nebula-field><canvas class="absolute inset-0 size-full [image-rendering:pixelated]" data-nebula-main></canvas><canvas class="absolute inset-0 size-full" data-nebula-overlay></canvas></div>
+<script>
+const CELL = 16, STOPS: [number, [number, number, number]][] = [[0,[255,195,0]],[0.3,[179,122,0]],[0.65,[74,44,0]],[1,[5,2,0]]], PEAK = 0.75, THRESHOLD = 0.16, GRADIENT = { count: 6, distortion: 0.28, wave: 0.12, motion: 0.86, speed: 0.5 }, PFX = { halftone: 0.2, scanLines: 0.4, vignette: 0.38, filmGrain: 0.3 };
+const smooth = (t: number) => t * t * (3 - 2 * t);
+function gradientAt(pos: number): [number,number,number] { const p = Math.min(1, Math.max(0,pos)), i = STOPS.findIndex(([at]) => at >= p); if (i <= 0) return STOPS[0][1]; const [a,ca] = STOPS[i-1], [b,cb] = STOPS[i], t = smooth((p-a)/(b-a)); return [0,1,2].map(k => ca[k] + (cb[k]-ca[k])*t) as [number,number,number]; }
+function glowFor(width:number,height:number) { return width >= 768 ? {x:width*0.3,y:height*0.5,radius:Math.min(width*0.32,height*0.6)} : {x:width*0.5,y:height*0.3,radius:Math.min(width*0.75,height*0.32)}; }
+function fieldAt(x:number,y:number,glow:ReturnType<typeof glowFor>,t:number) { const s=t*GRADIENT.speed,u=(x-glow.x-glow.radius*0.08*Math.sin(s*0.7))/glow.radius,v=(y-glow.y-glow.radius*0.06*Math.cos(s*0.9))/glow.radius,angle=Math.atan2(v,u); let r=Math.hypot(u,v); r*=1+GRADIENT.distortion*GRADIENT.motion*0.35*Math.sin(GRADIENT.count*angle+s); r+=GRADIENT.wave*0.5*Math.sin(r*9-s*1.5); return r; }
+function hash(col:number,row:number) { const n=Math.sin(col*127.1+row*311.7)*43758.5453; return n-Math.floor(n); }
+function makeCanvas(width:number,height:number) { const canvas=document.createElement('canvas'); canvas.width=width; canvas.height=height; return [canvas,canvas.getContext('2d')!] as const; }
+function pattern(ctx:CanvasRenderingContext2D,size:number,draw:(c:CanvasRenderingContext2D)=>void) { const [tile,tileCtx]=makeCanvas(size,size); draw(tileCtx); return ctx.createPattern(tile,'repeat')!; }
+const canvas = document.querySelector<HTMLCanvasElement>('[data-nebula-main]'), overlay = document.querySelector<HTMLCanvasElement>('[data-nebula-overlay]');
+if (canvas && overlay) {
+ const ctx=canvas.getContext('2d'), overlayCtx=overlay.getContext('2d');
+ if (ctx && overlayCtx) {
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)'); let still=reduce.matches;
+  const [grain,grainCtx]=makeCanvas(256,256),noise=grainCtx.createImageData(256,256); for(let i=0;i<noise.data.length;i+=4){const n=Math.random()*255;noise.data.set([n,n,n,255],i);} grainCtx.putImageData(noise,0,0); const grainPattern=ctx.createPattern(grain,'repeat')!;
+  let width=0,height=0,glow=glowFor(0,0);
+  function resize(){width=canvas!.clientWidth;height=canvas!.clientHeight;canvas!.width=width;canvas!.height=height;glow=glowFor(width,height);const dpr=Math.min(devicePixelRatio,2);overlay!.width=Math.round(width*dpr);overlay!.height=Math.round(height*dpr);overlayCtx!.setTransform(dpr,0,0,dpr,0,0);
+   overlayCtx!.fillStyle=pattern(overlayCtx!,4,c=>{c.fillStyle=`rgb(0 0 0 / ${PFX.halftone})`;c.beginPath();c.arc(2,2,1,0,Math.PI*2);c.fill();});overlayCtx!.fillRect(0,0,width,height);
+   overlayCtx!.fillStyle=pattern(overlayCtx!,3,c=>{c.fillStyle=`rgb(0 0 0 / ${PFX.scanLines*0.6})`;c.fillRect(0,2,3,1);});overlayCtx!.fillRect(0,0,width,height);
+   const vignette=overlayCtx!.createRadialGradient(width/2,height/2,Math.min(width,height)*0.3,width/2,height/2,Math.hypot(width,height)/2);vignette.addColorStop(0,'rgb(0 0 0 / 0)');vignette.addColorStop(1,`rgb(0 0 0 / ${PFX.vignette*1.6})`);overlayCtx!.fillStyle=vignette;overlayCtx!.fillRect(0,0,width,height);
+  }
+  function draw(t:number){ctx!.globalCompositeOperation='source-over';ctx!.globalAlpha=1;ctx!.clearRect(0,0,width,height);ctx!.fillStyle='#000';ctx!.fillRect(0,0,width,height);const cols=Math.ceil(width/CELL),rows=Math.ceil(height/CELL);
+   for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){const cx=col*CELL+CELL/2,cy=row*CELL+CELL/2,pos=fieldAt(cx,cy,glow,t);if(pos>=1)continue;const light=1-pos,twinkle=0.6+0.4*Math.sin((col+row)*0.35-t*2+hash(col,row)*6.28),level=light*twinkle;if(level<THRESHOLD)continue;const size=4+Math.round(level*3),x=Math.round(cx-size/2),y=Math.round(cy-size/2),[r,g,b]=gradientAt(pos);ctx!.fillStyle=`rgb(${r} ${g} ${b} / ${Math.min(1,level*1.4)*PEAK})`;ctx!.fillRect(x,y,size,1);ctx!.fillRect(x,y+size-1,size,1);ctx!.fillRect(x,y+1,1,size-2);ctx!.fillRect(x+size-1,y+1,1,size-2);}
+   ctx!.globalCompositeOperation='overlay';ctx!.globalAlpha=PFX.filmGrain*0.35;ctx!.save();ctx!.translate(-Math.random()*256,-Math.random()*256);ctx!.fillStyle=grainPattern;ctx!.fillRect(0,0,width+256,height+256);ctx!.restore();
+  }
+  let frame=0,drawn=-Infinity;const loop=(ms:number)=>{if(ms-drawn>=1000/30-2){drawn=ms;draw(ms/1000);}frame=requestAnimationFrame(loop);};
+  const observer=new ResizeObserver(()=>{resize();draw(Math.max(0,drawn)/1000);});observer.observe(canvas);resize();function play(){cancelAnimationFrame(frame);if(still)draw(Math.max(0,drawn)/1000);else frame=requestAnimationFrame(loop);}const onMotion=()=>{still=reduce.matches;play();};reduce.addEventListener('change',onMotion);play();
+ }
+}
+</script>

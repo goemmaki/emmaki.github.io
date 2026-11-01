@@ -1,12 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { AsciiImage } from '@/components/ascii-image';
+import AsciiImage from '../../components/AsciiImage.astro';
 import '@fontsource-variable/geist-pixel/elsh.css';
 ---
 <Base pageTitle="Placeholder keyword phrase" description="Placeholder description of Crossed Wires.">
   <section class="blog-cover relative -mt-16 overflow-x-clip" style="--nf-geist-pixel: 'Geist Pixel Variable';">
     <div class="relative flex h-svh flex-col">
-      <AsciiImage src="/blog/masks.webp" width={1000} height={890} className="blog-cover-masks" client:load />
+      <AsciiImage src="/blog/masks.webp" width={1000} height={890} class="blog-cover-masks" />
       <div class="blog-cover-bottom shell flex flex-1 flex-col justify-end pb-(--tagline-pb)"><div class="blog-cover-tagline-box"><p class="blog-cover-tagline text-center leading-[1.2] text-fg-2">A chronicle of <span class="text-fg-max">absurd humanity</span></p></div></div>
       <h1 class="blog-cover-name text-fg-max">Crossed Wires</h1>
     </div>

@@ -5,8 +5,8 @@ import PostToc from '../../components/blog/PostToc.astro';
 import PostIcon from '../../components/blog/PostIcon.astro';
 import Faq from '../../components/Faq.astro';
 import PageTools from '../../components/PageTools.astro';
-import { posts } from '@/lib/posts';
-import { formatPublished, headingId, readingMinutes, postMarkdown, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from '@/lib/post-format';
+import { posts } from '../../lib/posts';
+import { formatPublished, headingId, readingMinutes, postMarkdown, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from '../../lib/post-format';
 
 export function getStaticPaths() {
   return posts.map(post => ({ params: { slug: post.slug }, props: { post } }));
