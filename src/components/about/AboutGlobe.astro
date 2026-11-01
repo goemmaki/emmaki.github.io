@@ -2,12 +2,17 @@
 const destinations = ['London', 'New York', 'Sydney'];
 const icon = 'size-4';
 ---
-<div class="about-globe" data-about-globe data-layer="front">
+<div class="about-globe" data-under-header data-about-globe data-layer="front">
   <div class="about-globe-stage" data-globe-stage role="slider" tabindex="0" aria-label="Interactive globe" aria-describedby="about-globe-description" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="0" aria-orientation="horizontal">
-    <canvas class="absolute inset-0 size-full" data-globe-dots aria-hidden="true"></canvas>
-    <canvas class="pointer-events-none absolute inset-0 size-full" data-globe-lines aria-hidden="true"></canvas>
-    {destinations.map(name => <span class="about-globe-label type-meta uppercase" data-globe-label={name} aria-hidden="true">{name}</span>)}
-    <span class="about-globe-label about-globe-label--you type-meta uppercase" data-globe-label="you" aria-hidden="true">YOU?</span>
+    <div class="about-globe-surface about-globe-body" aria-hidden="true"><div data-globe-body></div></div>
+    <div class="about-globe-surface about-globe-dots" data-globe-dots-layer aria-hidden="true">
+      <canvas class="absolute inset-0 size-full" data-globe-dots></canvas>
+    </div>
+    <canvas class="about-globe-surface pointer-events-none absolute inset-0 size-full" data-globe-lines aria-hidden="true"></canvas>
+    <div class="about-globe-surface about-globe-labels" aria-hidden="true">
+      {destinations.map(name => <span class="about-globe-label type-meta uppercase" data-globe-label={name} aria-hidden="true">{name}</span>)}
+      <span class="about-globe-label about-globe-label--you type-meta uppercase" data-globe-label="you" aria-hidden="true">YOU?</span>
+    </div>
   </div>
   <p id="about-globe-description" class="sr-only">A globe centered on Crete, with routes to London, New York and Sydney. Use the arrow keys to rotate and Home to reset. In Explore, use plus and minus to zoom.</p>
   <p class="about-globe-statement">From here<span class="text-yellow-splash">.</span><br />To there<span class="text-yellow-splash">.</span></p>
@@ -44,7 +49,7 @@ const icon = 'size-4';
   @property --globe-fade {
     syntax: '<percentage>';
     inherits: false;
-    initial-value: 52%;
+    initial-value: 55%;
   }
   .about-globe {
     --globe-progress: 0;
@@ -58,22 +63,43 @@ const icon = 'size-4';
   }
   .about-globe-stage {
     position: absolute;
-    z-index: 1;
     inset: 0;
     touch-action: pan-y;
     cursor: grab;
     outline: none;
-    mix-blend-mode: screen;
-    -webkit-mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 30%));
-    mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 30%));
+  }
+  .about-globe-surface {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 42%));
+    mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 42%));
     transition: --globe-fade .6s var(--ease);
     transform: translateY(calc(var(--globe-progress) * 14svh)) scale(calc(1 - var(--globe-progress) * .45));
     transform-origin: var(--globe-cx) var(--globe-cy);
   }
-  :global([data-theme="light"]) .about-globe-stage {
+  .about-globe-body {
+    z-index: 1;
+  }
+  [data-globe-body] {
+    position: absolute;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-bg) 55%, transparent);
+  }
+  .about-globe-dots {
+    z-index: 2;
+    mix-blend-mode: screen;
+  }
+  [data-globe-dots] {
+    filter: contrast(1.04);
+  }
+  [data-globe-lines], .about-globe-labels {
+    z-index: 3;
+  }
+  :global([data-theme="light"]) .about-globe-dots {
     mix-blend-mode: multiply;
   }
-  .about-globe-stage:hover, .about-globe-stage:focus-visible, [data-dragging] .about-globe-stage, [data-explored] .about-globe-stage {
+  [data-explored] .about-globe-surface {
     --globe-fade: 100%;
   }
   [data-dragging] .about-globe-stage {
@@ -89,12 +115,9 @@ const icon = 'size-4';
   [data-explored] .about-globe-stage {
     touch-action: none;
   }
-  [data-layer="behind"] .about-globe-stage {
-    z-index: 0;
-  }
   :global(.page-cover:has([data-layer="behind"]) .page-cover-word) {
     position: relative;
-    z-index: 2;
+    z-index: 4;
     pointer-events: none;
   }
   .about-globe-label {
@@ -105,14 +128,10 @@ const icon = 'size-4';
     white-space: nowrap;
     padding: .2rem .4rem;
     border: 1px solid color-mix(in srgb, var(--color-fg-max) 55%, transparent);
-    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+    text-shadow: 0 0 .2rem var(--color-bg), 0 0 .45rem var(--color-bg);
     color: var(--color-fg-max);
     opacity: 0;
-    transition: opacity .25s var(--ease);
     pointer-events: none;
-  }
-  .about-globe-label[data-shown="true"] {
-    opacity: 1;
   }
   .about-globe-label--you {
     border-color: var(--color-yellow-splash);
@@ -121,11 +140,11 @@ const icon = 'size-4';
     border-color: var(--color-fg-max);
   }
   :global([data-theme="light"]) [data-globe-dots] {
-    filter: invert(1);
+    filter: contrast(1.04) invert(1);
   }
   .about-globe-statement {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     top: calc(4rem + 2svh);
     left: var(--gutter);
     font-family: var(--font-heading);
@@ -136,9 +155,15 @@ const icon = 'size-4';
     text-transform: uppercase;
     color: var(--color-fg-max);
   }
+  .about-globe-controls, .about-globe-exploration {
+    text-shadow: 0 0 .2rem var(--color-bg), 0 0 .45rem var(--color-bg);
+  }
+  .about-globe-controls .icon-action, .about-globe-tools .icon-action {
+    background: transparent;
+  }
   .about-globe-controls {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     right: var(--gutter);
     top: calc(4rem + 2svh);
     display: flex;
@@ -156,7 +181,7 @@ const icon = 'size-4';
   .about-globe-explore {
     padding: .65rem .9rem;
     border: 1px solid var(--color-line-strong);
-    background: var(--color-bg);
+    background: transparent;
     color: var(--color-fg-max);
   }
   .about-globe-explore[hidden] {
@@ -164,7 +189,7 @@ const icon = 'size-4';
   }
   .about-globe-exploration {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     right: var(--gutter);
     top: calc(7.5rem + 2svh);
     max-width: calc(100% - 2 * var(--gutter));
@@ -174,7 +199,7 @@ const icon = 'size-4';
     gap: .8rem;
     padding: .45rem .65rem;
     border: 1px solid var(--color-line);
-    background: color-mix(in srgb, var(--color-bg) 94%, transparent);
+    background: transparent;
     color: var(--color-fg-2);
   }
   .about-globe-exploration[hidden] {
@@ -216,7 +241,20 @@ const icon = 'size-4';
     background: var(--color-fg-max);
     color: var(--color-bg);
   }
+  @media (prefers-reduced-motion: reduce) {
+    .about-globe-surface {
+      transition: none;
+    }
+  }
+  @media (max-width:1099px) {
+    .about-globe-surface {
+      --globe-fade: 62%;
+    }
+  }
   @media (max-width:639px) {
+    :global(.page-cover:has([data-about-globe]) .page-cover-word) {
+      translate: 0 -8svh;
+    }
     .about-globe-statement {
       top: calc(4.5rem + 2svh);
       font-size: clamp(1.4rem, 6vw, 2.1rem);

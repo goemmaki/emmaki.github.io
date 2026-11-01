@@ -1,6 +1,7 @@
-// COBE draws the world. This overlay uses the same projection for the grid,
-// Crete's fine halftone and routes, so they stay registered through camera moves.
+// COBE and the overlay share one orthographic projection through every camera move.
 import createGlobe, { type Globe } from 'cobe';
+import { CRETE_COAST, REGIONAL_LAND, type Coast } from './geo';
+
 type LatLon = [number, number];
 type Vec3 = [number, number, number];
 type Rgb = [number, number, number];
@@ -14,32 +15,25 @@ type View = {
   cy: number;
 };
 const CRETE: LatLon = [35.36, 24.47];
-// Coastline vertices use longitude first, unlike LatLon.
-const COAST: [number, number][] = [
-  [23.57, 35.60], [23.75, 35.53], [24.02, 35.52], [24.18, 35.60],
-  [24.30, 35.50], [24.47, 35.37], [24.75, 35.40], [25.13, 35.34],
-  [25.40, 35.33], [25.72, 35.30], [25.72, 35.19], [25.95, 35.30],
-  [26.15, 35.20], [26.30, 35.28], [26.25, 35.05], [26.10, 35.00],
-  [25.74, 35.01], [25.30, 34.98], [24.90, 34.93], [24.75, 34.93],
-  [24.40, 35.18], [24.14, 35.20], [23.68, 35.23], [23.53, 35.28],
-];
 const DESTINATIONS: { name: string; at: LatLon }[] = [
   { name: 'London', at: [51.51, -0.13] },
   { name: 'New York', at: [40.71, -74.01] },
   { name: 'Sydney', at: [-33.87, 151.21] },
 ];
-const YOU = { towards: [28, -15] as LatLon, altitude: 0.4 };
+const YOU = { towards: [28, -15] as LatLon, altitude: 0.18 };
 const R = 0.8;
 const INTRO_SECONDS = 3.3;
-const ARC_START = 2.25, ARC_STAGGER = 0.32, ARC_DRAW = 0.8;
-const FINAL_LON = 35;
+const ARC_START = 2.85;
+const ARC_STAGGER = 0.32;
+const ARC_DRAW = 0.8;
+const FINAL_LON = 27;
 const FINAL_TILT = 0.6;
 const DRAG_SPEED = 0.0045;
 const KEY_STEP = Math.PI / 24;
-const MIN_ZOOM = 0.8, MAX_ZOOM = 4;
-// Crete spans about 2.8° of longitude; below this on-screen width it is drawn magnified around Rethymno.
-const CRETE_SPAN_DEG = 2.8, MIN_ISLAND_PX = 64;
-const INTRO_END = ARC_START + (DESTINATIONS.length + 1) * ARC_STAGGER + ARC_DRAW;
+const MIN_ZOOM = 0.8;
+const MAX_ZOOM = 4;
+const DOT_SPACING = 0.025;
+const INTRO_END = ARC_START + DESTINATIONS.length * ARC_STAGGER + ARC_DRAW;
 const toRad = (deg: number) => deg * Math.PI / 180;
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 const clamp01 = (n: number) => clamp(n, 0, 1);
@@ -47,32 +41,78 @@ const ease = (t: number) => 1 - (1 - t) ** 4;
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const phiFacing = (lon: number) => -Math.PI / 2 - toRad(lon);
 function unit([lat, lon]: LatLon): Vec3 {
-  const a = toRad(lat), b = toRad(lon) - Math.PI, c = Math.cos(a);
+  const a = toRad(lat);
+  const b = toRad(lon) - Math.PI;
+  const c = Math.cos(a);
   return [-c * Math.cos(b), Math.sin(a), c * Math.sin(b)];
 }
 const scaleVec = (p: Vec3, k: number): Vec3 => [p[0] * k, p[1] * k, p[2] * k];
-function inside(point: LatLon, polygon: LatLon[]) {
-  const [y, x] = point;
-  let hit = false;
-  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-    const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
-    if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi)
-      hit = !hit;
-  }
-  return hit;
-}
+const dot = (a: Vec3, b: Vec3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
-function halftone(): Vec3[] {
-  const points: Vec3[] = [];
-  for (let lat = 34.90; lat <= 35.63; lat += 0.06)
-    for (let lon = 23.48; lon <= 26.36; lon += 0.06)
-      if (inside([lat, lon], COAST))
-        points.push(unit([lat, lon]));
-  return points;
+// A rotated hex lattice in Crete's local tangent plane. Doubling the spacing
+// selects a subset of the same lattice, allowing a gradual detail handover.
+const LATTICE_ANGLE = toRad(17);
+const COS_LAT = Math.cos(toRad(CRETE[0]));
+function tangent([lon, lat]: [number, number]): [number, number] {
+  const x = (lon - CRETE[1]) * COS_LAT;
+  const y = lat - CRETE[0];
+  return [x * Math.cos(LATTICE_ANGLE) + y * Math.sin(LATTICE_ANGLE),
+    -x * Math.sin(LATTICE_ANGLE) + y * Math.cos(LATTICE_ANGLE)];
 }
-const ISLAND_DOTS = halftone();
+function geographic(x: number, y: number): LatLon {
+  return [CRETE[0] + x * Math.sin(LATTICE_ANGLE) + y * Math.cos(LATTICE_ANGLE),
+    CRETE[1] + (x * Math.cos(LATTICE_ANGLE) - y * Math.sin(LATTICE_ANGLE)) / COS_LAT];
+}
+type DotTile = { center: Vec3; levels: Vec3[][] };
+function halftone(polygons: Coast[], levelCount: number) {
+  const rings = polygons.map(polygon => polygon.map(tangent));
+  const tiles = new Map<string, DotTile>();
+  const ys = rings.flatMap(ring => ring.map(p => p[1]));
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  for (let level = 0; level < levelCount; level++) {
+    const spacing = DOT_SPACING * 2 ** level;
+    const rowHeight = spacing * Math.sqrt(3) / 2;
+    for (let row = Math.ceil(minY / rowHeight); row * rowHeight <= maxY; row++) {
+      const y = row * rowHeight;
+      const crossings: number[] = [];
+      for (const ring of rings) {
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+          const [ax, ay] = ring[i];
+          const [bx, by] = ring[j];
+          if ((ay > y) !== (by > y))
+            crossings.push(ax + (bx - ax) * (y - ay) / (by - ay));
+        }
+      }
+      crossings.sort((a, b) => a - b);
+      for (let i = 0; i + 1 < crossings.length; i += 2) {
+        for (let col = Math.ceil(crossings[i] / spacing - row / 2);
+          (col + row / 2) * spacing < crossings[i + 1]; col++) {
+          const at = geographic((col + row / 2) * spacing, y);
+          const latTile = Math.floor(at[0]);
+          const lonTile = Math.floor(at[1]);
+          const key = `${latTile}:${lonTile}`;
+          let tile = tiles.get(key);
+          if (!tile) {
+            tile = { center: unit([latTile + 0.5, lonTile + 0.5]),
+              levels: Array.from({ length: levelCount }, () => []) };
+            tiles.set(key, tile);
+          }
+          tile.levels[level].push(unit(at));
+        }
+      }
+    }
+  }
+  return [...tiles.values()];
+}
+const ISLAND_TILES = halftone([CRETE_COAST], 5);
+const REGIONAL_TILES = halftone(REGIONAL_LAND, 7);
+
 function project(p: Vec3, v: View) {
-  const ct = Math.cos(v.theta), st = Math.sin(v.theta), cp = Math.cos(v.phi), sp = Math.sin(v.phi);
+  const ct = Math.cos(v.theta);
+  const st = Math.sin(v.theta);
+  const cp = Math.cos(v.phi);
+  const sp = Math.sin(v.phi);
   const x = cp * p[0] + sp * p[2];
   const y = sp * st * p[0] + ct * p[1] - cp * st * p[2];
   const z = -sp * ct * p[0] + st * p[1] + cp * ct * p[2];
@@ -81,66 +121,68 @@ function project(p: Vec3, v: View) {
   return {
     x: v.cx + x * v.scale * half,
     y: v.cy - y * v.scale * half,
+    z,
     visible: z >= 0 || x * x + y * y >= R * R,
     front: z >= 0
   };
 }
-
-type Projected = ReturnType<typeof project>;
-
-// A raised route ending near the horizon descends away from the viewer and
-// projects as a hook. Stop the line where its second half turns back.
-function trimHook(points: Projected[]) {
-  const first = points[0], last = points[points.length - 1];
-  const cx = last.x - first.x, cy = last.y - first.y;
-  for (let i = Math.ceil(points.length / 2); i < points.length; i++) {
-    const dx = points[i].x - points[i - 1].x, dy = points[i].y - points[i - 1].y;
-    if (dx * cx + dy * cy < 0)
-      return points.slice(0, i);
-  }
-  return points;
-}
-
 function slerp(a: Vec3, b: Vec3, t: number): Vec3 {
-  const dot = clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1), angle = Math.acos(dot);
+  const angle = Math.acos(clamp(dot(a, b), -1, 1));
   if (angle < 1e-5)
     return a;
   const d = Math.sin(angle);
-  const wa = Math.sin((1 - t) * angle) / d, wb = Math.sin(t * angle) / d;
+  const wa = Math.sin((1 - t) * angle) / d;
+  const wb = Math.sin(t * angle) / d;
   return [a[0] * wa + b[0] * wb, a[1] * wa + b[1] * wb, a[2] * wa + b[2] * wb];
 }
-
 function greatArc(a: Vec3, b: Vec3, t: number): Vec3 {
-  const angle = Math.acos(clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1, 1));
-  // Scale lift with angular distance to keep short routes shallow.
-  // The great-circle samples remain outside the sphere at every step.
-  const h = (0.04 + 0.2 * angle) * Math.sin(Math.PI * t);
-  return scaleVec(slerp(a, b, t), R + h);
+  const angle = Math.acos(clamp(dot(a, b), -1, 1));
+  // A shallow, asymmetric lift keeps short routes from curling at arrival.
+  // The surface endpoints and every intermediate sample stay outside R.
+  const height = Math.min(0.2, 0.03 + 0.12 * angle);
+  const altitude = height * Math.sin(Math.PI * t) * (1 - 0.35 * t);
+  return scaleVec(slerp(a, b, t), R + altitude);
 }
-
 function openArc(t: number): Vec3 {
-  const a = unit(CRETE), b = unit(YOU.towards);
-  return scaleVec(slerp(a, b, t), R + YOU.altitude * t);
+  return scaleVec(slerp(unit(CRETE), unit(YOU.towards), t), R + YOU.altitude * t + 0.06 * Math.sin(Math.PI * t));
 }
-
-function frameFor(width: number, height: number, gutter: number, statementBottom: number, rem: number) {
+function routePoints(at: LatLon | null, amount: number, v: View) {
+  const a = unit(CRETE);
+  const b = unit(at ?? YOU.towards);
+  const normal: Vec3 = [a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  // As the route plane turns edge-on, flatten its lift smoothly. Its great
+  // circle stays visible without a raised silhouette folding back on itself.
+  const planeFacing = Math.abs(project(normal, v).z) / Math.hypot(...normal);
+  const lift = clamp01(planeFacing / 0.45) ** 2;
+  return Array.from({ length: 129 }, (_, i) => {
+    const t = i / 128 * amount;
+    const surface = project(scaleVec(slerp(a, b, t), R), v);
+    const raised = at ? greatArc(a, b, t) : openArc(t);
+    const radius = R + (Math.hypot(...raised) - R) * lift;
+    const p = project(scaleVec(slerp(a, b, t), radius), v);
+    // Hide the far hemisphere even when a high route clears the silhouette.
+    // Fade before its surface tangent: there is no back-of-limb return hook.
+    const alpha = smooth(clamp01((surface.z / R - 0.12) / 0.22));
+    return { ...p, alpha, visible: p.visible && alpha > 0.001 };
+  });
+}
+function frameFor(width: number, height: number, _gutter: number, statementBottom: number, rem: number) {
   const wide = width >= 1100;
   const phone = width < 640;
-  const diameter = wide ? Math.min(height * 1.15, width * 0.8) : phone ? width * 1.2 : Math.min(height, width * 1.05);
+  const diameter = wide ? Math.min(height * 1.4, width * 0.95)
+    : phone ? width * 1.5 : Math.min(height * 1.08, width * 1.15);
   const scale = diameter / (R * height);
-  // Bleed slightly farther on wide screens to keep the left edge near 42%
-  // while preserving the large diameter. Narrow screens use a 15% bleed.
-  const cx = phone ? width * 0.62 : width - gutter - (wide ? 0.28 : 0.35) * diameter;
-  const cy = phone ? statementBottom + 1.5 * rem + diameter / 2 : height * 0.55;
-  const lon = phone ? 15 : wide ? FINAL_LON : 25;
-  const startScale = clamp(width * 0.5 / (0.04 * R * height / 2), scale * 3.2, 110);
-  return {
-    scale,
-    cx,
-    cy,
-    lon,
-    startScale
-  };
+  const cx = width * (phone ? 0.54 : wide ? 0.60 : 0.57);
+  const cy = phone ? statementBottom + 1.5 * rem + diameter / 2 : height * 0.62;
+  const lon = FINAL_LON;
+  // Crete's 2.80° coastline spans about 0.040 radians in this projection.
+  const startScale = width * 0.52 / (0.040 * R * height / 2);
+  return { scale, cx, cy, lon, startScale };
+}
+
+function cssRgb(color: Rgb, alpha = 1) {
+  return `rgb(${color.map(c => Math.round(c * 255)).join(' ')} / ${alpha})`;
 }
 
 function rgbOf(color: string): Rgb {
@@ -177,6 +219,8 @@ export function mountGlobe(root: HTMLElement, opts: {
   const lines = root.querySelector<HTMLCanvasElement>('[data-globe-lines]')!;
   const stage = root.querySelector<HTMLElement>('[data-globe-stage]')!;
   const labels = new Map([...root.querySelectorAll<HTMLElement>('[data-globe-label]')].map(el => [el.dataset.globeLabel!, el]));
+  const body = root.querySelector<HTMLElement>('[data-globe-body]')!;
+  const dotsLayer = root.querySelector<HTMLElement>('[data-globe-dots-layer]')!;
   const ctx = lines.getContext('2d')!;
   const dpr = Math.min(devicePixelRatio || 1, 2), reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
@@ -271,6 +315,8 @@ export function mountGlobe(root: HTMLElement, opts: {
       mapSamples: 24000,
       mapBrightness: 12,
       mapBaseBrightness: 0,
+      // COBE multiplies land AND ocean by baseColor; zero would erase both.
+      // The canvas contrast filter removes its 0.1 * baseColor ocean pedestal.
       baseColor: [0.12, 0.12, 0.12] as Rgb,
       markerColor: colors.accent,
       glowColor: [0, 0, 0] as Rgb,
@@ -284,62 +330,125 @@ export function mountGlobe(root: HTMLElement, opts: {
     x: number;
     y: number;
     visible: boolean;
+    alpha?: number;
   }[], color: Rgb, alpha: number, lineWidth: number) {
-    ctx.strokeStyle = `rgb(${color.map(c => Math.round(c * 255)).join(' ')} / ${alpha})`;
     ctx.lineWidth = lineWidth * dpr;
+    ctx.lineCap = 'round';
     ctx.setLineDash([]);
-    ctx.beginPath();
-    let pen = false;
-    for (const p of points) {
-      if (!p.visible) {
-        pen = false;
-        continue;
-      }
-      if (pen)
-        ctx.lineTo(p.x * dpr, p.y * dpr);
-      else {
-        ctx.moveTo(p.x * dpr, p.y * dpr);
+    if (points[0]?.alpha === undefined) {
+      ctx.strokeStyle = cssRgb(color, alpha);
+      ctx.beginPath();
+      let pen = false;
+      for (const p of points) {
+        if (!p.visible) {
+          pen = false;
+          continue;
+        }
+        if (pen)
+          ctx.lineTo(p.x * dpr, p.y * dpr);
+        else
+          ctx.moveTo(p.x * dpr, p.y * dpr);
         pen = true;
       }
+      ctx.stroke();
+      return;
     }
-    ctx.stroke();
+    for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1];
+      const b = points[i];
+      if (!a.visible || !b.visible)
+        continue;
+      ctx.strokeStyle = cssRgb(color, alpha * Math.min(a.alpha ?? 1, b.alpha ?? 1));
+      ctx.beginPath();
+      ctx.moveTo(a.x * dpr, a.y * dpr);
+      ctx.lineTo(b.x * dpr, b.y * dpr);
+      ctx.stroke();
+    }
   }
+
+  // A label is either legible or hidden: never half-faded where its route meets the horizon.
+  const readable = (points: { alpha: number }[]) => points[points.length - 1].alpha >= 0.5;
 
   function placeLabel(key: string, p: {
     x: number;
     y: number;
     visible: boolean;
-  }, ready: boolean) {
+  }, opacity: number) {
     const el = labels.get(key);
     if (!el)
       return;
     el.style.left = `${p.x}px`;
     el.style.top = `${p.y}px`;
-    el.dataset.shown = String(ready && p.visible);
+    el.style.opacity = String(p.visible ? opacity : 0);
   }
 
-  function drawIsland(v: View) {
-    const origin = project(scaleVec(unit(CRETE), R + 0.003), v);
-    const neighbor = project(scaleVec(unit([CRETE[0], CRETE[1] + 0.06]), R + 0.003), v);
-    const trueSpacing = Math.hypot(neighbor.x - origin.x, neighbor.y - origin.y);
-    // When the globe is small, enlarge the island around Rethymno so it stays identifiable.
-    const magnify = Math.max(1, MIN_ISLAND_PX / (trueSpacing / 0.06 * CRETE_SPAN_DEG));
-    const radius = clamp(trueSpacing * magnify * 0.38, 0.8, 6) * dpr;
-    for (const point of ISLAND_DOTS) {
-      const p = project(scaleVec(point, R + 0.003), v);
-      if (!p.front)
+  function drawHalftone(tiles: DotTile[], v: View, spacing: number, color: Rgb, alpha: number, island = false) {
+    if (alpha <= 0)
+      return;
+    const level = clamp(Math.log2(spacing / DOT_SPACING), 0, tiles[0].levels.length - 1);
+    const lower = Math.floor(level);
+    const upper = Math.min(lower + 1, tiles[0].levels.length - 1);
+    const mix = smooth(level - lower);
+    const pixelsPerRadian = R * v.scale * v.height / 2;
+    for (const tile of tiles) {
+      const center = project(scaleVec(tile.center, R), v);
+      // A one-degree tile's chord fits inside this conservative screen radius.
+      const reach = pixelsPerRadian * toRad(1.5);
+      if (center.x + reach < 0 || center.x - reach > width ||
+        center.y + reach < 0 || center.y - reach > height || center.z < -R * toRad(1.5))
         continue;
-      const x = (origin.x + (p.x - origin.x) * magnify) * dpr;
-      const y = (origin.y + (p.y - origin.y) * magnify) * dpr;
-      ctx.beginPath();
-      ctx.arc(x, y, radius + 0.45 * dpr, 0, Math.PI * 2);
-      ctx.fillStyle = `rgb(${colors.ink.map(c => Math.round(c * 255)).join(' ')} / .48)`;
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgb(${colors.accent.map(c => Math.round(c * 255)).join(' ')})`;
-      ctx.fill();
+      for (const [detail, weight] of [[lower, 1 - mix], [upper, mix]]) {
+        if (weight <= 0)
+          continue;
+        const dotSpacing = toRad(DOT_SPACING * 2 ** detail) * pixelsPerRadian;
+        ctx.fillStyle = cssRgb(color, alpha * weight);
+        for (const point of tile.levels[detail]) {
+          const p = project(scaleVec(point, R), v);
+          if (!p.front || p.x < -8 || p.x > width + 8 || p.y < -8 || p.y > height + 8)
+            continue;
+          // The minimum projected spacing contracts toward the limb. No minimum
+          // radius: fine dots merge into a true-size island as the camera recedes.
+          const radius = dotSpacing * 0.36 * Math.max(0.05, p.z / R) * dpr;
+          if (island && !colors.dark) {
+            ctx.beginPath();
+            ctx.arc(p.x * dpr, p.y * dpr, radius * 1.35, 0, Math.PI * 2);
+            ctx.fillStyle = cssRgb(colors.ink, 0.65 * weight);
+            ctx.fill();
+            ctx.fillStyle = cssRgb(color, alpha * weight);
+          }
+          ctx.beginPath();
+          ctx.arc(p.x * dpr, p.y * dpr, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
     }
+  }
+
+  function drawRoutes(v: View) {
+    const zoom = v.scale / scaleFinal;
+    const opening = smooth(clamp01((clock - 2.5) / 0.45));
+    const alpha = opening * (1 - smooth(clamp01((zoom - 1.45) / 0.4)));
+    ctx.globalAlpha = alpha;
+    DESTINATIONS.forEach((dest, i) => {
+      const reveal = clamp01((clock - ARC_START - i * ARC_STAGGER) / ARC_DRAW);
+      const points = routePoints(dest.at, smooth(reveal), v);
+      if (reveal > 0 && alpha > 0) {
+        if (!colors.dark)
+          stroke(points, colors.ink, 0.48, 2.5);
+        stroke(points, colors.accent, 0.96, 1.35);
+      }
+      const end = project(scaleVec(unit(dest.at), R), v);
+      placeLabel(dest.name, end, reveal >= 1 && readable(points) ? alpha : 0);
+    });
+    const reveal = clamp01((clock - ARC_START - DESTINATIONS.length * ARC_STAGGER) / ARC_DRAW);
+    const points = routePoints(null, smooth(reveal), v);
+    if (reveal > 0 && alpha > 0)
+      stroke(points, colors.ink, 0.92, 1.25);
+    const end = points[points.length - 1];
+    placeLabel('you', end, reveal >= 1 && readable(points) ? alpha : 0);
+    if (alpha > 0)
+      drawMarker(v);
+    ctx.globalAlpha = 1;
   }
 
   function drawMarker(v: View) {
@@ -359,36 +468,32 @@ export function mountGlobe(root: HTMLElement, opts: {
 
   function drawOverlay(v: View) {
     ctx.clearRect(0, 0, lines.width, lines.height);
-    const wire = clock < INTRO_SECONDS ? 0.28 : 0.2;
+    const zoom = v.scale / scaleFinal;
+    const regionalAlpha = smooth(clamp01((zoom - 2.4) / 2.4));
+    // Around the handover, 1.3° matches COBE's 24,000-point Fibonacci spacing.
+    const spacing = clamp(1.3 * (2.8 / zoom) ** 3, DOT_SPACING, 1.3);
+    drawHalftone(REGIONAL_TILES, v, spacing, colors.ink, regionalAlpha * 0.8);
+    const wire = colors.dark ? 0.25 : 0.48;
     for (let lat = -75; lat <= 75; lat += 15)
       stroke(Array.from({ length: 145 }, (_, i) => project(scaleVec(unit([lat, i * 2.5 - 180]), R), v)), colors.line, wire, 0.6);
     for (let lon = -180; lon < 180; lon += 15)
       stroke(Array.from({ length: 73 }, (_, i) => project(scaleVec(unit([i * 2.5 - 90, lon]), R), v)), colors.line, wire, 0.6);
-    drawIsland(v);
-    DESTINATIONS.forEach((dest, i) => {
-      const reveal = clamp01((clock - ARC_START - i * ARC_STAGGER) / ARC_DRAW), t = smooth(reveal), a = unit(CRETE), b = unit(dest.at);
-      const pts = trimHook(Array.from({ length: 65 }, (_, k) => project(greatArc(a, b, k / 64 * t), v)));
-      if (t > 0) {
-        if (!colors.dark)
-          stroke(pts, colors.ink, .42, 2.5);
-        stroke(pts, colors.accent, .96, 1.35);
-      }
-      const end = reveal >= 1 ? pts[pts.length - 1] : project(scaleVec(b, R + 0.004), v);
-      placeLabel(dest.name, end, reveal >= 1);
-    });
-    const reveal = clamp01((clock - ARC_START - DESTINATIONS.length * ARC_STAGGER) / ARC_DRAW), t = smooth(reveal);
-    const pts = Array.from({ length: 65 }, (_, k) => project(openArc(k / 64 * t), v));
-    if (t > 0)
-      stroke(pts, colors.ink, .92, 1.25);
-    placeLabel('you', project(openArc(1), v), reveal >= 1);
-    drawMarker(v);
+    // Keep island dots about 3px apart, so Crete stays an amber halftone patch when the globe is small.
+    const islandSpacing = clamp(3 / (R * v.scale * v.height / 2 * toRad(1)), DOT_SPACING, 0.4);
+    drawHalftone(ISLAND_TILES, v, islandSpacing, colors.accent, 1, true);
+    drawRoutes(v);
   }
 
   function render() {
     if (!width || !height)
       return;
-    const v = view(), fade = clamp01((scaleFinal * 3.6 - v.scale) / (scaleFinal * 2.6));
-    dotsCanvas.style.opacity = String(fade);
+    const v = view();
+    const fade = 1 - smooth(clamp01((v.scale / scaleFinal - 2.4) / 2.4));
+    dotsLayer.style.opacity = String(fade);
+    const radius = R * v.scale * height / 2;
+    body.style.width = body.style.height = `${radius * 2}px`;
+    body.style.left = `${v.cx - radius}px`;
+    body.style.top = `${v.cy - radius}px`;
     if (!globe)
       globe = createGlobe(dotsCanvas, { devicePixelRatio: dpr, ...cobeOptions(v) });
     else

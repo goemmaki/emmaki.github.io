@@ -3,10 +3,12 @@ import ThemeToggle from './ThemeToggle.astro';
 import Wordmark from './Wordmark.astro';
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from '@/lib/content';
 interface Props { pathname: string; initialOverMedia?: boolean }
-const { pathname, initialOverMedia = false } = Astro.props;
+const { pathname } = Astro.props;
+const aboutHero = /^\/about\/?$/.test(pathname);
+const initialOverMedia = aboutHero || Astro.props.initialOverMedia === true;
 const nav = [{href:'/',label:'Home'},{href:'/proof',label:'Proof'},{href:'/brands',label:'Brands'},{href:'/blog',label:'Blog'},{href:'/about',label:'About'}];
 ---
-<header data-site-header class:list={["sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out has-focus-visible:translate-y-0", !initialOverMedia && "bg-bg/50 backdrop-blur-[48px]"]} data-over-media={initialOverMedia ? '' : undefined}>
+<header data-site-header data-about-hero={aboutHero ? '' : undefined} class:list={["sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out has-focus-visible:translate-y-0", !initialOverMedia && "bg-bg/50 backdrop-blur-[48px]"]} data-over-media={initialOverMedia ? '' : undefined}>
  <div class="shell flex h-16 items-center justify-between"><a href="/" aria-label="emmaki home" class="flex h-11 items-center"><Wordmark class="w-[88px] sm:w-[120px]"/></a>
   <div class="-mr-3 flex items-center"><span data-local-clock class="items-baseline gap-1.5 whitespace-nowrap font-heading text-sm mr-4 hidden sm:flex"><span data-local-clock-value class="font-medium text-fg-max"><span data-local-clock-time class="tabular-nums">00:00</span> EET</span><span data-local-clock-status class="font-thin uppercase text-fg-max">Offline</span></span><ThemeToggle/><button type="button" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false" class="icon-action" data-menu-open><svg class="size-5" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
  </div>
@@ -39,3 +41,22 @@ if (header && dialog && openButton && closeButton) {
  onScroll(); addEventListener('scroll', onScroll, {passive:true});
 }
 </script>
+
+<style>
+  /* About uses the existing over-media lifetime, with the page's own theme ink. */
+  [data-about-hero][data-over-media] {
+    background: transparent;
+    backdrop-filter: none;
+    animation: none;
+  }
+  :global([data-theme="light"]) [data-about-hero][data-over-media] {
+    animation: none;
+    --color-text-maximum: var(--cover-ink-max);
+    --color-text-secondary: var(--cover-ink-2);
+    --color-focus: var(--cover-ink-max);
+  }
+  [data-about-hero][data-over-media] [data-local-clock],
+  [data-about-hero][data-over-media] > .shell .icon-action {
+    filter: drop-shadow(0 0 2px var(--color-bg)) drop-shadow(0 0 5px var(--color-bg));
+  }
+</style>
