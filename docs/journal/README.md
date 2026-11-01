@@ -15,6 +15,10 @@ Append one dated entry to the history file for every working session. Record wha
 - Do not include marketing copy, conclusions about what AI can do, or case-study prose. The owner writes the case study and decides what is impressive.
 - Keep private details out. Refer to the owner as “the owner”; do not include secrets, email addresses, client names/data, or Fiverr buyer conversations.
 
+## Case-study notes
+
+[case-study-notes.md](case-study-notes.md) gathers design decisions, technical changes, problems solved and measured results for the owner's case study, with pointers into this journal.
+
 ## Screenshots
 
 Historical design screenshots are indexed in [screenshots.md](screenshots.md).
