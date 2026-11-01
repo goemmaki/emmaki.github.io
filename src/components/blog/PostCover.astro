@@ -71,7 +71,14 @@ if (cover && view && img && canvas && titleContent) {
       if (inside) { cover.style.setProperty('--cover-x', `${p.x - box.left}px`); cover.style.setProperty('--cover-y', `${p.y - box.top}px`); }
     });
   };
-  const move = event => { if (event.pointerType === 'mouse') { pointer = {x:event.clientX,y:event.clientY}; place(); } };
+  // On reload Chrome sends a pointermove at the resting cursor, which this early script sometimes
+  // catches; the spotlight waits for the mouse to actually move so every load starts unlit.
+  let rest = null; let moved = false;
+  const move = event => {
+    if (event.pointerType !== 'mouse') return;
+    if (!moved) { rest ??= {x:event.clientX,y:event.clientY}; if (event.clientX === rest.x && event.clientY === rest.y) return; moved = true; }
+    pointer = {x:event.clientX,y:event.clientY}; place();
+  };
   const leave = () => { pointer = null; place(); };
   const touch = event => { const p = event.touches[0]; pointer = p ? {x:p.clientX,y:p.clientY} : null; place(); };
   addEventListener('pointermove', move, {passive:true}); addEventListener('touchstart', touch, {passive:true}); addEventListener('touchmove', touch, {passive:true}); addEventListener('touchend', touch, {passive:true}); addEventListener('touchcancel', touch, {passive:true}); addEventListener('scroll', place, {passive:true}); document.documentElement.addEventListener('pointerleave', leave);
