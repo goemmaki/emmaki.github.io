@@ -8,4 +8,5 @@ const { word, ink, intro } = Astro.props;
     <h1 class="page-cover-word text-fg-max">{word.endsWith('.') ? <>{word.slice(0, -1)}<span class="text-yellow-splash">.</span></> : word}</h1>
   </div>
   <div class="page-cover-overhang" aria-hidden="true"></div>
+  <slot />
 </section>

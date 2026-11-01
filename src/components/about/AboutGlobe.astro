@@ -1,0 +1,197 @@
+---
+// The About hero globe, drawn over the page cover's giant word (PageCover's slot).
+// Behaviour lives in globe.ts; this file is the markup, controls and layout.
+const destinations = ['London', 'New York', 'Sydney'];
+const icon = 'size-5';
+---
+<div class="about-globe" data-about-globe data-statement-side="left">
+  <div class="about-globe-stage" data-globe-stage data-globe-slider role="slider" tabindex="0" aria-label="Globe" aria-describedby="about-globe-description" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="0" aria-orientation="horizontal">
+    <canvas class="absolute inset-0 size-full" data-globe-dots aria-hidden="true"></canvas>
+    <canvas class="pointer-events-none absolute inset-0 size-full" data-globe-lines aria-hidden="true"></canvas>
+    {destinations.map(name => <span class="about-globe-label type-meta uppercase" data-globe-label={name} aria-hidden="true">{name}</span>)}
+    <span class="about-globe-label about-globe-label--you" data-globe-label="you" aria-hidden="true">YOU?</span>
+  </div>
+  <p id="about-globe-description" class="sr-only">A dotted globe of the world with a latitude and longitude grid. Arcs run from Crete to London, New York and Sydney; a last arc leaves Crete and stops in space, labeled “You?”. Use the left and right arrow keys or the rotate buttons to turn it.</p>
+
+  <p class="about-globe-statement" data-globe-statement>From here<span class="text-yellow-splash">.</span><br />To there<span class="text-yellow-splash">.</span></p>
+
+  <div class="about-globe-controls" data-globe-controls>
+    <button type="button" class="icon-action" data-globe-toggle aria-label="Pause the globe animation">
+      <svg class={icon} data-icon="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+      <svg class={`${icon} hidden`} data-icon="play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg>
+    </button>
+    <button type="button" class="icon-action" data-globe-replay aria-label="Replay the globe animation">
+      <svg class={icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></svg>
+    </button>
+    <button type="button" class="icon-action" data-globe-rotate="-1" aria-label="Rotate the globe west">
+      <svg class={icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="icon-action" data-globe-rotate="1" aria-label="Rotate the globe east">
+      <svg class={icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+    <a href="#about-content" class="icon-action about-globe-next" aria-label="Scroll to the next section">
+      <svg class={icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+    </a>
+  </div>
+
+  <button type="button" class="about-globe-explore type-meta uppercase" data-globe-explore hidden>Explore the globe</button>
+
+  <nav aria-label="Statement position (review only)" class="fixed bottom-4 left-4 z-50 flex gap-1 rounded-full border border-line bg-bg p-1 font-mono text-xs" data-statement-switcher>
+    {(['left', 'right'] as const).map(side => <button type="button" aria-pressed="false" class="rounded-full px-3 py-2 aria-pressed:bg-fg-max aria-pressed:text-bg" data-statement-choice={side}>Statement {side}</button>)}
+  </nav>
+</div>
+
+<style>
+  @property --globe-fade {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 52%;
+  }
+  .about-globe {
+    --globe-progress: 0;
+    position: absolute;
+    inset: 0 0 auto;
+    height: 100svh;
+    pointer-events: none;
+  }
+  .about-globe > * { pointer-events: auto; }
+  /* The globe settles a little above the middle so the word reads below it. */
+  .about-globe-stage {
+    position: absolute;
+    inset: 0 0 8svh;
+    touch-action: pan-y;
+    cursor: grab;
+    outline: none;
+    /* COBE always paints a sphere body; black under screen (white under multiply) drops out,
+       leaving dots and lines over the page, the giant word included. */
+    mix-blend-mode: screen;
+    -webkit-mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 30%));
+    mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 30%));
+    transition: --globe-fade 0.6s var(--ease);
+    transform-origin: 50% 35%;
+    transform: translateY(calc(var(--globe-progress) * 14svh)) scale(calc(1 - var(--globe-progress) * 0.45));
+  }
+  :global([data-theme="light"]) .about-globe-stage { mix-blend-mode: multiply; }
+  .about-globe-stage:hover,
+  .about-globe-stage:focus-visible,
+  [data-dragging] .about-globe-stage { --globe-fade: 100%; }
+  [data-dragging] .about-globe-stage { cursor: grabbing; }
+  .about-globe-stage:focus-visible { outline: 1px solid var(--color-focus-ring); outline-offset: -1px; }
+  [data-compact]:not([data-explored]) .about-globe-stage { pointer-events: none; }
+
+  .about-globe-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, calc(-100% - 0.6rem));
+    white-space: nowrap;
+    color: var(--color-fg-2);
+    opacity: 0;
+    transition: opacity 0.6s var(--ease);
+    pointer-events: none;
+  }
+  .about-globe-label[data-shown="true"] { opacity: 1; }
+  .about-globe-label--you {
+    transform: translate(-50%, calc(-100% - 0.5rem));
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-announce);
+    letter-spacing: -0.02em;
+    color: var(--color-yellow-splash);
+  }
+  :global([data-theme="light"]) .about-globe-label--you { color: var(--color-fg-max); }
+
+  .about-globe-statement {
+    position: absolute;
+    top: calc(4rem + 2svh);
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-announce);
+    font-size: clamp(1.5rem, 3.2vw, 3.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    color: var(--color-fg-max);
+  }
+  [data-statement-side="left"] .about-globe-statement { left: var(--gutter); }
+  [data-statement-side="right"] .about-globe-statement { right: var(--gutter); text-align: right; }
+
+  .about-globe-controls {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--gutter) - 0.75rem);
+    translate: 0 -50%;
+    display: flex;
+    flex-direction: column;
+  }
+  .about-globe-next { margin-top: 1rem; }
+  [data-no-webgl] .about-globe-stage,
+  [data-no-webgl] .about-globe-controls > button { display: none; }
+
+  .about-globe-explore {
+    position: absolute;
+    left: 50%;
+    bottom: 34svh;
+    translate: -50% 0;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    background: var(--color-bg);
+    color: var(--color-fg-max);
+  }
+</style>
+
+<script>
+  import { hasWebGL, mountGlobe } from './globe';
+
+  const root = document.querySelector<HTMLElement>('[data-about-globe]');
+  if (root) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-globe-toggle]')!;
+    const explore = root.querySelector<HTMLButtonElement>('[data-globe-explore]')!;
+
+    // Review only: compare the statement in the left and right corners (?statement=right).
+    const sides = ['left', 'right'], buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-statement-choice]')];
+    const showSide = (side: string) => { root.dataset.statementSide = side; buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.statementChoice === side))); };
+    const requested = new URLSearchParams(location.search).get('statement') ?? '';
+    showSide(sides.includes(requested) ? requested : 'left');
+    buttons.forEach(b => b.addEventListener('click', () => { const url = new URL(location.href); url.searchParams.set('statement', b.dataset.statementChoice!); history.replaceState(history.state, '', url); showSide(b.dataset.statementChoice!); }));
+
+    if (!hasWebGL()) root.dataset.noWebgl = '';
+    else {
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Phones and tablets get the settled globe as a still; Explore plays the intro and enables dragging.
+      const compact = matchMedia('(width < 48rem), (pointer: coarse)').matches;
+      if (compact) { root.dataset.compact = ''; explore.hidden = false; }
+
+      const syncToggle = () => {
+        const playing = !globe.paused && !globe.settled;
+        toggle.setAttribute('aria-label', playing ? 'Pause the globe animation' : 'Play the globe animation');
+        toggle.querySelector('[data-icon="pause"]')!.classList.toggle('hidden', !playing);
+        toggle.querySelector('[data-icon="play"]')!.classList.toggle('hidden', playing);
+      };
+      const globe = mountGlobe(root, { animate: !reduced && !compact, onState: () => syncToggle() });
+      syncToggle();
+
+      toggle.addEventListener('click', () => { if (!globe.paused && !globe.settled) globe.pause(); else globe.play(); syncToggle(); });
+      root.querySelector('[data-globe-replay]')!.addEventListener('click', () => { globe.replay(); syncToggle(); });
+      root.querySelectorAll<HTMLButtonElement>('[data-globe-rotate]').forEach(b => b.addEventListener('click', () => globe.rotate(Number(b.dataset.globeRotate))));
+      explore.addEventListener('click', () => {
+        root.dataset.explored = ''; explore.hidden = true;
+        if (!reduced) globe.replay();
+        root.querySelector<HTMLElement>('[data-globe-stage]')!.focus({ preventScroll: true });
+      });
+
+      // Stop drawing while the hero is off screen.
+      new IntersectionObserver(([entry]) => globe.setVisible(entry.isIntersecting)).observe(root);
+      new MutationObserver(() => globe.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+
+    // Normal scrolling; the globe only shrinks as the hero leaves.
+    let queued = false;
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; root.style.setProperty('--globe-progress', String(Math.min(1, Math.max(0, scrollY / (root.offsetHeight * 0.9))))); });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>
