@@ -29,7 +29,8 @@
 - Visual glitches and polish to fix after the Astro migration merges, in the owner's words: [docs/visual-polish-backlog.md](docs/visual-polish-backlog.md).
 - New client or a logo to replace: follow [.claude/skills/client-logo/SKILL.md](.claude/skills/client-logo/SKILL.md).
 - Current site state, the 2026-10-28 checks and code review to finish: resume from [docs/handoffs/20261028-site.md](docs/handoffs/20261028-site.md).
-- Latest (2026-11-01 evening): About globe, content collections and integrations, under review; resume from [docs/handoffs/20261101-globe-collections.md](docs/handoffs/20261101-globe-collections.md).
+- Latest (2026-11-01 late evening): About globe accepted, controls next; resume from [docs/handoffs/20261101-about-globe.md](docs/handoffs/20261101-about-globe.md).
+- Earlier (2026-11-01 evening): content collections and integrations; see [docs/handoffs/20261101-globe-collections.md](docs/handoffs/20261101-globe-collections.md).
 - Earlier (2026-11-01): the Astro migration is merged; resume from [docs/handoffs/20261101-site-after-migration.md](docs/handoffs/20261101-site-after-migration.md). Migration record: [docs/exec-plans/20261031-astro-migration.md](docs/exec-plans/20261031-astro-migration.md); case-study material: [docs/journal/case-study-notes.md](docs/journal/case-study-notes.md).
 - Proof, the case-study template and Home (2026-10-29): resume from [docs/handoffs/20261029-proof-case-study.md](docs/handoffs/20261029-proof-case-study.md).
 - Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.

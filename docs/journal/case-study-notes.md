@@ -71,3 +71,28 @@ Gzipped JavaScript per page fell from 255–292 KB to 4–8 KB. For comparison, 
 - No Lighthouse run on the Astro build yet; the end-of-day procedure (`docs/checks/end-of-day.md`) covers it.
 - No real-device, Safari/WebKit or screen-reader testing for the migrated site.
 - The site is not deployed: GitHub Pages still serves `main`, which holds only a README.
+
+## The About globe (2026-11-01)
+
+Full record: the journal entries dated 2026-11-01 (evening) and 2026-11-01 (late evening). Commits `f01c9690` (first pass), `dc58951e` (pass 2), `4dcdee7d` (pass 3 checkpoint), `ea095c7a` (simplified, accepted).
+
+### Challenges
+
+- **A library that couldn't do what the design asked.** COBE 2 has no options for a transparent ocean, wireframe, arcs or a custom map. The ocean was removed with blend modes and a contrast filter, after Codex found that COBE multiplies land and ocean by the same color. Everything else was drawn on a second canvas using COBE's projection, copied from its source.
+- **Over-engineering, then pulling back.** Three Codex passes added geography (an embedded coastline lattice, regional land drawn as extra dots, routes with altitude profiles). Each fixed the last round's defects and added new ones. Pass 3 drew up to ~105,000 dots a frame and precomputed ~730,000 vectors. The owner stopped pass 4: "We're overcomplicating this." The accepted version uses COBE's own globe with a small overlay: grid and Crete only.
+- **Measuring speed on the wrong machine.** The test Chrome renders WebGL in software, so it showed about 5 fps however much the overlay was trimmed. The owner's machine ran it smoothly. Agent frame-time numbers from a headless browser didn't say anything about the real experience.
+- **Bugs inside the library.** A strip of the western Sahara was missing: COBE's shader produces NaN for dots along one meridian through floating-point rounding. COBE's built-in 256×128 world map is fattened (42% land against 33%), which joined the UK to France and closed the Red Sea. Both were fixed without editing the dependency. The shader line is clamped at compile time, and a Natural Earth map (1024×512, 9 KB) is swapped in for COBE's own.
+- **Making one dot belong.** The amber Crete marker had to look like one of COBE's dots, not a pin. It sits on the nearest point of COBE's Fibonacci dot lattice, at the dot size measured on screen. Crete and Santorini are left out of the land map so no white dot sits beside it or links it to Turkey.
+- **Accessible brand color.** Brand yellow `#FFC300` is 1.6:1 on white. Light mode first used a dark outline, which the owner disliked; it now uses amber `#C78500` (3.1:1, WCAG non-text contrast).
+
+### Agent mistakes and corrections
+
+- Pass 2 (Codex Luna high) swapped latitude and longitude, so Crete didn't render; a stronger model (Sol medium) fixed it in a revision.
+- Claude attributed the 5 fps to the overlay before establishing that the headless browser's software WebGL dominated the frame time.
+- Claude's first amber-dot size used COBE's shader constant and came out too small; it was corrected against screenshots.
+- Pause froze zoom and drag inertia; found while testing the map, fixed in `ea095c7a`.
+
+### Measured
+
+- About globe script: 9.1 KB gzip (first pass), about 50 KB (pass 3), 11.5 KB plus a 9 KB map image (accepted version), COBE included.
+- Land share: COBE's map 42%, Natural Earth 10m 33% (same 256×128 grid).
