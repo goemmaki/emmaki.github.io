@@ -2,12 +2,16 @@
 import SiteHeader from '../components/SiteHeader.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { WORK_HOURS } from '@/lib/content';
-import plexSans400 from '../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
+import plexSans400 from '../assets/fonts/ibm-plex-sans-latin.woff2?url';
+import geist400 from '../assets/fonts/geist-latin.woff2?url';
+import plexMono400 from '../assets/fonts/ibm-plex-mono-latin-400.woff2?url';
+import plexMono500 from '../assets/fonts/ibm-plex-mono-latin-500.woff2?url';
+import sourceSerif300 from '../assets/fonts/source-serif-4-latin-italic-300.woff2?url';
 import '../styles/site.css';
 
-interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string }
+interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string; initialOverMedia?: boolean }
 
-const { pageTitle, pageTitleAbsolute = false, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.' } = Astro.props;
+const { pageTitle, pageTitleAbsolute = false, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.', initialOverMedia = false } = Astro.props;
 const title = pageTitle ? (pageTitleAbsolute ? pageTitle : `${pageTitle} — Emmaki`) : 'Emmaki — Senior copy & AI content strategy';
 const pathname = Astro.url.pathname;
 ---
@@ -18,6 +22,10 @@ const pathname = Astro.url.pathname;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
     <link rel="preload" href={plexSans400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geist400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexMono400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plexMono500} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sourceSerif300} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" />
     <meta name="description" content={description} />
     <title>{title}</title>
@@ -26,9 +34,10 @@ const pathname = Astro.url.pathname;
   </head>
   <body class="flex min-h-dvh flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
-    <SiteHeader pathname={pathname} />
+    <SiteHeader pathname={pathname} initialOverMedia={initialOverMedia} />
     <script is:inline define:vars={{ workHours: WORK_HOURS }}>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:workHours.timeZone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=workHours.days.includes(day)&&hour>=workHours.start&&hour<workHours.end?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
     <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
+    <script is:inline>(function(){var h=document.querySelector('[data-site-header]'),m=document.querySelector('[data-under-header]'),c=document.querySelector('[data-covers-media]');if(!h)return;var over=!!m&&m.getBoundingClientRect().bottom>64&&(!c||c.getBoundingClientRect().top>64);if(over)h.setAttribute('data-over-media','');else h.removeAttribute('data-over-media');h.classList.toggle('bg-bg/50',!over);h.classList.toggle('backdrop-blur-[48px]',!over)})()</script>
     <footer>
       <div class="footer relative overflow-hidden" data-footer>
         <div class="footer-base absolute inset-x-0 bottom-0"></div>

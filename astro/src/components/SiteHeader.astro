@@ -2,11 +2,11 @@
 import ThemeToggle from './ThemeToggle.astro';
 import Wordmark from './Wordmark.astro';
 import { FIVERR_INBOX_URL, FIVERR_PROFILE_URL } from '@/lib/content';
-interface Props { pathname: string }
-const { pathname } = Astro.props;
+interface Props { pathname: string; initialOverMedia?: boolean }
+const { pathname, initialOverMedia = false } = Astro.props;
 const nav = [{href:'/',label:'Home'},{href:'/proof',label:'Proof'},{href:'/brands',label:'Brands'},{href:'/blog',label:'Blog'},{href:'/about',label:'About'}];
 ---
-<header data-site-header class="sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out has-focus-visible:translate-y-0 bg-bg/50 backdrop-blur-[48px]" data-under-media="false">
+<header data-site-header class:list={["sticky top-0 z-50 transition-[translate,background-color] duration-300 ease-out has-focus-visible:translate-y-0", !initialOverMedia && "bg-bg/50 backdrop-blur-[48px]"]} data-over-media={initialOverMedia ? '' : undefined}>
  <div class="shell flex h-16 items-center justify-between"><a href="/" aria-label="emmaki home" class="flex h-11 items-center"><Wordmark class="w-[88px] sm:w-[120px]"/></a>
   <div class="-mr-3 flex items-center"><span data-local-clock class="items-baseline gap-1.5 whitespace-nowrap font-heading text-sm mr-4 hidden sm:flex"><span data-local-clock-value class="font-medium text-fg-max"><span data-local-clock-time class="tabular-nums">00:00</span> EET</span><span data-local-clock-status class="font-thin uppercase text-fg-max">Offline</span></span><ThemeToggle/><button type="button" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false" class="icon-action" data-menu-open><svg class="size-5" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
  </div>
@@ -27,15 +27,15 @@ const header = document.querySelector<HTMLElement>('[data-site-header]'), dialog
 if (header && dialog && openButton && closeButton) {
  const ease = 'cubic-bezier(0.65, 0.01, 0.05, 0.99)', reveal = 0.575;
  const close = () => { if (dialog.open) dialog.close(); document.body.style.removeProperty('overflow'); };
- openButton.addEventListener('click', () => { dialog.showModal(); openButton.setAttribute('aria-expanded','true'); document.body.style.overflow = 'hidden'; const backdrop = dialog.querySelector<HTMLElement>('[data-menu-backdrop]'); if (backdrop) backdrop.style.animation = `site-menu-backdrop-in 0.7s ${ease} both`; dialog.querySelectorAll<HTMLElement>('[data-menu-layer]').forEach((layer, i) => { layer.style.animation = `menu-slide-in ${reveal}s ${ease} ${i * .12}s both`; }); requestAnimationFrame(() => requestAnimationFrame(() => { const trigger = openButton.getBoundingClientRect(), panel = dialog.getBoundingClientRect(); closeButton.style.top = `${trigger.top - panel.top}px`; closeButton.style.right = `${panel.right - trigger.right}px`; })); });
+ openButton.addEventListener('click', () => { if (hidden) header.classList.remove('-translate-y-full'); dialog.showModal(); openButton.setAttribute('aria-expanded','true'); document.body.style.overflow = 'hidden'; const backdrop = dialog.querySelector<HTMLElement>('[data-menu-backdrop]'); if (backdrop) backdrop.style.animation = `site-menu-backdrop-in 0.7s ${ease} both`; dialog.querySelectorAll<HTMLElement>('[data-menu-layer]').forEach((layer, i) => { layer.style.animation = `menu-slide-in ${reveal}s ${ease} ${i * .12}s both`; }); requestAnimationFrame(() => requestAnimationFrame(() => { const trigger = openButton.getBoundingClientRect(), panel = dialog.getBoundingClientRect(); closeButton.style.top = `${trigger.top - panel.top}px`; closeButton.style.right = `${panel.right - trigger.right}px`; })); });
  closeButton.addEventListener('click', close);
  dialog.addEventListener('click', event => { if (event.target === dialog || (event.target as Element).hasAttribute('data-menu-backdrop')) close(); });
- dialog.addEventListener('close', () => { document.body.style.removeProperty('overflow'); openButton.setAttribute('aria-expanded','false'); });
+ dialog.addEventListener('close', () => { document.body.style.removeProperty('overflow'); openButton.setAttribute('aria-expanded','false'); if (hidden) header.classList.add('-translate-y-full'); });
  dialog.addEventListener('keydown', event => { if (event.key !== 'Tab') return; const items = [...dialog.querySelectorAll<HTMLElement>('a[href],button:not([disabled])')].filter(el => el.offsetParent !== null); if (!items.length) return; const first = items[0], last = items.at(-1)!; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } });
  dialog.querySelectorAll<HTMLAnchorElement>('nav a').forEach(link => link.addEventListener('click', close));
- let last = scrollY, frame = 0, reset = true;
+ let last = scrollY, frame = 0, reset = true, hidden = false;
  const media = document.querySelector('[data-under-header]'), cover = document.querySelector('[data-covers-media]');
- const onScroll = () => { if (frame) return; frame = requestAnimationFrame(() => { frame = 0; if (reset) { header.classList.remove('-translate-y-full'); reset = false; } const overMedia = !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64); if (overMedia) header.setAttribute('data-over-media', ''); else header.removeAttribute('data-over-media'); header.classList.toggle('bg-bg/50', !overMedia); const y = scrollY; if (Math.abs(y-last)<8) return; header.classList.toggle('-translate-y-full', y>last && y>64 && !dialog.open); last=y; }); };
+ const onScroll = () => { if (frame) return; frame = requestAnimationFrame(() => { frame = 0; if (reset) { header.classList.remove('-translate-y-full'); reset = false; } const overMedia = !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64); if (overMedia) header.setAttribute('data-over-media', ''); else header.removeAttribute('data-over-media'); header.classList.toggle('bg-bg/50', !overMedia); header.classList.toggle('backdrop-blur-[48px]', !overMedia); const y = scrollY; if (Math.abs(y-last)<8) return; hidden = y>last && y>64; header.classList.toggle('-translate-y-full', hidden && !dialog.open); last=y; }); };
  onScroll(); addEventListener('scroll', onScroll, {passive:true});
 }
 </script>

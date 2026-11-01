@@ -30,7 +30,7 @@ const bodyText = 'font-sans text-base leading-[1.625] text-fg-2';
 const patternId = `post-title-stripes-${post.slug}`;
 const markdown = postMarkdown(post, '__PAGE_URL__');
 ---
-<Base pageTitle={post.title} pageTitleAbsolute>
+<Base pageTitle={post.title} pageTitleAbsolute initialOverMedia={Boolean(post.cover)}>
   {post.cover && <link slot="head" rel="preload" as="image" href={post.cover} />}
   <article class="overflow-x-clip">
     {post.cover && <PostCover src={post.cover}><h1 class="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">{post.title}</h1></PostCover>}
