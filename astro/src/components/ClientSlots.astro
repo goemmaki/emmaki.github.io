@@ -8,9 +8,9 @@ const clients = [...BRANDS].sort((a, b) => CLIENT_STRIP_ORDER.indexOf(a.name) - 
 </div>
 <script>
 import { BRANDS, CLIENT_STRIP_ORDER } from '@/lib/content';
-const strip = document.querySelector<HTMLElement>('[data-client-strip]');
-const list = strip?.querySelector<HTMLElement>('[data-client-slots]');
-if (strip && list) {
+for (const strip of document.querySelectorAll<HTMLElement>('[data-client-strip]')) {
+const list = strip.querySelector<HTMLElement>('[data-client-slots]');
+if (list) {
   const clients = [...BRANDS].sort((a, b) => CLIENT_STRIP_ORDER.indexOf(a.name) - CLIENT_STRIP_ORDER.indexOf(b.name));
   let cols = 5, shown: number[] = [], queue: number[] = [], hovered = false, visible = false, timer = 0;
   const reels: HTMLElement[] = [];
@@ -46,5 +46,6 @@ if (strip && list) {
   }
   for (const query of ['(min-width: 64rem)', '(min-width: 40rem)']) matchMedia(query).addEventListener('change', () => { updateCols(); stop(); start(); });
   window.addEventListener('resize', () => { updateCols(); });
+}
 }
 </script>

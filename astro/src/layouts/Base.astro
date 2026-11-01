@@ -1,5 +1,5 @@
 ---
-import { SiteHeader } from '../islands/SiteHeader.tsx';
+import SiteHeader from '../components/SiteHeader.astro';
 import BackToTop from '../components/BackToTop.astro';
 import { WORK_HOURS } from '@/lib/content';
 import plexSans400 from '../../node_modules/@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
@@ -26,7 +26,7 @@ const pathname = Astro.url.pathname;
   </head>
   <body class="flex min-h-dvh flex-col">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
-    <SiteHeader pathname={pathname} client:load />
+    <SiteHeader pathname={pathname} />
     <script is:inline define:vars={{ workHours: WORK_HOURS }}>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:workHours.timeZone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=workHours.days.includes(day)&&hour>=workHours.start&&hour<workHours.end?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
     <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
     <footer>

@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PostCover from '../../components/blog/PostCover.astro';
 import PostToc from '../../components/blog/PostToc.astro';
 import PostIcon from '../../components/blog/PostIcon.astro';
-import { Faq } from '@/components/faq';
+import Faq from '../../components/Faq.astro';
 import PageTools from '../../components/PageTools.astro';
 import { posts } from '@/lib/posts';
 import { formatPublished, headingId, readingMinutes, postMarkdown, POST_FAQ_LABEL, POST_TLDR_ID, POST_TLDR_LABEL } from '@/lib/post-format';
@@ -58,7 +58,7 @@ const markdown = postMarkdown(post, '__PAGE_URL__');
             const Tag = `h${block.level}` as 'h3'|'h4'|'h5'|'h6'; return <Tag class:list={[`!mt-8 ${headingStyle[block.level]} text-fg-max`]}>{block.text}</Tag>;
           })}</div></section>)}
           <div class="mt-e2"><a href={post.cta.href} class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">{post.cta.label}</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a></div>
-          <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={post.faqs} bodyText={bodyText} client:load /></section>
+          <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={post.faqs} bodyText={bodyText} /></section>
         </div>
       </div>
     </div>

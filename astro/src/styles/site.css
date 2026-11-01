@@ -33,6 +33,15 @@
 .page-tools-menu-item[data-highlighted],
 .page-tools-menu-item:focus-visible { @apply bg-surface; }
 
+.site-menu:not([open]) { display: none; }
+.site-menu[open] { display: block; }
+.site-menu::backdrop { background: transparent; }
+.site-menu-backdrop { opacity: 1; transition: opacity 0.7s cubic-bezier(0.65, 0.01, 0.05, 0.99); }
+@keyframes site-menu-backdrop-in { from { opacity: 0; } }
+.faq-panel { height: 0; overflow: hidden; transition: height 0.3s ease-out; }
+.faq-panel[data-open] { height: auto; }
+.faq-trigger[aria-expanded="true"] { padding-inline: 16px; background: var(--color-fg-max); color: var(--color-bg); }
+
 /* Additive logo fill crossfade: the monochrome and color artwork share one isolated cell. */
 .client-slot-logo { position: relative; isolation: isolate; }
 .client-slot-logo img { transition: filter 0.2s ease-out, opacity 0.2s ease-out; }

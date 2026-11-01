@@ -1,0 +1,24 @@
+---
+import { PLACEHOLDER_QUOTES } from '@/lib/content';
+interface Props { size?: 'sm'|'lg'; class?: string }
+const { size = 'sm', class: className = '' } = Astro.props;
+---
+<figure class={`testimonials ${className}`} data-testimonials>
+ <div class="testimonials-line"><span class="testimonials-fill" data-held data-fill></span></div>
+ <div class="mt-4 flex items-center justify-between"><div class="flex gap-2"><button type="button" class="testimonials-button" aria-label="Previous quote" data-prev><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button><button type="button" class="testimonials-button" aria-label="Next quote" data-next><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6m6 6H3"/></svg></button></div><p class="type-meta text-fg-2" data-count>01 / 03</p></div>
+ <div class="testimonials-stack">{PLACEHOLDER_QUOTES.map((t, i) => <div class="testimonials-quote" data-current={i === 0 ? '' : undefined} data-quote><blockquote class={`mt-8 text-fg-max ${size === 'lg' ? 'type-h3' : 'type-editorial'}`}>“{t.quote}”</blockquote><figcaption class="mt-6 flex items-center gap-3 type-secondary text-fg-2"><span class="flex flex-col"><span class="text-fg-max">{t.name}</span><span>{t.role}</span><span>{t.company}</span></span></figcaption>{t.about && <p class="mt-6 type-meta text-fg-2 uppercase">({t.about})</p>}</div>)}</div>
+</figure>
+<script>
+for (const root of document.querySelectorAll<HTMLElement>('[data-testimonials]')) {
+ const quotes = [...root.querySelectorAll<HTMLElement>('[data-quote]')], count = root.querySelector<HTMLElement>('[data-count]')!;
+ let index = 0, held = false, visible = false;
+ const render = () => { quotes.forEach((q, i) => q.toggleAttribute('data-current', i === index)); count.textContent = `${String(index+1).padStart(2,'0')} / ${String(quotes.length).padStart(2,'0')}`; const current = root.querySelector<HTMLElement>('[data-fill]')!; const next = current.cloneNode(false) as HTMLElement; next.toggleAttribute('data-held', held || !visible); current.replaceWith(next); };
+ const go = (step: number) => { index = (index + step + quotes.length) % quotes.length; render(); };
+ root.querySelector('[data-prev]')?.addEventListener('click', () => go(-1)); root.querySelector('[data-next]')?.addEventListener('click', () => go(1));
+ root.addEventListener('pointerenter', () => { held = true; root.querySelector('[data-fill]')?.setAttribute('data-held',''); }); root.addEventListener('pointerleave', () => { held = false; root.querySelector('[data-fill]')?.toggleAttribute('data-held', !visible); });
+ root.addEventListener('focusin', () => { held = true; root.querySelector('[data-fill]')?.setAttribute('data-held',''); }); root.addEventListener('focusout', e => { if (!root.contains(e.relatedTarget as Node)) { held = false; root.querySelector('[data-fill]')?.toggleAttribute('data-held', !visible); } });
+ const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; root.querySelector('[data-fill]')?.toggleAttribute('data-held', held || !visible); }); io.observe(root);
+ root.addEventListener('animationend', event => { if ((event.target as Element).matches('[data-fill]')) go(1); });
+ if (matchMedia('(prefers-reduced-motion: reduce)').matches) root.querySelector('[data-fill]')?.setAttribute('data-held','');
+}
+</script>

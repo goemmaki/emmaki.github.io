@@ -2,10 +2,10 @@
 import Base from '../layouts/Base.astro';
 import PageCover from '../components/PageCover.astro';
 import PageClosing from '../components/PageClosing.astro';
-import { AboutConcepts } from '../islands/AboutConcepts';
+import AboutConcepts from '../components/AboutConcepts.astro';
 ---
 <Base>
   <PageCover word="About" ink={2.613} intro="Owner’s intro: one or two lines on what this page is and who it’s for." />
-  <AboutConcepts client:load />
+  <AboutConcepts />
   <PageClosing />
 </Base>
