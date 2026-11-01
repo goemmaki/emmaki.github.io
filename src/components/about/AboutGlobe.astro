@@ -1,20 +1,14 @@
 ---
-const destinations = ['London', 'New York', 'Sydney'];
 const icon = 'size-4';
 ---
-<div class="about-globe" data-under-header data-about-globe data-layer="front">
+<div class="about-globe" data-under-header data-about-globe>
   <div class="about-globe-stage" data-globe-stage role="slider" tabindex="0" aria-label="Interactive globe" aria-describedby="about-globe-description" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="0" aria-orientation="horizontal">
-    <div class="about-globe-surface about-globe-body" aria-hidden="true"><div data-globe-body></div></div>
     <div class="about-globe-surface about-globe-dots" data-globe-dots-layer aria-hidden="true">
       <canvas class="absolute inset-0 size-full" data-globe-dots></canvas>
     </div>
     <canvas class="about-globe-surface pointer-events-none absolute inset-0 size-full" data-globe-lines aria-hidden="true"></canvas>
-    <div class="about-globe-surface about-globe-labels" aria-hidden="true">
-      {destinations.map(name => <span class="about-globe-label type-meta uppercase" data-globe-label={name} aria-hidden="true">{name}</span>)}
-      <span class="about-globe-label about-globe-label--you type-meta uppercase" data-globe-label="you" aria-hidden="true">YOU?</span>
-    </div>
   </div>
-  <p id="about-globe-description" class="sr-only">A globe centered on Crete, with routes to London, New York and Sydney. Use the arrow keys to rotate and Home to reset. In Explore, use plus and minus to zoom.</p>
+  <p id="about-globe-description" class="sr-only">A slowly turning globe of dots, with Crete marked in amber. Use the arrow keys to rotate and Home to reset. In Explore, use plus and minus to zoom.</p>
   <p class="about-globe-statement">From here<span class="text-yellow-splash">.</span><br />To there<span class="text-yellow-splash">.</span></p>
 
   <div class="about-globe-controls" data-globe-controls>
@@ -39,10 +33,6 @@ const icon = 'size-4';
     </div>
   </div>
 
-  <nav aria-label="Globe layer (review only)" class="about-globe-layer" data-layer-switcher>
-    <button type="button" aria-pressed="true" data-layer-choice="front">Globe in front</button>
-    <button type="button" aria-pressed="false" data-layer-choice="behind">Globe behind</button>
-  </nav>
 </div>
 
 <style>
@@ -52,7 +42,8 @@ const icon = 'size-4';
     initial-value: 55%;
   }
   .about-globe {
-    --globe-progress: 0;
+    /* Brand yellow on dark; on white, a darker amber at 3.1:1 (WCAG non-text contrast). */
+    --globe-accent: var(--color-yellow-splash);
     position: absolute;
     inset: 0 0 auto;
     height: 100svh;
@@ -75,16 +66,6 @@ const icon = 'size-4';
     -webkit-mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 42%));
     mask-image: linear-gradient(to bottom, #000 var(--globe-fade), transparent calc(var(--globe-fade) + 42%));
     transition: --globe-fade .6s var(--ease);
-    transform: translateY(calc(var(--globe-progress) * 14svh)) scale(calc(1 - var(--globe-progress) * .45));
-    transform-origin: var(--globe-cx) var(--globe-cy);
-  }
-  .about-globe-body {
-    z-index: 1;
-  }
-  [data-globe-body] {
-    position: absolute;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--color-bg) 55%, transparent);
   }
   .about-globe-dots {
     z-index: 2;
@@ -93,8 +74,11 @@ const icon = 'size-4';
   [data-globe-dots] {
     filter: contrast(1.04);
   }
-  [data-globe-lines], .about-globe-labels {
+  [data-globe-lines] {
     z-index: 3;
+  }
+  :global([data-theme="light"]) .about-globe {
+    --globe-accent: #C78500;
   }
   :global([data-theme="light"]) .about-globe-dots {
     mix-blend-mode: multiply;
@@ -115,29 +99,10 @@ const icon = 'size-4';
   [data-explored] .about-globe-stage {
     touch-action: none;
   }
-  :global(.page-cover:has([data-layer="behind"]) .page-cover-word) {
+  :global(.page-cover:has([data-about-globe]) .page-cover-word) {
     position: relative;
     z-index: 4;
     pointer-events: none;
-  }
-  .about-globe-label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    translate: -50% calc(-100% - .55rem);
-    white-space: nowrap;
-    padding: .2rem .4rem;
-    border: 1px solid color-mix(in srgb, var(--color-fg-max) 55%, transparent);
-    text-shadow: 0 0 .2rem var(--color-bg), 0 0 .45rem var(--color-bg);
-    color: var(--color-fg-max);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .about-globe-label--you {
-    border-color: var(--color-yellow-splash);
-  }
-  :global([data-theme="light"]) .about-globe-label--you {
-    border-color: var(--color-fg-max);
   }
   :global([data-theme="light"]) [data-globe-dots] {
     filter: contrast(1.04) invert(1);
@@ -219,28 +184,6 @@ const icon = 'size-4';
     min-height: 1.8rem;
     font: var(--type-meta-default-size)/1 var(--font-mono);
   }
-  .about-globe-layer {
-    position: fixed;
-    z-index: 100;
-    left: 1rem;
-    bottom: 1rem;
-    display: flex;
-    gap: .2rem;
-    padding: .25rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: var(--color-bg);
-    font: var(--type-meta-default-size)/1 var(--font-mono);
-  }
-  .about-globe-layer button {
-    padding: .45rem .7rem;
-    border-radius: 999px;
-    color: var(--color-fg-2);
-  }
-  .about-globe-layer button[aria-pressed="true"] {
-    background: var(--color-fg-max);
-    color: var(--color-bg);
-  }
   @media (prefers-reduced-motion: reduce) {
     .about-globe-surface {
       transition: none;
@@ -262,9 +205,6 @@ const icon = 'size-4';
     .about-globe-controls {
       top: calc(var(--statement-bottom) + .75rem);
     }
-    .about-globe-layer {
-      bottom: 5rem;
-    }
     .about-globe-exploration {
       top: calc(var(--statement-bottom) + 3.5rem);
       gap: .4rem;
@@ -281,20 +221,6 @@ const icon = 'size-4';
     const panel = root.querySelector<HTMLElement>('[data-globe-exploration]')!;
     const compact = matchMedia('(width < 1100px), (pointer: coarse)').matches;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const layerButtons = [...root.querySelectorAll<HTMLButtonElement>('[data-layer-choice]')];
-    const layer = new URLSearchParams(location.search).get('layer') === 'behind' ? 'behind' : 'front';
-    const showLayer = (value: string) => {
-      root!.dataset.layer = value;
-      layerButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layerChoice === value)));
-    };
-    showLayer(layer);
-    layerButtons.forEach(b => b.addEventListener('click', () => {
-      const value = b.dataset.layerChoice!;
-      const url = new URL(location.href);
-      url.searchParams.set('layer', value);
-      history.replaceState(history.state, '', url);
-      showLayer(value);
-    }));
     if (!hasWebGL())
       root.dataset.noWebgl = '';
     else {
@@ -303,14 +229,14 @@ const icon = 'size-4';
       const globe = mountGlobe(root, {
         animate: !compact && !reduced,
         onState: () => {
-          const playing = !globe.paused && !globe.settled;
+          const playing = !globe.paused;
           toggle.setAttribute('aria-label', playing ? 'Pause the globe animation' : 'Play the globe animation');
           toggle.querySelector('[data-icon="pause"]')!.classList.toggle('hidden', !playing);
           toggle.querySelector('[data-icon="play"]')!.classList.toggle('hidden', playing);
         }
       });
       toggle.addEventListener('click', () => {
-        if (!globe.paused && !globe.settled)
+        if (!globe.paused)
           globe.pause();
         else
           globe.play();
@@ -338,15 +264,5 @@ const icon = 'size-4';
       new IntersectionObserver(([entry]) => globe.setVisible(entry.isIntersecting)).observe(root);
       new MutationObserver(() => globe.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     }
-    let queued = false;
-    addEventListener('scroll', () => {
-      if (queued)
-        return;
-      queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
-        root!.style.setProperty('--globe-progress', String(Math.min(1, Math.max(0, scrollY / (root!.offsetHeight * .9)))));
-      });
-    }, { passive: true });
   }
 </script>
