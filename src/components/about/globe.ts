@@ -1,10 +1,8 @@
-// COBE draws the globe and its land. A 2D overlay, sharing COBE's projection,
-// adds the grid and an amber Crete: a halftone island in the close-up that
-// becomes one amber globe dot as the camera pulls back.
-import createGlobe, { type Globe } from 'cobe';
+// Globedots supplies the land pass; the existing orthographic overlay and
+// controller retain the framing, intro, grid, Crete, and dock behavior.
+import { createDots, CRETE_LATTICE, DOT_COUNT, DOT_RATIO, FAR_HEMISPHERE } from './globedots';
 import { CRETE_COAST } from './geo';
-// Natural Earth 1:10m land (v5.1.1), rasterised to 1024×512 equirectangular.
-// COBE's own 256×128 map fattens coastlines and closes the Channel, Skagerrak and Red Sea.
+// Natural Earth 1:10m land, delivered separately from the renderer.
 import landUrl from './land.png?url';
 
 type LatLon = [number, number];
@@ -13,19 +11,19 @@ type Rgb = [number, number, number];
 type View = { phi: number; theta: number; scale: number; cx: number; cy: number };
 
 const CRETE: LatLon = [35.3, 24.8];
+const [creteX, creteY, creteZ] = CRETE_LATTICE.point;
+const CRETE_DOT: Vec3 = [creteZ, creteY, -creteX];
 const R = 0.8;
 const INTRO_SECONDS = 3.3;
 // The globe faces Crete until it starts to turn.
 const FINAL_LON = CRETE[1];
 const FINAL_TILT = CRETE[0] * Math.PI / 180;
 const SPIN = (2 * Math.PI) / 100; // One revolution every 100 s.
+const SPIN_IN = 0.5; // Share of the intro after which the spin starts easing in.
 const DRAG_SPEED = 0.0045;
 const KEY_STEP = Math.PI / 24;
 const MIN_ZOOM = 0.8;
-const MAX_ZOOM = 4;
-// COBE fades each dot out over a chord of 0.008 on the unit sphere; this is its visible radius.
-const COBE_DOT_RADIUS = 0.006;
-const MAP_SAMPLES = 24000;
+const MAX_ZOOM = 1.6;
 // Island lattice spacings in degrees. The intro opens on big dots (about 2.4% of the
 // viewport width apart) and switches to coarser lattices so they never get closer than 6 px.
 const ISLAND_SPACINGS = [0.03, 0.06, 0.12, 0.24];
@@ -73,27 +71,7 @@ function islandDots(spacing: number): Vec3[] {
 }
 const ISLAND = ISLAND_SPACINGS.map(islandDots);
 
-// COBE places its dots on a spherical Fibonacci lattice (dot j at height 1 − 2j/n, turned by
-// fract(0.618034·j) of a revolution). The amber dot takes the lattice point nearest Crete,
-// so it sits exactly where COBE would put a dot; the land map leaves Crete out.
-function nearestGlobeDot(target: Vec3, samples: number): Vec3 {
-  let best: Vec3 = target, distance = Infinity;
-  for (let j = 0; j < samples; j++) {
-    const y = 1 - 2 * j / samples;
-    const r = Math.sqrt(1 - y * y);
-    const angle = (j * 0.618034 % 1) * Math.PI * 2;
-    const p: Vec3 = [Math.cos(angle) * r, y, Math.sin(angle) * r];
-    const d = (p[0] - target[0]) ** 2 + (p[1] - target[1]) ** 2 + (p[2] - target[2]) ** 2;
-    if (d < distance) {
-      best = p;
-      distance = d;
-    }
-  }
-  return best;
-}
-const CRETE_DOT = nearestGlobeDot(unit(CRETE), MAP_SAMPLES);
-
-// Same orthographic projection as COBE's shader; x and y in CSS pixels.
+// Shared orthographic projection; x and y in CSS pixels.
 function project(p: Vec3, v: View, height: number) {
   const ct = Math.cos(v.theta), st = Math.sin(v.theta);
   const cp = Math.cos(v.phi), sp = Math.sin(v.phi);
@@ -132,42 +110,9 @@ const land = new Image();
 land.src = landUrl;
 const landReady = land.decode();
 
-// Two adjustments to COBE 2.0.1, which offers no option for either:
-// - It computes each dot's longitude with acos(-d.x/cos(j)); rounding pushes the argument
-//   just past 1 along one meridian, acos returns NaN and a strip of the western Sahara
-//   loses its dots. Clamp it while COBE compiles its shaders.
-// - It uploads its built-in map image once that loads; upload our land map instead.
-function createPatchedGlobe(canvas: HTMLCanvasElement, options: Parameters<typeof createGlobe>[1]) {
-  const contexts = [WebGLRenderingContext, globalThis.WebGL2RenderingContext].filter(Boolean);
-  const shaderSources = contexts.map(c => c.prototype.shaderSource);
-  const texImages = contexts.map(c => c.prototype.texImage2D as (...args: unknown[]) => void);
-  contexts.forEach((c, i) => {
-    c.prototype.shaderSource = function (shader: WebGLShader, source: string) {
-      shaderSources[i].call(this, shader, source.replace('acos(-d.x/cos(j))', 'acos(clamp(-d.x/cos(j),-1.,1.))'));
-    };
-    c.prototype.texImage2D = function (this: WebGLRenderingContext, ...args: unknown[]) {
-      if (args.length === 6 && args[5] instanceof HTMLImageElement) {
-        args[5] = land;
-        contexts.forEach((c, i) => {
-          c.prototype.texImage2D = texImages[i] as typeof c.prototype.texImage2D;
-        });
-      }
-      texImages[i].apply(this, args);
-    } as typeof c.prototype.texImage2D;
-  });
-  try {
-    return createGlobe(canvas, options);
-  }
-  finally {
-    contexts.forEach((c, i) => {
-      c.prototype.shaderSource = shaderSources[i];
-    });
-  }
-}
-
 export function hasWebGL() {
   const c = document.createElement('canvas');
-  return Boolean(c.getContext('webgl2') || c.getContext('webgl'));
+  return Boolean(c.getContext('webgl2'));
 }
 
 export type GlobeHandle = {
@@ -180,7 +125,11 @@ export type GlobeHandle = {
   setExploring(value: boolean): void;
   setVisible(value: boolean): void;
   refreshTheme(): void;
+  /** Arrows rotate, +/− zoom, Home resets; returns whether the key was handled. */
+  handleKey(e: KeyboardEvent): boolean;
   readonly paused: boolean;
+  /** Zoom between its limits, 0 (out) to 1 (in), on a log scale. */
+  readonly zoomLevel: number;
   readonly settled: boolean;
 };
 
@@ -203,7 +152,8 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
   let velocityX = 0, velocityY = 0;
   let glide: { from: View; elapsed: number } | null = null;
   let drag: { x: number; y: number; time: number } | null = null;
-  let globe: Globe | null = null;
+  let globe: ReturnType<typeof createDots> | null = null;
+  let shaderPending = false;
 
   const introDone = () => clock >= INTRO_SECONDS;
 
@@ -245,30 +195,6 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
       scale: frame.startScale + (frame.scale - frame.startScale) * ease(clock / INTRO_SECONDS),
       cx: width / 2 + (frame.cx - width / 2) * t,
       cy: height / 2 + (frame.cy - height / 2) * t,
-    };
-  }
-
-  function cobeOptions(v: View) {
-    return {
-      phi: v.phi,
-      theta: v.theta,
-      scale: v.scale,
-      width,
-      height,
-      // COBE shifts its center by offset * scale / 2 CSS pixels.
-      offset: [2 * (v.cx - width / 2) / v.scale, 2 * (v.cy - height / 2) / v.scale] as [number, number],
-      dark: 1,
-      diffuse: 1.4,
-      mapSamples: MAP_SAMPLES,
-      mapBrightness: 12,
-      mapBaseBrightness: 0,
-      // COBE multiplies land and ocean by baseColor; the canvas contrast filter
-      // removes the faint ocean it leaves, so only the dots remain.
-      baseColor: [0.12, 0.12, 0.12] as Rgb,
-      markerColor: colors.accent,
-      glowColor: [0, 0, 0] as Rgb,
-      markers: [],
-      opacity: 1,
     };
   }
 
@@ -338,19 +264,21 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     }
     const dot = project(CRETE_DOT, v, height);
     if (dot.z > 0)
-      drawAmber([dot], sphere * COBE_DOT_RADIUS, (1 - island) * clamp01(dot.z / (R * 0.15)));
+      drawAmber([dot], sphere * DOT_RATIO * Math.sqrt(4 * Math.PI / DOT_COUNT), (1 - island) * clamp01(dot.z / (R * 0.15)));
   }
 
   function render() {
-    if (!width || !height)
+    if (!visible || document.hidden || !width || !height)
       return;
     const v = view();
-    // COBE's dots are huge in the close-up; bring them in as the camera pulls back.
+    // Retain the editorial island opener; reveal the planet at the original scale.
     dotsCanvas.style.opacity = String(1 - smooth(clamp01((v.scale / frame.scale - 1.6) / 1.6)));
-    if (globe)
-      globe.update(cobeOptions(v));
-    else if (landLoaded)
-      globe = createPatchedGlobe(dotsCanvas, { devicePixelRatio: dpr, ...cobeOptions(v) });
+    if (!globe && landLoaded)
+      globe = createDots(dotsCanvas, land);
+    if (globe) {
+      globe.setFarSideOpacity(colors.dark ? FAR_HEMISPHERE : 0);
+      shaderPending = !globe.draw(v, width, height);
+    }
     ctx.clearRect(0, 0, lines.width, lines.height);
     drawGrid(v);
     drawCrete(v);
@@ -365,16 +293,20 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
 
   const spinning = () => introDone() && !paused && !reduced && !drag;
   // Pause stops the intro and the spin; zoom glides and drag inertia still finish.
-  const moving = () => !reduced && (glide !== null || Math.abs(velocityX) > 1e-4 || Math.abs(velocityY) > 1e-4
-    || (!paused && (!introDone() || spinning())));
+  const moving = () => shaderPending || (!reduced && (glide !== null || Math.abs(velocityX) > 1e-4 || Math.abs(velocityY) > 1e-4
+    || (!paused && (!introDone() || spinning()))));
 
   function tick(ms: number) {
     raf = 0;
     const dt = last ? Math.min(0.05, (ms - last) / 1000) : 0;
     last = ms;
-    if (!introDone() && !paused)
+    if (!introDone() && !paused) {
       clock = Math.min(INTRO_SECONDS, clock + dt);
-    if (spinning())
+      // The zoom-out's eased tail barely moves, so the spin eases in over it and
+      // reaches full speed as the intro ends: no pause before the globe turns.
+      phi += SPIN * dt * smooth(clamp01((clock / INTRO_SECONDS - SPIN_IN) / (1 - SPIN_IN)));
+    }
+    else if (spinning())
       phi += SPIN * dt;
     if (!drag && (Math.abs(velocityX) > 1e-4 || Math.abs(velocityY) > 1e-4)) {
       phi += velocityX * dt * 60;
@@ -392,14 +324,14 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
         glide = null;
     }
     render();
-    if (moving() && visible)
+    if (moving() && visible && !document.hidden)
       raf = requestAnimationFrame(tick);
     else
       last = 0;
   }
 
   function wake() {
-    if (!raf && visible && moving()) {
+    if (!raf && visible && !document.hidden && moving()) {
       last = 0;
       raf = requestAnimationFrame(tick);
     }
@@ -458,6 +390,7 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     velocityX = velocityY = 0;
     render();
     wake();
+    opts.onState();
   }
 
   stage.addEventListener('pointerdown', e => {
@@ -525,7 +458,7 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     e.preventDefault();
     zoom(Math.exp(-e.deltaY * 0.001));
   }, { passive: false });
-  stage.addEventListener('keydown', e => {
+  function handleKey(e: KeyboardEvent) {
     const steps: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: 2, ArrowDown: -2 };
     if (e.key in steps)
       rotate(steps[e.key]);
@@ -536,19 +469,33 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     else if (e.key === 'Home')
       reset();
     else
-      return;
+      return false;
     e.preventDefault();
-  });
+    return true;
+  }
+  stage.addEventListener('keydown', handleKey);
 
   new ResizeObserver(() => {
     size();
     render();
   }).observe(root);
-  // COBE waits for the land map; the close-up opens on Crete alone, so nothing is missed.
+  // The close-up opens on Crete alone while the land asset loads.
   let landLoaded = false;
   landReady.then(() => {
     landLoaded = true;
     render();
+    wake();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      last = 0;
+    }
+    else {
+      render();
+      wake();
+    }
   });
   readColors();
   size();
@@ -592,8 +539,10 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     },
     setVisible(value) {
       visible = value;
-      if (value)
+      if (value) {
+        render();
         wake();
+      }
       else if (raf) {
         cancelAnimationFrame(raf);
         raf = 0;
@@ -604,8 +553,12 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
       readColors();
       render();
     },
+    handleKey,
     get paused() {
       return paused || reduced;
+    },
+    get zoomLevel() {
+      return clamp01(Math.log(targetScale / frame.scale / MIN_ZOOM) / Math.log(MAX_ZOOM / MIN_ZOOM));
     },
     get settled() {
       return introDone();

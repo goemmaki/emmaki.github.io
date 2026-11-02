@@ -44,6 +44,9 @@ importers:
       cobe:
         specifier: 2.0.1
         version: 2.0.1
+      globedots:
+        specifier: 0.1.1
+        version: 0.1.1
       gsap:
         specifier: ^3.15.0
         version: 3.15.0
@@ -1090,6 +1093,15 @@ packages:
 
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
+
+  globedots@0.1.1:
+    resolution: {integrity: sha512-KnMX08U1JLLlvxAN+OQyGUw61DwbzLXBFJ0eTpE/fxBTLC+8jBwB3om6hnXxEbppov/fkQQSS2hBQuchmPqeWQ==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      react: '>=18'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
@@ -2874,6 +2886,8 @@ snapshots:
       resolve-pkg-maps: 1.0.0
 
   github-slugger@2.0.0: {}
+
+  globedots@0.1.1: {}
 
   graceful-fs@4.2.11: {}
 
