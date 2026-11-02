@@ -5,6 +5,7 @@ import Statement from '../components/Statement.astro';
 import WhyMe from '../components/WhyMe.astro';
 import PageClosing from '../components/PageClosing.astro';
 import HeroPoster from '../components/HeroPoster.astro';
+import CautionTape from '../components/CautionTape.astro';
 const links = [
   { text: 'A', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
   { text: 'B', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
@@ -29,6 +30,7 @@ const credibility = [
   <section>
     <ClientSlots class="shell" />
   </section>
+  <CautionTape />
   <Statement kicker="Who I am" before="I help X and Y to" {links} after=", without FGH." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
