@@ -1,0 +1,33 @@
+---
+// Hover and focus label for an icon link; its parent is the trigger.
+---
+<span class="icon-tip" role="tooltip" aria-hidden="true"><slot /></span>
+<script>
+  // Keep the label this far inside the viewport's edges.
+  const EDGE = 8;
+  for (const tip of document.querySelectorAll<HTMLElement>('.icon-tip')) {
+    const trigger = tip.parentElement!;
+    let timer = 0;
+    const show = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        tip.style.removeProperty('--tip-shift');
+        const box = tip.getBoundingClientRect();
+        const right = document.documentElement.clientWidth - EDGE;
+        const shift = box.right > right ? right - box.right : box.left < EDGE ? EDGE - box.left : 0;
+        tip.style.setProperty('--tip-shift', `${shift}px`);
+        trigger.dataset.tipOpen = '';
+        tip.removeAttribute('aria-hidden');
+      }, 150);
+    };
+    const hide = () => {
+      window.clearTimeout(timer);
+      delete trigger.dataset.tipOpen;
+      tip.setAttribute('aria-hidden', 'true');
+    };
+    trigger.addEventListener('pointerenter', show);
+    trigger.addEventListener('pointerleave', hide);
+    trigger.addEventListener('focus', show);
+    trigger.addEventListener('blur', hide);
+  }
+</script>

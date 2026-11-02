@@ -78,10 +78,12 @@
   src: url("../assets/fonts/ibm-plex-mono-latin-500.woff2") format("woff2");
 }
 
-.back-to-top-tooltip {
-  @apply absolute z-[70] bottom-[calc(100%+4px)] left-1/2 whitespace-nowrap opacity-0 pointer-events-none -translate-x-1/2 rounded-sm bg-raised px-2 py-1 type-meta text-fg transition-opacity duration-150;
+.icon-tip {
+  @apply absolute z-[70] bottom-[calc(100%+4px)] left-1/2 whitespace-nowrap opacity-0 pointer-events-none rounded-sm bg-raised px-2 py-1 type-meta text-fg transition-opacity duration-150;
+  /* Centered on its trigger, shifted by IconTip's script to stay in the viewport. */
+  translate: calc(-50% + var(--tip-shift, 0px)) 0;
 }
-.back-to-top[data-tooltip-open] .back-to-top-tooltip { @apply opacity-100; }
+[data-tip-open] > .icon-tip { @apply opacity-100; }
 .page-tools-menu {
   @apply fixed inset-auto m-0 translate-x-0 translate-y-0 z-[70];
 }

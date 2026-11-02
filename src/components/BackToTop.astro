@@ -1,28 +1,15 @@
 ---
+import IconTip from './IconTip.astro';
 interface Props { class?: string }
 const { class: className = '' } = Astro.props;
 ---
 <a href="#content" aria-label="Back to top" class={`back-to-top icon-action relative ${className}`}>
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-[18px]" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="m16 12-4-4-4 4"></path><path d="M12 16V8"></path></svg>
-  <span class="back-to-top-tooltip rounded-sm bg-raised px-2 py-1 type-meta text-fg" role="tooltip" aria-hidden="true">Back to top</span>
+  <IconTip>Back to top</IconTip>
 </a>
 <script>
   const triggers = document.querySelectorAll<HTMLAnchorElement>('.back-to-top');
   for (const trigger of triggers) {
-    let timer = 0;
-    const show = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => { trigger.dataset.tooltipOpen = ''; trigger.querySelector('[role="tooltip"]')?.removeAttribute('aria-hidden'); }, 150);
-    };
-    const hide = () => {
-      window.clearTimeout(timer);
-      delete trigger.dataset.tooltipOpen;
-      trigger.querySelector('[role="tooltip"]')?.setAttribute('aria-hidden', 'true');
-    };
-    trigger.addEventListener('pointerenter', show);
-    trigger.addEventListener('pointerleave', hide);
-    trigger.addEventListener('focus', show);
-    trigger.addEventListener('blur', hide);
     trigger.addEventListener('click', event => {
       event.preventDefault();
       window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
