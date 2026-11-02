@@ -33,7 +33,9 @@ const markdown = postMarkdown(post, '__PAGE_URL__');
           </div>
           <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2 [grid-area:breadcrumb]"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><PostIcon name="home"/></a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li class="shrink-0"><a href="/blog" class="quiet-link">Blog</a></li><li aria-hidden="true"><PostIcon name="chevron"/></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">{data.category}</li></ol></nav>
           <div class="justify-self-end [grid-area:tools]"><PageTools title={data.title} markdown={markdown} aiQuestion={data.aiQuestion} /></div>
-          <p aria-hidden="true" class:list={[`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`]}>{data.title}</p>
+          {data.cover
+            ? <p aria-hidden="true" class:list={[`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`]}>{data.title}</p>
+            : <h1 class:list={[`my-5 ${headingStyle[1]} text-fg-max text-pretty [grid-area:title]`]}>{data.title}</h1>}
           <div class="contents md:flex md:items-center md:justify-between md:gap-8 md:[grid-area:meta]"><div class="flex items-center gap-3 [grid-area:author]"><div aria-hidden="true" class="grid size-9 place-items-center rounded-sm bg-raised font-heading text-sm text-fg">ER</div><span class="font-sans text-sm font-medium text-fg-max">{data.author}</span></div><div class="flex flex-col gap-1 type-meta text-fg-2 [grid-area:date] md:items-end"><time datetime={data.published}><span class="hidden sm:inline">Published </span>{formatPublished(data.published)}</time>{data.updated && <span>Updated <time datetime={data.updated}>{formatPublished(data.updated)}</time></span>}<span class="lg:hidden">{minutes} min read</span></div></div>
         </header>
       </div>
