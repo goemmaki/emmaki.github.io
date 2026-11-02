@@ -2,6 +2,12 @@ import type { CollectionEntry } from "astro:content";
 
 type Post = CollectionEntry<"blog">;
 
+const postImages = import.meta.glob('../content/blog/*/*.{avif,gif,jpeg,jpg,png,svg,webp}', {
+  eager: true,
+  query: '?url&no-inline',
+  import: 'default',
+}) as Record<string, string>;
+
 export const POST_TLDR_ID = "tldr";
 export const POST_TLDR_LABEL = "TL;DR";
 export const POST_FAQ_LABEL = "FAQs";
@@ -31,8 +37,19 @@ function bodyMarkdown(body: string) {
   return stripMdx(body).replace(/(!\[[^\]]*\]\([^)\s]+) "[^"]*"\)/g, "$1)");
 }
 
+function emittedImageUrls(post: Post, body: string) {
+  const folder = post.id.split('/')[0];
+  const prefix = `../content/blog/${folder}/`;
+  return body.replace(/(!\[[^\]]*\]\()\.\/([^\s)]+)(\))/g, (_match, start: string, file: string, end: string) => {
+    const assetUrl = postImages[`${prefix}${file}`];
+    if (!assetUrl) throw new Error(`Missing imported post image URL for ${post.id}: ${file}`);
+    return `${start}${assetUrl}${end}`;
+  });
+}
+
 /** The post as Markdown, for "Copy as .md". */
-export function postMarkdown({ data, body = "" }: Post, url: string) {
+export function postMarkdown(post: Post, url: string) {
+  const { data, body = "" } = post;
   return [
     `# ${data.title}`,
     `${data.author} · ${formatPublished(data.published)} · ${data.category}`,
@@ -40,7 +57,7 @@ export function postMarkdown({ data, body = "" }: Post, url: string) {
     `## ${POST_TLDR_LABEL}`,
     data.tldr.map((item) => `- ${item}`).join("\n"),
     data.intro,
-    bodyMarkdown(body),
+    emittedImageUrls(post, bodyMarkdown(body)),
     `## ${POST_FAQ_LABEL}`,
     ...data.faqs.flatMap(({ question, answer }) => [`### ${question}`, answer]),
   ].join("\n\n");
