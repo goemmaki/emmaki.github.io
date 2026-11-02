@@ -5,7 +5,7 @@ Supersedes the case-study parts of `20261029-proof-case-study.md` (its Home item
 ## Owner goals and decisions
 
 - The page design for `/proof/placeholder` is recorded in `docs/site-plan.md`, "Case study template", including what was tried and rejected today. The owner said "we done here" at the end of the session.
-- Settled: the results arrow stays Geist's `→`; no reveal text and no TL;DR box on case studies; no TOC below 1024px (as on blog posts); the closing (Open for work, Message me, Ask AI) is a shared component placed only on the pages the owner names, never added site-wide; the opening's text has 1.5 line height.
+- Settled: the results arrow stays Geist's `→`; no reveal text and no TL;DR box on case studies; no TOC below 1024px (as on blog posts); the closing (Open for work, Message me, Ask AI) is a shared component placed only on the pages the owner names, never added site-wide; the opening's text keeps the H3 role's 1.2 line height (owner tried 1.5, preferred 1.2).
 
 ## What happened
 
@@ -13,7 +13,7 @@ Supersedes the case-study parts of `20261029-proof-case-study.md` (its Home item
 
 ## Current state and where things live
 
-- Branch `design/case-study-20261102`, worktree `~/worktrees/fiverr-portfolio/case-study-20261102`, based on `design/proof-index-20261102` (`d57c9e00`). Code `7d9b2321`, `be27d5eb`, `cc7674f9` (line height); `ab6f6afd` (closing in `Base`) was rejected and reverted in `18044359`. Committed only: not pushed, not fast-forwarded into any other branch.
+- Branch `design/case-study-20261102`, worktree `~/worktrees/fiverr-portfolio/case-study-20261102`, based on `design/proof-index-20261102` (`d57c9e00`). Code `7d9b2321`, `be27d5eb`, `cc7674f9` (1.5 line height, reverted in `f2e135dc`); `ab6f6afd` (closing in `Base`) was rejected and reverted in `18044359`. Committed only: not pushed, not fast-forwarded into any other branch.
 - Review server: `astro dev` on 3012 from this worktree (http://192.168.20.5:3012/proof/placeholder). The 3011 server serves `design/post-migration-20261101` and does not show this work.
 - Code: `src/layouts/CaseStudy.astro` (order, TOC, "Long story short…", FAQs), `src/components/CaseFrame.astro` and the "Case frame" CSS block (testimonial, logo size, company facts row), `src/components/PageClosing.astro` (Ask AI) placed per page, `src/content.config.ts` (`industry`, `headquarters`, `aiQuestion`, `opening`, `faqs` on work entries), `pageReadingMinutes` in `src/lib/post-format.ts`.
 - Placeholders still in the entry: metrics, opening, FAQs and company facts are lorem or made up; the testimonial is Brett Smith's real quote standing in.
@@ -34,5 +34,5 @@ Supersedes the case-study parts of `20261029-proof-case-study.md` (its Home item
 ## How to resume
 
 1. Read `AGENTS.md`, this handoff and the site plan's "Case study template".
-2. `git -C ~/worktrees/fiverr-portfolio/case-study-20261102 log --oneline -4`; expect the docs commit on top of `18044359`.
+2. `git -C ~/worktrees/fiverr-portfolio/case-study-20261102 log --oneline -4`; expect the docs commit on top of `f2e135dc`.
 3. If 3012 isn't running: `pnpm exec astro dev --host 0.0.0.0 --port 3012` in the worktree, then open `/proof/placeholder`.
