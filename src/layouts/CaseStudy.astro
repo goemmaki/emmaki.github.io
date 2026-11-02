@@ -34,7 +34,7 @@ const toc = [{ id: OPENING_ID, text: OPENING_LABEL }, ...headings.filter(({ dept
   <div class="shell mt-e2 grid gap-y-e1 lg:grid-cols-12">
     <aside aria-labelledby="toc-title" class="hidden lg:col-span-3 lg:block lg:self-start lg:sticky lg:top-28"><p class="mb-8 flex items-center gap-2 type-meta text-fg-2"><PostIcon name="clock"/>{minutes} min read</p><h2 id="toc-title" class="sr-only">On this page</h2><PostToc entries={toc} /></aside>
     <div class="max-w-[700px] lg:col-span-8 lg:col-start-5">
-      <section aria-labelledby={OPENING_ID} class="mb-e2"><h2 id={OPENING_ID} tabindex="-1" class={sectionHeadingClass}>{OPENING_LABEL}</h2><p class="mt-6 type-h3 text-[1.25rem] leading-[1.5] font-normal text-fg text-pretty">{data.opening}</p></section>
+      <section aria-labelledby={OPENING_ID} class="mb-e2"><h2 id={OPENING_ID} tabindex="-1" class={sectionHeadingClass}>{OPENING_LABEL}</h2><p class="mt-6 type-h3 text-[1.25rem] font-normal text-fg text-pretty">{data.opening}</p></section>
       <slot />
       {data.faqs.length > 0 && <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={data.faqs} bodyText={bodyText} /></section>}
     </div>
