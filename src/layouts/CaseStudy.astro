@@ -5,6 +5,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
+import PageClosing from '../components/PageClosing.astro';
 import CaseFrame from '../components/CaseFrame.astro';
 import PostIcon from '../components/blog/PostIcon.astro';
 import Faq from '../components/Faq.astro';
@@ -23,7 +24,7 @@ const OPENING_ID = 'long-story-short';
 const minutes = pageReadingMinutes(body, [data.title, data.opening], data.faqs);
 const toc = [{ id: OPENING_ID, text: OPENING_LABEL }, ...headings.filter(({ depth }) => depth === 2).map(({ slug, text }) => ({ id: slug, text })), ...(data.faqs.length ? [{ id: headingId(POST_FAQ_LABEL), text: POST_FAQ_LABEL }] : [])];
 ---
-<Base pageTitle={data.shortTitle} aiQuestion={data.aiQuestion}>
+<Base pageTitle={data.shortTitle}>
   {data.noindex && <meta slot="head" name="robots" content="noindex" />}
   <section class="shell pt-[clamp(8rem,20svh,11rem)]">
     <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li class="shrink-0"><a href="/proof" class="quiet-link">Case studies</a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">{data.shortTitle}</li></ol></nav>
@@ -38,4 +39,5 @@ const toc = [{ id: OPENING_ID, text: OPENING_LABEL }, ...headings.filter(({ dept
       {data.faqs.length > 0 && <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={data.faqs} bodyText={bodyText} /></section>}
     </div>
   </div>
+  <PageClosing aiQuestion={data.aiQuestion} />
 </Base>

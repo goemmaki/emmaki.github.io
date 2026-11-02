@@ -21,7 +21,7 @@ const postGrid = 'shell lg:grid lg:grid-cols-[240px_minmax(0,700px)] lg:gap-x-e1
 const patternId = `post-title-stripes-${post.id}`;
 const markdown = postMarkdown(post, '__PAGE_URL__');
 ---
-<Base pageTitle={data.title} pageTitleAbsolute initialOverMedia={Boolean(data.cover)} closing={false}>
+<Base pageTitle={data.title} pageTitleAbsolute initialOverMedia={Boolean(data.cover)}>
   {data.cover && <link slot="head" rel="preload" as="image" href={data.cover} />}
   <article class="overflow-x-clip">
     {data.cover && <PostCover src={data.cover}><h1 class="max-w-[18ch] font-heading text-[clamp(2.75rem,7vw,7.5rem)] font-semibold leading-[0.92] tracking-[-0.045em] text-fg-max text-balance">{data.title}</h1></PostCover>}
