@@ -83,7 +83,7 @@
   /* Centered on its trigger, shifted by IconTip's script to stay in the viewport. */
   translate: calc(-50% + var(--tip-shift, 0px)) 0;
 }
-[data-tip-open] > .icon-tip { @apply opacity-100; }
+[data-tip-open] > .icon-tip { @apply opacity-100 pointer-events-auto; }
 .page-tools-menu {
   @apply fixed inset-auto m-0 translate-x-0 translate-y-0 z-[70];
 }
