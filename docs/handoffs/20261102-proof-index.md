@@ -14,10 +14,10 @@ Closed by the owner ("this is now closed"). This handoff only records where the 
 
 ## Current state and where things live
 
-- Branch `design/proof-index-20261102`, worktree `~/worktrees/fiverr-portfolio/proof-index-20261102`, based on `design/post-migration-20261101` (`d531213f`, itself unmerged). Code `08972bc0`, docs in the following commit. Not pushed, not merged anywhere.
+- Branch `design/proof-index-20261102`, worktree `~/worktrees/fiverr-portfolio/proof-index-20261102`, based on `design/post-migration-20261101` (`d531213f`, itself unmerged). Code `08972bc0`, docs `ae74bc81`. Pushed 2026-11-02; `design/post-migration-20261101` fast-forwarded to it, so the 3011 server shows it. Not merged into `design/foundation` (owner: not needed).
 - Code: `src/components/ProofIndex.astro` (data, markup, hover/focus/touch script) and the "Proof index" block in `src/styles/globals.css`.
 - Placeholders still in the data: types, tags and one shared blurb.
-- Review server: 3012 (`astro dev` in this worktree).
+- Review server: 3011 (`astro dev` in `~/worktrees/fiverr-portfolio/post-migration-20261101`); the 3012 server was stopped.
 
 ## Open work
 
@@ -34,4 +34,4 @@ Closed by the owner ("this is now closed"). This handoff only records where the 
 ## How to resume
 
 1. Read `AGENTS.md`, this handoff and the journal entry.
-2. `git -C ~/worktrees/fiverr-portfolio/proof-index-20261102 log --oneline -3`; open `/proof` on 3012.
+2. `git -C ~/worktrees/fiverr-portfolio/proof-index-20261102 log --oneline -3`; open `/proof` on 3011.
