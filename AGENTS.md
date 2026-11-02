@@ -22,6 +22,7 @@
 
 ## Next action
 
+- Home hero poster and caution tape (2026-11-03; tape finish, gutters for the words and placeholder h1 await the owner): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
 - Visual glitches and polish to fix after the Astro migration merges, in the owner's words: [docs/visual-polish-backlog.md](docs/visual-polish-backlog.md).
