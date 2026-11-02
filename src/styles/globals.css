@@ -3,6 +3,7 @@
 /* Canonical Emmaki tokens. docs/design-system is the single source of truth. */
 @import "../../docs/design-system/colors_and_type.css";
 @import "../../docs/design-system/tokens.css";
+@import "./starwind.css";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));

@@ -1,0 +1,18 @@
+@import "tw-animate-css";
+
+/*
+ * Starwind-only names. The shared shadcn substrate (background, primary,
+ * muted, border, radius…) is mapped once in globals.css; don't repeat it here.
+ */
+@theme inline {
+  --color-primary-accent: var(--color-text-primary);
+  --color-outline: var(--color-focus);
+  --color-info: var(--color-semantic-info);
+  --color-info-foreground: var(--color-canvas);
+  --color-success: var(--color-semantic-success);
+  --color-success-foreground: var(--color-canvas);
+  --color-warning: var(--color-semantic-warning);
+  --color-warning-foreground: var(--color-canvas);
+  --color-error: var(--color-semantic-error);
+  --color-error-foreground: var(--color-canvas);
+}
