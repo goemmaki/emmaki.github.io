@@ -2,11 +2,9 @@
 import Base from '../layouts/Base.astro';
 import PageCover from '../components/PageCover.astro';
 import BrandWall from '../components/BrandWall.astro';
-import PageClosing from '../components/PageClosing.astro';
 import { BRANDS } from '@/lib/content';
 ---
 <Base>
   <PageCover word="Brands" ink={2.973} intro="I’m Emmaki, a B2B copywriter and AI content strategist with 20+ years’ experience turning complex ideas into simple messages for brands around the world." />
   <BrandWall brands={BRANDS} />
-  <PageClosing />
 </Base>

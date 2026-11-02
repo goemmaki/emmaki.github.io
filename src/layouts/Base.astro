@@ -2,6 +2,7 @@
 import SiteHeader from '../components/SiteHeader.astro';
 import BackToTop from '../components/BackToTop.astro';
 import IconTip from '../components/IconTip.astro';
+import PageClosing from '../components/PageClosing.astro';
 import { WORK_HOURS } from '@/lib/content';
 import plexSans400 from '../assets/fonts/ibm-plex-sans-latin.woff2?url';
 import geist400 from '../assets/fonts/geist-latin.woff2?url';
@@ -10,9 +11,11 @@ import plexMono500 from '../assets/fonts/ibm-plex-mono-latin-500.woff2?url';
 import sourceSerif300 from '../assets/fonts/source-serif-4-latin-italic-300.woff2?url';
 import '../styles/site.css';
 
-interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string; initialOverMedia?: boolean }
+// Every page ends with the closing (Open for work, Ask AI) except the blog's and the 404, which pass closing={false}.
+// aiQuestion: the page's question for Ask AI there.
+interface Props { pageTitle?: string; pageTitleAbsolute?: boolean; description?: string; initialOverMedia?: boolean; closing?: boolean; aiQuestion?: string }
 
-const { pageTitle, pageTitleAbsolute = false, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.', initialOverMedia = false } = Astro.props;
+const { pageTitle, pageTitleAbsolute = false, description = 'Senior B2B copywriting and AI content strategy for complex offers. The writing makes it clear; the systems make it scale.', initialOverMedia = false, closing = true, aiQuestion } = Astro.props;
 const title = pageTitle ? (pageTitleAbsolute ? pageTitle : `${pageTitle} — Emmaki`) : 'Emmaki — Senior copy & AI content strategy';
 const pathname = Astro.url.pathname;
 ---
@@ -37,7 +40,7 @@ const pathname = Astro.url.pathname;
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:bg-bg focus:px-3 focus:py-2 focus:type-meta">Skip to content</a>
     <SiteHeader pathname={pathname} initialOverMedia={initialOverMedia} />
     <script is:inline define:vars={{ workHours: WORK_HOURS }}>(function(){var root=document.querySelector('[data-local-clock]');if(!root)return;function tick(){var p=new Intl.DateTimeFormat('en-US',{timeZone:workHours.timeZone,weekday:'short',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date());var get=function(t){return p.find(function(x){return x.type===t}).value};var days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var day=days.indexOf(get('weekday')),hour=Number(get('hour'));root.querySelector('[data-local-clock-time]').textContent=get('hour')+':'+get('minute');root.querySelector('[data-local-clock-value]').lastChild.nodeValue=' '+(get('timeZoneName')==='GMT+3'?'EEST':'EET');root.querySelector('[data-local-clock-status]').textContent=workHours.days.includes(day)&&hour>=workHours.start&&hour<workHours.end?'Online':'Offline'}tick();setInterval(tick,15000)})()</script>
-    <main id="content" tabindex="-1" class="flex-1 outline-none"><slot /></main>
+    <main id="content" tabindex="-1" class="flex-1 outline-none"><slot />{closing && <PageClosing aiQuestion={aiQuestion} />}</main>
     <script is:inline>(function(){var h=document.querySelector('[data-site-header]'),m=document.querySelector('[data-under-header]'),c=document.querySelector('[data-covers-media]');if(!h)return;var over=!!m&&m.getBoundingClientRect().bottom>64&&(!c||c.getBoundingClientRect().top>64);if(over)h.setAttribute('data-over-media','');else h.removeAttribute('data-over-media');h.classList.toggle('bg-bg/50',!over);h.classList.toggle('backdrop-blur-[48px]',!over)})()</script>
     <footer>
       <div class="footer relative overflow-hidden" data-footer>
