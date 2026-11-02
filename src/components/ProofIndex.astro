@@ -1,27 +1,29 @@
 ---
 import { BRANDS, SERVICES } from '@/lib/content';
+const BLURB_MAX = 50; // Keep desktop blurbs to one line and phone blurbs to two.
 const projects = [
-  { client: 'Harvard University', project: 'Placeholder 01', work: SERVICES[0], companion: '#E39380', darkInk: '#BE3D50', lightCompanion: '#AD6250' },
-  { client: 'Quartile', project: 'Placeholder 02', work: SERVICES[1], companion: '#C35A32', lightInk: '#B86D00' },
-  { client: 'Accredible', project: 'Placeholder 03', work: SERVICES[4], companion: '#8D9FDC', lightCompanion: '#6274AE' },
-  { client: 'Fiverr', project: 'Placeholder 04', work: 'AI automation', companion: '#247C88', lightInk: '#168852' },
-  { client: 'TV Tropes', project: 'Placeholder 05', work: SERVICES[3], companion: '#78ABB5', lightCompanion: '#467D88' },
-  { client: 'Spectral Core', project: 'Placeholder 06', work: 'AI automation', companion: '#526AB6', lightInk: '#10899F' },
+  { client: 'Harvard University', type: 'Case study', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'Writing', kind: 'writing' }, { label: SERVICES[0], kind: 'writing' }], companion: '#E39380', darkInk: '#BE3D50', lightCompanion: '#AD6250' },
+  { client: 'Quartile', type: 'Project', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'Automation', kind: 'automation' }, { label: SERVICES[1], kind: 'writing' }], companion: '#C35A32', lightInk: '#B86D00' },
+  { client: 'Accredible', type: 'Case study', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'AI', kind: 'ai' }, { label: SERVICES[8], kind: 'ai' }], companion: '#8D9FDC', lightCompanion: '#6274AE' },
+  { client: 'Fiverr', type: 'Project', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'Automation', kind: 'automation' }, { label: SERVICES[0], kind: 'writing' }], companion: '#247C88', lightInk: '#168852' },
+  { client: 'TV Tropes', type: 'Case study', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'Writing', kind: 'writing' }, { label: SERVICES[3], kind: 'writing' }], companion: '#78ABB5', lightCompanion: '#467D88' },
+  { client: 'Spectral Core', type: 'Project', blurb: 'Placeholder: one short line about the project.', tags: [{ label: 'AI', kind: 'ai' }, { label: 'Automation', kind: 'automation' }], companion: '#526AB6', lightInk: '#10899F' },
 ].map(({ client, ...project }) => {
   const brand = BRANDS.find((item) => item.name === client);
   if (!brand?.color) throw new Error(`Proof project needs a brand color: ${client}`);
+  if (project.blurb.length > BLURB_MAX) throw new Error(`Proof blurb over ${BLURB_MAX} characters: ${client}`);
   return { ...project, brand };
 });
 ---
 <section class="shell proof-index" data-proof-index>
-  <div class="proof-index-head" aria-hidden="true"><span>Client</span><span>Project</span><span>Work</span></div>
+  <div class="proof-index-head" aria-hidden="true"><span>Client</span><span>Type</span><span>Tags</span></div>
   <ul class="proof-list">
-    {projects.map(({ brand, project, work, companion, lightInk, darkInk, lightCompanion }) => <li>
+    {projects.map(({ brand, type, blurb, tags, companion, lightInk, darkInk, lightCompanion }) => <li>
       <a href="/proof" class="proof-row" style={`--proof-brand:${brand.color};--proof-companion:${companion};${lightInk ? `--proof-ink-light:${lightInk};` : ''}${darkInk ? `--proof-ink-dark:${darkInk};` : ''}${lightCompanion ? `--proof-companion-light:${lightCompanion};` : ''}`}>
         <canvas class="proof-screen" aria-hidden="true"></canvas>
-        <span class="proof-client-cell"><svg class="proof-row-arrow" viewBox="6 6 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="proof-client"><span class="proof-client-base">{brand.name}</span><span class="proof-client-gradient" aria-hidden="true">{brand.name}</span></span></span>
-        <span class="proof-project"><span class="sr-only">Project: </span>{project}</span>
-        <span class="proof-work"><span class="sr-only">Work: </span>{work}</span>
+        <span class="proof-client-cell"><svg class="proof-row-arrow" viewBox="6 6 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg><span class="proof-client-stack"><span class="proof-client"><span class="proof-client-base">{brand.name}</span><span class="proof-client-gradient" aria-hidden="true">{brand.name}</span></span><span class="proof-blurb-wrap"><span class="proof-blurb">{blurb}</span></span></span></span>
+        <span class="proof-type"><span class="sr-only">Type: </span>{type}</span>
+        <span class="sr-only">Tags: </span><ul class="proof-tags">{tags.map(({ label, kind }) => <li class="proof-tag" data-kind={kind}>{label}</li>)}</ul>
       </a>
     </li>)}
   </ul>
@@ -34,6 +36,8 @@ type Point = { x: number; y: number };
 const pointer: Point = { x: -1, y: -1 };
 let hovered: HTMLElement | null = null;
 let focused: HTMLElement | null = null;
+let touchOpen: HTMLElement | null = null;
+let touchDown: HTMLElement | null = null;
 let grainFrame = 0;
 function dotRadius(x: number, y: number, at: Point) { return 0.35 + 1.9 * Math.max(0, 1 - Math.hypot(x - at.x, y - at.y) / 220); }
 function stopDots(row: HTMLElement) { const frame = Number(row.dataset.dotFrame); if (frame) cancelAnimationFrame(frame); }
@@ -68,13 +72,18 @@ function activate(row: HTMLElement | null) {
 }
 const rows = [...document.querySelectorAll<HTMLElement>('[data-proof-index] .proof-row')];
 for (const row of rows) {
-  row.addEventListener('pointerenter', (event) => { const e = event as PointerEvent; if (e.pointerType !== 'mouse' || !matchMedia(FINE_POINTER).matches) return; pointer.x = e.clientX; pointer.y = e.clientY; hovered = row; activate(hovered ?? focused); });
+  row.addEventListener('pointerenter', (event) => { const e = event as PointerEvent; if (e.pointerType !== 'mouse' || !matchMedia(FINE_POINTER).matches) return; pointer.x = e.clientX; pointer.y = e.clientY; hovered = row; activate(touchOpen ?? hovered ?? focused); });
   row.addEventListener('pointermove', (event) => { const e = event as PointerEvent; pointer.x = e.clientX; pointer.y = e.clientY; });
-  row.addEventListener('pointerleave', () => { hovered = null; activate(focused); }); row.addEventListener('pointercancel', () => { hovered = null; activate(focused); });
-  row.addEventListener('focus', () => { if (row.matches(':focus-visible')) { focused = row; activate(hovered ?? focused); } });
-  row.addEventListener('blur', () => { focused = null; activate(hovered); });
+  row.addEventListener('pointerleave', () => { hovered = null; activate(touchOpen ?? focused); });
+  row.addEventListener('pointercancel', () => { touchDown = null; hovered = null; activate(touchOpen ?? focused); });
+  row.addEventListener('pointerdown', (event) => { if ((event as PointerEvent).pointerType === 'touch') touchDown = row; });
+  row.addEventListener('click', (event) => { const touchTap = touchDown === row || (event as PointerEvent).pointerType === 'touch'; if (!touchTap) return; touchDown = null; if (touchOpen === row) { touchOpen = null; activate(hovered ?? focused); return; } event.preventDefault(); touchOpen = row; hovered = null; activate(touchOpen); });
+  row.addEventListener('focus', () => { if (row.matches(':focus-visible')) { focused = row; activate(touchOpen ?? hovered ?? focused); } });
+  row.addEventListener('blur', () => { focused = null; activate(touchOpen ?? hovered); });
 }
-document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(grainFrame); grainFrame = 0; rows.forEach(stopDots); } else activate(hovered ?? focused); });
-matchMedia(REDUCED_MOTION).addEventListener('change', () => activate(hovered ?? focused));
-matchMedia(FINE_POINTER).addEventListener('change', () => activate(hovered ?? focused));
+document.addEventListener('pointerdown', (event) => { if ((event as PointerEvent).pointerType === 'touch' && !(event.target as Element).closest('.proof-row')) { touchDown = null; touchOpen = null; activate(hovered ?? focused); } });
+document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && touchOpen) { touchOpen = null; activate(hovered ?? focused); } });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(grainFrame); grainFrame = 0; rows.forEach(stopDots); } else activate(touchOpen ?? hovered ?? focused); });
+matchMedia(REDUCED_MOTION).addEventListener('change', () => activate(touchOpen ?? hovered ?? focused));
+matchMedia(FINE_POINTER).addEventListener('change', () => activate(touchOpen ?? hovered ?? focused));
 </script>

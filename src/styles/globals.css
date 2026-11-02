@@ -1470,15 +1470,22 @@
 
 /*
  * Proof index (proof-index.tsx), after gorantrickovski.design's works list (owner, 2026-10-29): full-ink
- * rules, tight rows, the client in the Brands typography and the project and work in a smaller bold,
- * after supersolid.agency's list. Names are 4rem at full width, scaling down with the list.
+ * rules, tight rows, the client in the Brands typography and the type and tags in a smaller bold,
+ * after supersolid.agency's list. Names are 4rem at full width, scaling down with the list. Active rows
+ * add a short blurb below the name without changing desktop row height.
  */
-.proof-index { padding-block: 84px 52px; }
+.proof-index {
+  --proof-name-scale: 1;
+  --proof-blurb-size: 0.15;
+  --proof-blurb-gap: 0;
+  padding-block: 84px 52px;
+}
 .proof-index-head,
 .proof-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 16px; }
 .proof-index-head { display: none; }
 .proof-list { container-type: inline-size; border-top: 1px solid var(--color-fg-max); }
 .proof-row {
+  --proof-name-size: clamp(1.75rem, 4.76cqw, 4rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --proof-name-ink: var(--proof-ink-dark, var(--proof-brand));
   --proof-name-companion: var(--proof-companion);
@@ -1497,20 +1504,38 @@
 .proof-row:active { background-color: color-mix(in srgb, var(--color-fg-max) 5%, transparent); }
 /* The arrow, then a word space (Geist's, less the tracking), then the name: one line of type. */
 .proof-client-cell {
+  --proof-blurb-font: max(0.875rem, calc(var(--proof-name-size) * var(--proof-blurb-size)));
+  --proof-blurb-line: calc(var(--proof-blurb-font) * 1.15);
+  --proof-group-size: calc(var(--proof-name-size) * (var(--proof-name-scale) + var(--proof-blurb-gap)) + var(--proof-blurb-line));
   grid-column: 1 / -1;
   display: flex;
   align-items: baseline;
   gap: 0.2em;
   min-width: 0;
+  min-height: var(--proof-group-size);
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: clamp(1.75rem, 4.76cqw, 4rem);
+  font-size: var(--proof-name-size);
   line-height: 1;
   letter-spacing: -0.06em;
 }
 /* The viewBox is cropped to the glyph, so 0.85em puts the arrow's height on Geist's cap height. */
 .proof-row-arrow { flex-shrink: 0; position: relative; top: 0.07em; width: 0.85em; height: 0.85em; }
-.proof-client { position: relative; min-width: 0; padding-block: 0.08em; }
+.proof-client-stack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  flex: 1;
+  min-width: 0;
+}
+.proof-client {
+  position: relative;
+  min-width: 0;
+  padding-block: 0.08em;
+  transform-origin: left top;
+  transition: transform 0.5s var(--ease);
+}
 /* Real, selectable text crossfades with a decorative copy; the last grain frame fades with it. */
 .proof-client-base { opacity: 1; transition: opacity 0.5s var(--ease); }
 .proof-client-gradient {
@@ -1529,16 +1554,62 @@
   background-clip: text;
   color: transparent;
 }
+.proof-blurb-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - var(--proof-group-size) / 2 + var(--proof-name-size) * (var(--proof-name-scale) + var(--proof-blurb-gap)));
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(0.15em);
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.proof-blurb {
+  display: block;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: var(--proof-blurb-font);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-fg-max);
+}
+.proof-row[data-active] .proof-client { transform: translateY(calc(var(--proof-name-size) * (0.58 - 0.08 * var(--proof-name-scale)) - var(--proof-group-size) / 2)) scale(var(--proof-name-scale)); transition-duration: 0.2s; }
 .proof-row[data-active] .proof-client-base { opacity: 0; transition-duration: 0.2s; }
 .proof-row[data-active] .proof-client-gradient { opacity: 1; transition-duration: 0.2s; }
+.proof-row[data-active] .proof-blurb-wrap { opacity: 1; transform: translateY(0); transition-duration: 0.2s; }
 .proof-client::selection { color: var(--color-bg); background: var(--color-fg-max); }
-.proof-project,
-.proof-work {
+.proof-type {
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 1rem;
   line-height: 1.25;
   letter-spacing: -0.02em;
+}
+.proof-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.proof-tag {
+  border: 1px solid color-mix(in srgb, var(--color-fg-max) 28%, transparent);
+  border-radius: 3px;
+  padding: 1px 6px;
+  color: var(--color-fg-2);
+  background: color-mix(in srgb, var(--color-fg-max) 6%, transparent);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+/* Monochrome: white ink reads stronger on black than black ink on white, so light mode gets more. */
+[data-theme="light"] .proof-tag {
+  border-color: color-mix(in srgb, var(--color-fg-max) 32%, transparent);
+  background: color-mix(in srgb, var(--color-fg-max) 4%, transparent);
 }
 /* The dot screen: the page's strongest ink, held to a quiet grey by the canvas's opacity. */
 .proof-screen {
@@ -1560,8 +1631,41 @@
   .proof-index-head { display: grid; padding-bottom: 12px; }
   .proof-row { padding-block: 12px; }
   .proof-client-cell { grid-column: auto; }
-  .proof-project,
-  .proof-work { font-size: 1.25rem; }
+  .proof-type { font-size: 1.25rem; }
+  .proof-index-head > :last-child { text-align: right; }
+  .proof-tags { justify-self: end; }
+}
+@media (width < 48rem) {
+  .proof-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    /* Subtract the client's 0.16em block padding from the target 8px visual gap. */
+    row-gap: clamp(0px, calc(8px - var(--proof-name-size) * 0.16), 8px);
+  }
+  .proof-client-cell { grid-column: 1 / -1; min-height: 0; }
+  .proof-client-stack {
+    display: grid;
+    grid-template-rows: auto 0fr;
+    align-items: start;
+    transition: grid-template-rows 0.5s var(--ease);
+  }
+  .proof-row[data-active] .proof-client-stack { transition-duration: 0.2s; }
+  .proof-row[data-active] .proof-client { transform: scale(var(--proof-name-scale)); }
+  .proof-client { grid-row: 1; }
+  .proof-blurb-wrap {
+    position: relative;
+    grid-row: 2;
+    top: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    opacity: 0;
+    min-height: 0;
+    transition: opacity 0.5s var(--ease);
+  }
+  .proof-row[data-active] .proof-client-stack { grid-template-rows: auto 1fr; }
+  .proof-row[data-active] .proof-blurb-wrap { opacity: 1; transition-duration: 0.2s; }
+  .proof-type { margin-left: calc(var(--proof-name-size) * 1.05); }
+  .proof-tags { justify-self: end; }
 }
 /* Under a mouse the arrow waits outside the column; hover or focus brings it in and moves the name
    over by its width and the word space. Touch keeps it showing, marking each row as a link. */
@@ -1571,11 +1675,20 @@
   .proof-row[data-active] .proof-client-cell { translate: 0; transition-duration: 0.2s; }
   .proof-row[data-active] .proof-row-arrow { opacity: 1; transition-duration: 0.2s; }
 }
+/* Stacked rows under a mouse: the type waits with the name and moves in with it. */
+@media (hover: hover) and (pointer: fine) and (width < 48rem) {
+  .proof-type { translate: calc(var(--proof-name-size) * -1.05) 0; transition: translate 0.5s var(--ease); }
+  .proof-row[data-active] .proof-type { translate: 0; transition-duration: 0.2s; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .proof-client-cell { translate: 0; }
   .proof-client-cell,
+  .proof-type { translate: 0; }
+  .proof-client-cell,
+  .proof-client-stack,
+  .proof-client,
   .proof-client-base,
   .proof-client-gradient,
   .proof-screen,
-  .proof-row-arrow { transition: none !important; }
+  .proof-row-arrow,
+  .proof-blurb-wrap { transition: none !important; }
 }
