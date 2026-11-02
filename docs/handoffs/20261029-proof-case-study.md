@@ -1,5 +1,7 @@
 # Session handoff: Proof, the case-study template and Home (2026-10-29)
 
+**Case-study template: superseded by [20261102-case-study.md](20261102-case-study.md).** The Home items below stay current.
+
 Supersedes `20261028-home-why-me.md` (deleted; in Git history at `76e36820`). `20261028-site.md` stays current for branches, checks and open accessibility items. The session record is the journal entry "2026-10-29 — Case frame, AI badges, Home logo hover" in `docs/journal/20260924-20261026-history.md`.
 
 ## Owner goals and decisions
