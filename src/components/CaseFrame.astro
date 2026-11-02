@@ -1,25 +1,28 @@
 ---
-interface Props { brandColor: string; clientName: string }
-const { brandColor, clientName } = Astro.props;
+import { TESTIMONIALS } from '@/lib/content';
+// facts: the client at a glance, label and value, in a row across the frame's foot.
+interface Props { brandColor: string; clientName: string; facts: [string, string][] }
+const { brandColor, clientName, facts } = Astro.props;
+const person = TESTIMONIALS[0];
 const metrics = [
   { value: '00%', label: 'Lorem ipsum dolor sit amet' },
   { value: '000', label: 'Consectetur adipiscing elit' },
   { value: '00 → 00', label: 'Sed do eiusmod tempor' },
 ];
 ---
-<div data-case-frame data-theme="dark" class="case-frame mt-e2" style={`--case-brand:${brandColor}`}>
+<div data-case-frame data-theme="dark" class="case-frame mt-e2" style={`--case-brand:${brandColor};--case-facts:${facts.length}`}>
   <dl class="case-frame-metrics" aria-label="Placeholder results">
     {metrics.map(({ value, label }) => <div class="case-frame-metric"><dt>{label}</dt><dd>{value}</dd></div>)}
   </dl>
   <figure class="case-frame-quote">
-    <blockquote><p data-case-quote>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p></blockquote>
+    <blockquote><p data-case-quote>{person.quote}</p></blockquote>
     <figcaption>
-      <span class="case-frame-avatar" aria-hidden="true"></span>
-      <span class="case-frame-person"><span class="case-frame-name">Name Surname</span><span class="case-frame-role">Role</span></span>
+      <img src={`/testimonials/${person.photo}`} alt="" width="56" height="56" class="case-frame-avatar" />
+      <span class="case-frame-person"><span class="case-frame-name">{person.name}</span><span class="case-frame-role">{person.role}</span></span>
       <span class="case-frame-logo" role="img" aria-label={clientName}></span>
     </figcaption>
   </figure>
+  {facts.length > 0 && <dl class="case-frame-company" aria-label={`About ${clientName}`}>{facts.map(([label, value]) => <div><dt class="type-meta uppercase">{label}</dt><dd>{value}</dd></div>)}</dl>}
 </div>
 <script is:inline>
   (function(){var field=document.querySelector('[data-case-frame]'),quote=document.querySelector('[data-case-quote]');if(!field||!quote)return;

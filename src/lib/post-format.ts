@@ -48,10 +48,15 @@ export function postMarkdown({ data, body = "" }: Post, url: string) {
 
 /** Whole minutes to read the post at 230 words a minute, at least 1. Image alt text doesn't count; captions do. */
 export function readingMinutes({ data, body = "" }: Post) {
+  return pageReadingMinutes(body, [data.title, data.intro, ...data.tldr], data.faqs);
+}
+
+/** Minutes to read an MDX body plus a page's other text and FAQs, at 230 words a minute. */
+export function pageReadingMinutes(body: string, extra: string[], faqs: { question: string; answer: string }[]) {
   const prose = stripMdx(body)
     .replace(/!\[[^\]]*\]\([^)\s]+(?: "([^"]*)")?\)/g, "$1")
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/^#+ /gm, "");
-  const text = [data.title, data.intro, ...data.tldr, prose, ...data.faqs.flatMap(({ question, answer }) => [question, answer])].join(" ");
+  const text = [...extra, prose, ...faqs.flatMap(({ question, answer }) => [question, answer])].join(" ");
   return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / 230));
 }

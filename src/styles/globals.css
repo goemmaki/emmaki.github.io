@@ -1452,13 +1452,21 @@
   width: var(--case-quote-width, 100%);
   max-width: 100%;
 }
-.case-frame-avatar { flex: none; width: var(--case-caption); height: var(--case-caption); border-radius: 2px; background: color-mix(in srgb, var(--color-text-maximum) 18%, transparent); }
+.case-frame-avatar { flex: none; width: var(--case-caption); height: var(--case-caption); border-radius: var(--shape-control-radius); object-fit: cover; background: color-mix(in srgb, var(--color-text-maximum) 18%, transparent); }
 .case-frame-person { min-width: 0; margin-right: auto; }
-.case-frame-logo { flex: none; width: calc(var(--case-caption) * 373.9 / 93.9); height: var(--case-caption); background: currentColor; mask: url("/clients/harvard-on-dark.svg") right center / contain no-repeat; }
+.case-frame-logo { flex: none; width: calc(var(--case-caption) * 0.75 * 373.9 / 93.9); height: calc(var(--case-caption) * 0.75); background: currentColor; mask: url("/clients/harvard-on-dark.svg") right center / contain no-repeat; }
 .case-frame-name { display: block; font-size: 1rem; font-weight: 500; line-height: 1.5; }
 .case-frame-role { display: block; color: var(--case-soft-ink); font-size: 0.875rem; line-height: 1.5; }
+/* The client at a glance: a row of facts across the frame's foot. */
+.case-frame-company { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--case-line); }
+.case-frame-company > div { min-width: 0; padding: 24px 32px; }
+.case-frame-company > div:nth-child(odd) { border-right: 1px solid var(--case-line); }
+.case-frame-company > div:nth-child(n + 3) { border-top: 1px solid var(--case-line); }
+.case-frame-company dt { color: var(--case-soft-ink); }
+.case-frame-company dd { margin-top: 8px; font-size: 1rem; line-height: 1.5; }
 @media (width < 48rem) {
   .case-frame-metric { padding-inline: 24px; }
+  .case-frame-company > div { padding-inline: 24px; }
   .case-frame-quote { padding: 32px 24px; }
 }
 @media (width >= 64rem) {
@@ -1466,6 +1474,9 @@
   .case-frame-metrics { grid-column: 1 / span 5; border-right: 1px solid var(--case-line); }
   .case-frame-metric:last-child { border-bottom: 0; }
   .case-frame-quote { grid-column: 6 / -1; }
+  .case-frame-company { grid-column: 1 / -1; grid-template-columns: repeat(var(--case-facts), minmax(0, 1fr)); }
+  .case-frame-company > div:nth-child(n) { border-top: 0; border-right: 1px solid var(--case-line); }
+  .case-frame-company > div:last-child { border-right: 0; }
 }
 
 /*

@@ -49,6 +49,13 @@ const work = defineCollection({
     length: z.string().optional(),
     companySize: z.string().optional(),
     annualRevenue: z.string().optional(),
+    industry: z.string().optional(),
+    headquarters: z.string().optional(),
+    /** The question Ask AI opens with, about this page. */
+    aiQuestion: z.string().optional(),
+    /** "Long story short…": the opening summary above the intro, about 100 words, set large. */
+    opening: z.string(),
+    faqs: z.array(faq).default([]),
     /** Placeholder or unfinished entries stay out of search engines. */
     noindex: z.boolean().default(false),
   }).refine((entry) => entry.kind === 'internal' || entry.client, { message: 'client work needs a client', path: ['client'] }),

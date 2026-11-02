@@ -1,46 +1,43 @@
 ---
-// The default layout for a work entry (presentation: case-study): title, client frame,
-// facts sidebar and the MDX body, sectioned by collection-sections.ts.
+// The default layout for a work entry (presentation: case-study): title, the client frame (results,
+// testimonial, company facts), then a contents sidebar beside the opening ("Long story short…"), the MDX
+// body (sectioned by collection-sections.ts) and the FAQs.
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
 import PageClosing from '../components/PageClosing.astro';
 import CaseFrame from '../components/CaseFrame.astro';
-import AiBadges from '../components/AiBadges.astro';
-import { BRANDS, FIVERR_PROFILE_URL } from '@/lib/content';
+import PostIcon from '../components/blog/PostIcon.astro';
+import Faq from '../components/Faq.astro';
+import PostToc from '../components/blog/PostToc.astro';
+import { BRANDS } from '@/lib/content';
+import { headingId, pageReadingMinutes, POST_FAQ_LABEL } from '@/lib/post-format';
+import { bodyText, sectionHeadingClass } from '@/lib/prose';
 
-interface Props { entry: CollectionEntry<'work'> }
-const { data } = Astro.props.entry;
+interface Props { entry: CollectionEntry<'work'>; headings: MarkdownHeading[] }
+const { entry: { data, body = '' }, headings } = Astro.props;
 const client = data.client ? BRANDS.find((brand) => brand.name === data.client) : undefined;
 if (client && !client.color) throw new Error(`Case study needs ${client.name}'s brand color`);
-const facts = [['Length', data.length], ['Company size', data.companySize], ['Annual revenue', data.annualRevenue]].filter((fact): fact is [string, string] => Boolean(fact[1]));
-// Services without an icon here show the label alone.
-const SERVICE_ICONS: Record<string, string> = {
-  'Website Copy': '<svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
-  'Email Copy': '<svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
-};
+const companyFacts = [['Industry', data.industry], ['Headquarters', data.headquarters], ['Company size', data.companySize], ['Annual revenue', data.annualRevenue]].filter((fact): fact is [string, string] => Boolean(fact[1]));
+const OPENING_LABEL = 'Long story short…';
+const OPENING_ID = 'long-story-short';
+const minutes = pageReadingMinutes(body, [data.title, data.opening], data.faqs);
+const toc = [{ id: OPENING_ID, text: OPENING_LABEL }, ...headings.filter(({ depth }) => depth === 2).map(({ slug, text }) => ({ id: slug, text })), ...(data.faqs.length ? [{ id: headingId(POST_FAQ_LABEL), text: POST_FAQ_LABEL }] : [])];
 ---
 <Base pageTitle={data.shortTitle}>
   {data.noindex && <meta slot="head" name="robots" content="noindex" />}
   <section class="shell pt-[clamp(8rem,20svh,11rem)]">
     <nav aria-label="Breadcrumb" class="type-meta uppercase text-fg-2"><ol class="flex min-w-0 items-center gap-2"><li class="flex shrink-0"><a href="/" aria-label="Home" class="quiet-link"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li class="shrink-0"><a href="/proof" class="quiet-link">Case studies</a></li><li aria-hidden="true"><svg viewBox="0 0 24 24" class="size-3.5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></li><li aria-current="page" class="min-w-0 max-w-[36ch] truncate text-fg-max">{data.shortTitle}</li></ol></nav>
     <h1 class="mt-8 max-w-[22ch] font-heading font-normal text-[clamp(2rem,2.8vw,2.5rem)] leading-[1.15] tracking-[-0.03em] text-fg-max text-pretty">{data.title}</h1>
-    {client && <CaseFrame brandColor={client.color!} clientName={client.name} />}
+    {client && <CaseFrame brandColor={client.color!} clientName={client.name} facts={companyFacts} />}
   </section>
-  <div class="shell mt-e3 grid gap-y-e1 lg:grid-cols-12">
-    <aside class="lg:col-span-3 lg:self-start lg:sticky lg:top-28">
-      <dl>
-        {client && <div class="border-b border-line py-4 first:pt-0"><dt class="type-meta uppercase text-fg-2">Client</dt><dd class="mt-2 font-sans text-base text-fg-max">{client.name}</dd></div>}
-        <div class="border-b border-line py-4"><dt class="type-meta uppercase text-fg-2">Service</dt>{data.services.map(service => <dd class="mt-2 flex items-center gap-2 font-sans text-base text-fg-max">{SERVICE_ICONS[service] && <Fragment set:html={SERVICE_ICONS[service]} />}{service}</dd>)}</div>
-        {facts.map(([label, value]) => <div class="border-b border-line py-4"><dt class="type-meta uppercase text-fg-2">{label}</dt><dd class="mt-2 font-sans text-base text-fg-max">{value}</dd></div>)}
-        
-        
-      </dl>
-      <div class="mt-8"><a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">Message me</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a></div>
-      <div class="mt-8"><AiBadges /></div>
-    </aside>
+  <div class="shell mt-e2 grid gap-y-e1 lg:grid-cols-12">
+    <aside aria-labelledby="toc-title" class="hidden lg:col-span-3 lg:block lg:self-start lg:sticky lg:top-28"><p class="mb-8 flex items-center gap-2 type-meta text-fg-2"><PostIcon name="clock"/>{minutes} min read</p><h2 id="toc-title" class="sr-only">On this page</h2><PostToc entries={toc} /></aside>
     <div class="max-w-[700px] lg:col-span-8 lg:col-start-5">
+      <section aria-labelledby={OPENING_ID} class="mb-e2"><h2 id={OPENING_ID} tabindex="-1" class={sectionHeadingClass}>{OPENING_LABEL}</h2><p class="mt-6 type-h3 text-[1.25rem] font-normal text-fg text-pretty">{data.opening}</p></section>
       <slot />
+      {data.faqs.length > 0 && <section aria-labelledby={headingId(POST_FAQ_LABEL)} class="mt-e2"><h2 id={headingId(POST_FAQ_LABEL)} tabindex="-1" class={sectionHeadingClass}>{POST_FAQ_LABEL}</h2><Faq faqs={data.faqs} bodyText={bodyText} /></section>}
     </div>
   </div>
-  <PageClosing />
+  <PageClosing aiQuestion={data.aiQuestion} />
 </Base>
