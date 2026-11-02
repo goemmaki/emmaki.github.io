@@ -4,7 +4,8 @@ import ClientSlots from '../components/ClientSlots.astro';
 import Statement from '../components/Statement.astro';
 import WhyMe from '../components/WhyMe.astro';
 import PageClosing from '../components/PageClosing.astro';
-import { FIVERR_PROFILE_URL } from '@/lib/content';
+import HeroPoster from '../components/HeroPoster.astro';
+import CautionTape from '../components/CautionTape.astro';
 const links = [
   { text: 'A', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
   { text: 'B', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
@@ -21,14 +22,15 @@ const credibility = [
 ];
 ---
 <Base>
-  <h1 class="sr-only">emmaki</h1>
-  <section class="shell -mt-16 flex min-h-svh items-center justify-center pt-16">
-    <a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">Lorem ipsum</span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
-  </section>
+  <HeroPoster>
+    <Fragment slot="line">Does <em>anyone</em> actually get what you’re selling?</Fragment>
+    <Fragment slot="support">You explain it to me once. I explain it to everyone else.</Fragment>
+    <p slot="caption" class="poster-caption type-meta uppercase">Brands I’ve written for</p>
+  </HeroPoster>
   <section>
-    <p class="shell mb-10 text-center type-meta text-fg-2 uppercase">Brands I’ve written for</p>
     <ClientSlots class="shell" />
   </section>
+  <CautionTape />
   <Statement kicker="Who I am" before="I help X and Y to" {links} after=", without FGH." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>

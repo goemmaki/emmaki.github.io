@@ -17,3 +17,11 @@ Hovering or focusing a name on `/brands` could show a one-sentence description o
 ## Something in the negative space of the page covers (2026-10-28)
 
 The cover on `/brands` (the giant page word and the owner's intro) has empty space that wants something cool in it. Decide once the other pages are done, so it can be one idea across all the covers rather than a one-off.
+
+## A CRO tool, cooler than isellwords (2026-11-03)
+
+An interactive CRO tool on the site that beats the one at https://www.isellwords.com.au/. Placement is open: About, or its own page. Just a note for now; nothing studied or decided yet.
+
+## More hero portraits, and maybe "Choose your copywriter" (2026-11-03)
+
+Once the owner's real photos exist, make several halftone portraits for the Home hero (more arrogant, more serious, friendlier, and so on), with a switcher to change between them. A bigger version would be a "Choose your copywriter" picker. The owner suspects that's too much; it's just an idea for now.

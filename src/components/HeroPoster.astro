@@ -1,0 +1,163 @@
+---
+import { FIVERR_PROFILE_URL } from '@/lib/content';
+import HeroWords from './HeroWords.astro';
+// The big line above the fold is a hook, not the page's h1 (that sits in the statement below the fold).
+---
+<section data-header-clear class="poster-review shell" data-poster>
+  <div class="poster-art" aria-hidden="true"><HeroWords /></div>
+  <div class="poster-figure" aria-hidden="true">
+    <div class="poster-disk"></div>
+    <div class="poster-person"></div>
+    <canvas data-poster-canvas></canvas>
+  </div>
+  <div class="poster-copy">
+    <p class="poster-heading type-h1 text-fg-max text-balance"><slot name="line" /></p>
+    <p class="poster-support type-lead text-fg-2 text-pretty"><slot name="support" /></p>
+    <div class="poster-action">
+      <a href={FIVERR_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="flood-button"><span class="flood-button__layout"><span class="flood-button__label">Prove it<span class="sr-only">: my Fiverr reviews (opens in a new tab)</span></span><span class="flood-button__icon" aria-hidden="true"><svg class="flood-button__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg><svg class="flood-button__arrow flood-button__arrow--next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></span></span></a>
+    </div>
+  </div>
+  <slot name="caption" />
+</section>
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-poster]');
+    // Runs inline, before first paint. The copy's height varies with the viewport. On wide screens
+    // it gets the room left of the disk; stacked (under 960px) the figure starts below the button.
+    const copy = root.querySelector('.poster-copy'), disk = root.querySelector('.poster-disk');
+    const fit = () => {
+      const stacked = !matchMedia('(min-width: 960px)').matches;
+      if (stacked) {
+        root.style.removeProperty('--copy-room');
+        root.style.setProperty('--figure-top', `${copy.getBoundingClientRect().bottom - root.getBoundingClientRect().top + 16}px`);
+      } else {
+        root.style.removeProperty('--figure-top');
+        root.style.setProperty('--copy-room', `${disk.getBoundingClientRect().left - copy.getBoundingClientRect().left - 32}px`);
+      }
+    };
+    fit();
+    const watch = new ResizeObserver(fit); watch.observe(root); watch.observe(copy);
+  })();
+</script>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-poster]')!;
+  const canvas = root.querySelector<HTMLCanvasElement>('[data-poster-canvas]')!;
+  const screen = canvas.getContext('2d')!;
+  const disk = root.querySelector<HTMLElement>('.poster-disk')!;
+  const person = root.querySelector<HTMLElement>('.poster-person')!;
+  let portrait: Promise<HTMLCanvasElement> | undefined, generation = 0;
+
+  // Transparent cutouts work directly. White-backdrop photos use an edge-connected
+  // matte, preserving enclosed whites (skin, reflections) rather than color-keying them.
+  function source() {
+    return portrait ??= (async () => {
+      const image = new Image(); image.src = '/hero/portrait.png'; await image.decode();
+      const work = document.createElement('canvas');
+      work.height = Math.min(1200, image.naturalHeight); work.width = Math.round(work.height * image.naturalWidth / image.naturalHeight);
+      const c = work.getContext('2d', { willReadFrequently: true })!;
+      c.drawImage(image, 0, 0, work.width, work.height);
+      const pixels = c.getImageData(0, 0, work.width, work.height), p = pixels.data;
+      const w = work.width, h = work.height, seen = new Uint8Array(w * h), queue = new Int32Array(w * h);
+      let start = 0, end = 0;
+      function visit(n: number) {
+        if (seen[n]) return;
+        seen[n] = 1; const i = n * 4;
+        if (p[i + 3] < 16 || (Math.min(p[i], p[i + 1], p[i + 2]) > 230 && Math.max(p[i], p[i + 1], p[i + 2]) - Math.min(p[i], p[i + 1], p[i + 2]) < 20)) queue[end++] = n;
+      }
+      for (let x = 0; x < w; x++) { visit(x); visit((h - 1) * w + x); }
+      for (let y = 0; y < h; y++) { visit(y * w); visit(y * w + w - 1); }
+      while (start < end) {
+        const n = queue[start++], x = n % w, y = Math.floor(n / w); p[n * 4 + 3] = 0;
+        if (x) visit(n - 1); if (x < w - 1) visit(n + 1); if (y) visit(n - w); if (y < h - 1) visit(n + w);
+      }
+      let left = w, top = h, right = 0, bottom = 0;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (p[(y * w + x) * 4 + 3] > 32) { left = Math.min(left, x); top = Math.min(top, y); right = Math.max(right, x); bottom = Math.max(bottom, y); }
+      if (right <= left || bottom <= top) throw new Error('Portrait has no foreground');
+      c.putImageData(pixels, 0, 0);
+      const trimmed = document.createElement('canvas'); trimmed.width = right - left + 1; trimmed.height = bottom - top + 1;
+      trimmed.getContext('2d')!.drawImage(work, left, top, trimmed.width, trimmed.height, 0, 0, trimmed.width, trimmed.height);
+      return trimmed;
+    })();
+  }
+
+  async function draw() {
+    const ticket = ++generation;
+    root.dataset.ready = 'false';
+    try {
+      const image = await source(); if (ticket !== generation) return;
+      const box = canvas.getBoundingClientRect(), figure = person.getBoundingClientRect(), circle = disk.getBoundingClientRect();
+      const dpr = Math.min(devicePixelRatio, 1.5), w = Math.round(box.width * dpr), h = Math.round(box.height * dpr);
+      canvas.width = w; canvas.height = h;
+      const sample = document.createElement('canvas'); sample.width = w; sample.height = h;
+      const ctx = sample.getContext('2d', { willReadFrequently: true })!;
+      const fh = figure.height * dpr, fw = fh * image.width / image.height;
+      const fx = (figure.left - box.left) * dpr + (figure.width * dpr - fw) / 2, fy = (figure.top - box.top) * dpr;
+      ctx.drawImage(image, fx, fy, fw, fh);
+      const pixels = ctx.getImageData(0, 0, w, h), p = pixels.data;
+      const cx = (circle.left - box.left + circle.width / 2) * dpr, cy = (circle.top - box.top + circle.height / 2) * dpr, radius = circle.width * dpr / 2;
+      const darkCanvas = document.documentElement.dataset.theme !== 'light';
+      const lightInk = getComputedStyle(document.documentElement).getPropertyValue('--color-fg-max').trim();
+      const inkContext = document.createElement('canvas').getContext('2d')!;
+      inkContext.fillStyle = lightInk; inkContext.fillRect(0, 0, 1, 1);
+      const lightRgb = inkContext.getImageData(0, 0, 1, 1).data;
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4; if (!p[i + 3]) continue;
+        const inside = (x - cx) ** 2 + (y - cy) ** 2 < radius ** 2;
+        const lum = (0.2126 * p[i] + 0.7152 * p[i + 1] + 0.0722 * p[i + 2]) / 255;
+        const tone = Math.max(0, Math.min(1, (lum - 0.12) / 0.74));
+        const darkCanvasOutsideDisk = darkCanvas && !inside;
+        const coverage = darkCanvasOutsideDisk ? tone : 1 - tone;
+        const cell = 5 * dpr, dx = ((x % cell) / cell - 0.5), dy = ((y % cell) / cell - 0.5);
+        const dot = dx * dx + dy * dy < coverage * 0.48;
+        const value = dot ? (darkCanvasOutsideDisk ? lightRgb[0] : 0) : (darkCanvasOutsideDisk ? 0 : 255);
+        p[i] = p[i + 1] = p[i + 2] = value;
+      }
+      ctx.putImageData(pixels, 0, 0); screen.drawImage(sample, 0, 0); root.dataset.ready = 'true';
+    } catch (error) { root.dataset.ready = 'error'; console.error('Hero portrait failed to render', error); }
+  }
+  // The copy can move the figure (see the inline fit script), so a copy resize redraws too.
+  const redraw = new ResizeObserver(() => { void draw(); }); redraw.observe(root); redraw.observe(root.querySelector('.poster-copy')!);
+  new MutationObserver(() => { void draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  void draw();
+</script>
+
+<style>
+  .poster-review { position: relative; height: calc(100svh + var(--poster-tail)); --poster-tail: calc(2 * var(--space-interface-32)); margin-top: calc(-2 * var(--space-interface-32)); isolation: isolate; }
+  /* The background words bleed to the window edges; everything else keeps to the gutters and the header. */
+  .poster-art { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); }
+  /* The figure's box: the content width, from just under the header to the logos. Sizes inside it are
+     in container units, so the disk and portrait scale with the room they have, not with the window. */
+  .poster-figure { position: absolute; z-index: -1; left: var(--gutter); right: var(--gutter); top: calc(2 * var(--space-interface-32) + var(--space-interface-16)); bottom: 0; container-type: size; }
+  /* --d is the disk's diameter; the portrait is sized from it so the two keep one proportion at every
+     size. The shoulders run off the bottom and the head stays inside the box (1.35d fits its height). */
+  .poster-disk, .poster-person { --d: min(52cqw, 74cqh); }
+  .poster-disk { position: absolute; width: var(--d); aspect-ratio: 1; right: 0; bottom: calc(var(--d) * 0.26); border-radius: 50%; background: var(--color-brand-yellow-splash); }
+  /* A thin Byzantine maroon ring inside the disk, concentric, with an even band of yellow outside it.
+     It sits on the disk, so the portrait hides it exactly as it hides the yellow. */
+  .poster-disk::after { content: ''; position: absolute; inset: 2.4%; border: clamp(2px, 0.18vw, 3px) solid #7A0F1E; border-radius: 50%; }
+  .poster-person { position: absolute; width: calc(var(--d) * 1.21); height: calc(var(--d) * 1.4); right: 0; bottom: calc(var(--d) * -0.05); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .poster-copy { position: absolute; left: var(--layout-gutter); top: 50svh; z-index: 1; transform: translateY(-50%); }
+  .poster-copy { max-width: var(--copy-room, none); }
+  .poster-heading { max-width: 14ch; margin: 0; }
+  .poster-support { max-width: 36ch; margin-top: var(--space-interface-16); }
+  /* The poster runs past the fold to the client logos; their label is printed on the black top. */
+  :global(.poster-caption) { position: absolute; z-index: 1; left: 64%; bottom: var(--space-interface-24); margin: 0; color: #fff; }
+  .poster-action { margin-top: var(--space-interface-24); width: max-content; background: var(--color-canvas); }
+  @media (min-width: 600px) and (max-width: 959px) {
+    .poster-review { --figure-top: 32svh; height: calc(max(100svh, var(--figure-top) + 68svh) + var(--poster-tail)); }
+    .poster-figure { top: var(--figure-top); }
+    .poster-disk { width: min(100cqw, 72svh); top: 8svh; bottom: auto; }
+    .poster-person { width: 90cqw; height: 80svh; left: 5cqw; top: 0; bottom: auto; }
+    .poster-copy { left: var(--layout-gutter); right: var(--layout-gutter); top: 14svh; transform: none; }
+  }
+  @media (max-width: 599px) {
+    .poster-review { --figure-top: 45svh; height: calc(max(100svh, var(--figure-top) + 55svh) + var(--poster-tail)); }
+    .poster-figure { top: var(--figure-top); }
+    .poster-disk { width: min(100cqw, 46svh); top: 5svh; bottom: auto; }
+    .poster-person { width: 100cqw; height: 72svh; left: 0; top: 0; bottom: auto; }
+    .poster-copy { left: var(--layout-gutter); right: var(--layout-gutter); top: calc(4 * var(--space-interface-32)); transform: none; }
+    .poster-heading { max-width: 13ch; }
+    :global(.poster-caption) { left: var(--layout-gutter); }
+  }
+</style>

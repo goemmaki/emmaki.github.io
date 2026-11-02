@@ -1,0 +1,100 @@
+---
+// Caution tape between the client logos and the statement: the page turns from the hero's swagger to
+// the measured voice of everything below it. Two crossed strips with hazard edges, crawling in
+// opposite directions. Decorative (the next heading carries the meaning), so it is hidden from
+// assistive tech. The dev-only switcher compares finishes until the owner picks one.
+const phrase = 'Fun’s over';
+const styles = [
+  ['pulled', 'Pulled tight'], ['flat', 'Flat (before)'], ['depth', 'Depth'], ['print', 'Depth + print'], ['worn', 'Worn'],
+];
+// Each half of the track must outrun the widest screen so the loop never shows a gap.
+const copies = Array.from({ length: 18 });
+---
+<div class="tape" data-tape data-style="pulled" aria-hidden="true">
+  {[true, false].map(back => (
+    <div class:list={['tape-band', back && 'tape-band--back']}>
+      <div class="tape-track">{[0, 1].map(() => <div class="tape-half">{copies.map(() => <span class="tape-item">{phrase}</span>)}</div>)}</div>
+    </div>
+  ))}
+  <!-- Ink wobble for the printed letters: a faint displacement, so the type isn't vector-perfect. -->
+  <svg class="tape-defs" width="0" height="0"><filter id="tape-ink"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" /><feDisplacementMap in="SourceGraphic" scale="1.8" /></filter></svg>
+</div>
+{import.meta.env.DEV && <form class="tape-controls" aria-label="Tape review">
+  <label>Tape <select name="tape-style" aria-label="Tape finish">{styles.map(([value, label]) => <option value={value}>{label}</option>)}</select></label>
+</form>}
+<script>
+  const tape = document.querySelector<HTMLElement>('[data-tape]');
+  if (tape) {
+    // A steady crawl speed, and halves that are a whole number of hazard stripes wide, so the moving
+    // edges loop without a jump.
+    const STRIPE = 16;
+    const pace = () => {
+      const halves = [...tape.querySelectorAll<HTMLElement>('.tape-half')];
+      for (const half of halves) half.style.paddingInlineEnd = '';
+      const width = halves[0].offsetWidth, pad = (STRIPE - (width % STRIPE)) % STRIPE;
+      for (const half of halves) half.style.paddingInlineEnd = `${pad}px`;
+      tape.style.setProperty('--tape-duration', `${(width + pad) / 40}s`);
+    };
+    document.fonts.ready.then(pace).catch(error => console.error('Tape font failed to load', error));
+    const style = document.querySelector<HTMLSelectElement>('form.tape-controls select[name="tape-style"]');
+    if (style) {
+      const wanted = new URL(location.href).searchParams.get('tape');
+      if ([...style.options].some(option => option.value === wanted)) style.value = wanted!;
+      tape.dataset.style = style.value;
+      style.form!.addEventListener('submit', event => event.preventDefault());
+      style.addEventListener('change', () => {
+        tape.dataset.style = style.value;
+        const next = new URL(location.href); next.searchParams.set('tape', style.value); history.replaceState(null, '', next);
+      });
+    }
+  }
+</script>
+<style>
+  /* Tape is a physical object: the same yellow and black in both themes. */
+  .tape {
+    --tape-yellow: var(--color-brand-yellow-splash); --tape-black: #000; --tape-edge: 6px;
+    --tape-stripes: repeating-linear-gradient(-45deg, var(--tape-black) 0 5.657px, var(--tape-yellow) 5.657px 11.314px);
+    --tape-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --tape-holes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -14 0 0 0 9.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+    position: relative; display: grid; margin-top: calc(3 * var(--space-interface-32)); padding-block: var(--space-interface-32); overflow-x: clip;
+  }
+  .tape-defs { position: absolute; }
+  .tape-band { position: relative; grid-area: 1 / 1; width: 110vw; margin-left: -5vw; display: flex; height: clamp(2.75rem, 3.6vw, 3.5rem); background: var(--tape-yellow); color: var(--tape-black); overflow: hidden; rotate: -3deg; }
+  /* The strip underneath is a shade darker and runs the other way. */
+  .tape-band--back { rotate: 3deg; filter: brightness(0.82); }
+  .tape-band--back .tape-track { animation-direction: reverse; }
+  .tape-track { display: flex; width: max-content; animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
+  .tape-half { display: flex; align-items: center; }
+  .tape-item { padding-inline-end: 2.5em; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1rem, 1.45vw, 1.375rem); letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
+  @keyframes tape-crawl { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .tape-track { animation: none; } }
+  /* Over a narrow screen ±3° barely diverges, so phones get a steeper cross. */
+  @media (max-width: 599px) {
+    .tape-band { rotate: -7deg; }
+    .tape-band--back { rotate: 7deg; }
+  }
+
+  /* Flat (the version before this round): hazard edges fixed to the band while the words crawl. */
+  [data-style="flat"] .tape-band { border-block: var(--tape-edge) solid transparent; border-image: var(--tape-stripes) 6; }
+
+  /* Every other finish prints the edges on the moving track, so the stripes travel with the words. */
+  .tape:not([data-style="flat"]) .tape-track {
+    background: var(--tape-stripes) top left / 16px var(--tape-edge) repeat-x, var(--tape-stripes) bottom left / 16px var(--tape-edge) repeat-x;
+  }
+  /* Depth: the front strip clearly on top, casting a shadow; the one underneath dimmer. */
+  .tape:not([data-style="flat"]) .tape-band:not(.tape-band--back) { filter: drop-shadow(0 3px 2px rgb(0 0 0 / 0.45)) drop-shadow(0 10px 14px rgb(0 0 0 / 0.3)); }
+  .tape:not([data-style="flat"]) .tape-band--back { filter: brightness(0.72) saturate(0.9); }
+  /* Print: a little unevenness in the yellow and a wobble in the ink, both riding on the tape. */
+  :is([data-style="print"], [data-style="pulled"], [data-style="worn"]) .tape-track { background-image: var(--tape-stripes), var(--tape-stripes), var(--tape-noise); background-position: top left, bottom left, 0 0; background-size: 16px var(--tape-edge), 16px var(--tape-edge), 180px 180px; background-repeat: repeat-x, repeat-x, repeat; }
+  :is([data-style="print"], [data-style="pulled"], [data-style="worn"]) .tape-half { filter: url(#tape-ink); }
+  /* Pulled tight: the front strip narrows a hair where it crosses, with a crease at the crossing. */
+  :is([data-style="pulled"], [data-style="worn"]) .tape-band:not(.tape-band--back) { clip-path: polygon(0 0, 50% 7%, 100% 0, 100% 100%, 50% 93%, 0 100%); }
+  :is([data-style="pulled"], [data-style="worn"]) .tape-band:not(.tape-band--back)::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, transparent 46%, rgb(0 0 0 / 0.14) 49.5%, rgb(255 255 255 / 0.12) 50.5%, transparent 54%); }
+  /* Worn: small scuffs through the tape, and the lower strip's stripes out of step with the top one's. */
+  [data-style="worn"] .tape-track { mask-image: var(--tape-holes); mask-size: 220px 220px; }
+  [data-style="worn"] .tape-band--back .tape-track { background-position: 7px 0, 3px 100%, 0 0; }
+
+  .tape-controls { position: fixed; z-index: 55; right: var(--layout-gutter); bottom: var(--space-interface-16); display: flex; gap: var(--space-interface-12); padding: var(--space-interface-8); border: var(--shape-border-width) solid var(--color-border-default); border-radius: var(--shape-control-radius); background: var(--color-canvas); color: var(--color-text-secondary); font-family: var(--font-body); font-size: var(--type-meta-default-size); }
+  .tape-controls label { display: flex; align-items: center; gap: var(--space-interface-8); }
+  .tape-controls select { color: var(--color-text-primary); background: var(--color-canvas); padding: var(--space-interface-4); border-radius: var(--shape-control-radius); border: var(--shape-border-width) solid var(--color-border-default); }
+</style>

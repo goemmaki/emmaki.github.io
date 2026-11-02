@@ -5,7 +5,7 @@ WCAG 2.2 AA, SEO, performance and cross-browser behaviour, so the next session c
 them. They measure; they don't fix. First run 2026-10-26 (results: `docs/journal/20261026-baseline.md`).
 
 Who does what: Claude prepares, builds and runs Lighthouse; Codex runs everything else in Firefox.
-Codex's sandbox blocks a Turbopack build and Chrome, so those stay with Claude.
+Codex's sandbox blocks Chrome and has broken installs and builds before, so those stay with Claude.
 
 ## 1. Prepare (Claude)
 
@@ -52,7 +52,7 @@ About a minute after launch, check the log to confirm it is working. Then wait o
 # Brief: end-of-day accessibility and cross-browser checks (read-only on code)
 
 Repository: `<worktree>` (branch `<branch>`, at `<commit>`). Static Astro build of the emmaki
-portfolio site, already built to `out/` and served at http://127.0.0.1:3021 (don't rebuild; the
+portfolio site, already built to `dist/` and served at http://127.0.0.1:3021 (don't rebuild; the
 sandbox can't).
 
 ## Goal

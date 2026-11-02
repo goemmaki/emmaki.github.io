@@ -1,0 +1,97 @@
+---
+// Background type behind the Home hero ("pixel weave"): the services in uppercase Geist Pixel, run on
+// in tight rows, each row starting a few words further along the list, with neighboring words a shade
+// apart. Painted on a canvas so the repeated words stay out of the page text (no keyword-stuffing signal
+// for search engines, nothing for screen readers). Under a mouse, a soft light follows the pointer and
+// lifts the words around it.
+const words = [
+  'Copywriting', 'Storytelling', 'Content Strategy', 'AI Strategy', 'Automation', 'Positioning', 'Messaging',
+  'Copy Editing', 'Direct Response', 'Brand Voice', 'Audience Research', 'Market Research', 'Thought Leadership',
+  'Ghostwriting', 'Conversion Funnels', 'CRO', 'Landing Pages', 'Email Marketing', 'Lead Generation',
+  'White Papers', 'Case Studies', 'SEO', 'Content Audits', 'Sales Copy', 'Web Analytics', 'Marketing Strategy',
+  'AI Workflows', 'Prompt Engineering', 'API Integration', 'Content Optimization', 'Marketing Automation',
+  'B2B Marketing', 'Content Development', 'Editorial Writing', 'Research', 'n8n',
+];
+---
+<canvas class="hero-words" data-hero-words data-words={JSON.stringify(words)} aria-hidden="true"></canvas>
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-hero-words]');
+  const root = document.querySelector<HTMLElement>('[data-poster]');
+  const screen = canvas?.getContext('2d');
+  if (canvas && root && screen) {
+    // Product names keep their own casing (n8n); everything else is set in capitals.
+    const words = (JSON.parse(canvas.dataset.words!) as string[]).map(word => word === 'n8n' ? word : word.toUpperCase());
+    const pixel = '"Geist Pixel"';
+    const SHADES = [0.8, 1, 1.2], LIFT = 4, RADIUS = 220, STEP = 5;
+    // The words are painted once at a relative ink into `art`; the screen shows it at the theme's gray,
+    // plus a brighter copy masked to a soft circle under the pointer.
+    const art = document.createElement('canvas'), artCtx = art.getContext('2d')!;
+    const glow = document.createElement('canvas'), glowCtx = glow.getContext('2d')!;
+    let base = 0.075, dpr = 1, pointer: { x: number; y: number } | null = null, light = { x: 0, y: 0, a: 0 }, frame = 0;
+
+    const paint = () => {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      for (const c of [canvas, art, glow]) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      base = document.documentElement.dataset.theme === 'light' ? 0.06 : 0.075;
+      const ink = document.documentElement.dataset.theme === 'light' ? '0 0 0' : '255 255 255';
+      artCtx.setTransform(dpr, 0, 0, dpr, 0, 0); artCtx.clearRect(0, 0, w, h);
+      const size = w < 600 ? 28 : 55;
+      artCtx.font = `500 ${size}px ${pixel}`; artCtx.letterSpacing = '0px'; artCtx.textBaseline = 'alphabetic';
+      // Tight rows: the first cap sits at the top edge, the last baseline at the bottom.
+      const cap = artCtx.measureText('H').actualBoundingBoxAscent, space = artCtx.measureText(' ').width;
+      const count = Math.max(2, Math.floor((h - cap) / size) + 1), step = (h - cap - 2) / (count - 1);
+      for (let row = 0; row < count; row++) {
+        let x = 0, i = 0;
+        while (x < w) {
+          const word = words[(row * STEP + i) % words.length];
+          artCtx.fillStyle = `rgb(${ink} / ${SHADES[i % 3] / 1.2})`;
+          artCtx.fillText(word, x, cap + row * step);
+          x += artCtx.measureText(word).width + space; i++;
+        }
+      }
+      render();
+    };
+
+    const render = () => {
+      const w = canvas.width, h = canvas.height;
+      screen.setTransform(1, 0, 0, 1, 0, 0); screen.clearRect(0, 0, w, h);
+      screen.globalAlpha = base * 1.2; screen.drawImage(art, 0, 0);
+      if (light.a > 0.01) {
+        glowCtx.setTransform(1, 0, 0, 1, 0, 0); glowCtx.globalCompositeOperation = 'copy'; glowCtx.drawImage(art, 0, 0);
+        const r = RADIUS * dpr, gradient = glowCtx.createRadialGradient(light.x * dpr, light.y * dpr, 0, light.x * dpr, light.y * dpr, r);
+        gradient.addColorStop(0, 'rgb(0 0 0 / 1)'); gradient.addColorStop(1, 'rgb(0 0 0 / 0)');
+        glowCtx.globalCompositeOperation = 'destination-in'; glowCtx.fillStyle = gradient; glowCtx.fillRect(0, 0, w, h);
+        screen.globalAlpha = Math.min(1, base * 1.2 * (LIFT - 1) * light.a); screen.drawImage(glow, 0, 0);
+      }
+      screen.globalAlpha = 1;
+    };
+
+    // The light eases toward the pointer and fades in and out, then the loop stops.
+    const tick = () => {
+      const target = pointer ?? light, on = pointer ? 1 : 0;
+      light.x += (target.x - light.x) * 0.18; light.y += (target.y - light.y) * 0.18; light.a += (on - light.a) * 0.12;
+      render();
+      const settled = Math.abs(on - light.a) < 0.01 && (!pointer || Math.hypot(pointer.x - light.x, pointer.y - light.y) < 0.5);
+      frame = settled ? 0 : requestAnimationFrame(tick);
+    };
+    const wake = () => { if (!frame) frame = requestAnimationFrame(tick); };
+    const fine = matchMedia('(hover: hover) and (pointer: fine)');
+    root.addEventListener('pointermove', (event) => {
+      if (!fine.matches || event.pointerType !== 'mouse') return;
+      const rect = canvas.getBoundingClientRect();
+      pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (light.a < 0.01) { light.x = pointer.x; light.y = pointer.y; }
+      wake();
+    });
+    root.addEventListener('pointerleave', () => { pointer = null; wake(); });
+
+    document.fonts.load(`500 55px ${pixel}`).then(paint).catch(error => console.error('Hero word font failed to load', error));
+    new ResizeObserver(paint).observe(canvas);
+    new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+</script>
+<style>
+  .hero-words { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+</style>

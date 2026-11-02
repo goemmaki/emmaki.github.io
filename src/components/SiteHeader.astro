@@ -36,8 +36,8 @@ if (header && dialog && openButton && closeButton) {
  dialog.addEventListener('keydown', event => { if (event.key !== 'Tab') return; const items = [...dialog.querySelectorAll<HTMLElement>('a[href],button:not([disabled])')].filter(el => el.offsetParent !== null); if (!items.length) return; const first = items[0], last = items.at(-1)!; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); } });
  dialog.querySelectorAll<HTMLAnchorElement>('nav a').forEach(link => link.addEventListener('click', close));
  let last = scrollY, frame = 0, reset = true, hidden = false;
- const media = document.querySelector('[data-under-header]'), cover = document.querySelector('[data-covers-media]');
- const onScroll = () => { if (frame) return; frame = requestAnimationFrame(() => { frame = 0; if (reset) { header.classList.remove('-translate-y-full'); reset = false; } const overMedia = !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64); if (overMedia) header.setAttribute('data-over-media', ''); else header.removeAttribute('data-over-media'); header.classList.toggle('bg-bg/50', !overMedia); header.classList.toggle('backdrop-blur-[48px]', !overMedia); const y = scrollY; if (Math.abs(y-last)<8) return; hidden = y>last && y>64; header.classList.toggle('-translate-y-full', hidden && !dialog.open); last=y; }); };
+ const media = document.querySelector('[data-under-header]'), cover = document.querySelector('[data-covers-media]'), clearUnder = document.querySelector('[data-header-clear]');
+ const onScroll = () => { if (frame) return; frame = requestAnimationFrame(() => { frame = 0; if (reset) { header.classList.remove('-translate-y-full'); reset = false; } const overMedia = !!media && media.getBoundingClientRect().bottom > 64 && (!cover || cover.getBoundingClientRect().top > 64); if (overMedia) header.setAttribute('data-over-media', ''); else header.removeAttribute('data-over-media'); const clear = overMedia || (!!clearUnder && clearUnder.getBoundingClientRect().bottom > 64); header.classList.toggle('bg-bg/50', !clear); header.classList.toggle('backdrop-blur-[48px]', !clear); header.toggleAttribute('data-clear', clear); const y = scrollY; if (Math.abs(y-last)<8) return; hidden = y>last && y>64; header.classList.toggle('-translate-y-full', hidden && !dialog.open); last=y; }); };
  onScroll(); addEventListener('scroll', onScroll, {passive:true});
 }
 </script>
@@ -55,8 +55,10 @@ if (header && dialog && openButton && closeButton) {
     --color-text-secondary: var(--cover-ink-2);
     --color-focus: var(--cover-ink-max);
   }
-  [data-about-hero][data-over-media] [data-local-clock],
-  [data-about-hero][data-over-media] > .shell .icon-action {
+  /* Without the header's backing (over About's globe or the Home hero), a halo of the page color keeps
+     the clock and icon buttons legible over the artwork (WCAG 1.4.3 / 1.4.11). */
+  :global([data-site-header][data-clear] [data-local-clock]),
+  :global([data-site-header][data-clear] > .shell .icon-action) {
     filter: drop-shadow(0 0 2px var(--color-bg)) drop-shadow(0 0 5px var(--color-bg));
   }
 </style>

@@ -103,6 +103,7 @@
 /* Additive logo fill crossfade: the monochrome and color artwork share one isolated cell. */
 .client-slot-logo { position: relative; isolation: isolate; }
 .client-slot-logo img { transition: filter 0.2s ease-out, opacity 0.2s ease-out; }
+:root:not([data-theme="light"]) .client-slot-logo img { transition: opacity 0.2s ease-out; }
 .client-slot-logo img.client-logo-color-copy { mix-blend-mode: plus-lighter; }
 :root:not([data-theme="light"]) .client-slot-logo img:not(.client-logo-color-copy) { mix-blend-mode: plus-lighter; }
 .client-slot-logo img.client-logo-color-copy { position: absolute; inset: 0; margin: auto; filter: none; opacity: 0; }
