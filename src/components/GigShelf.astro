@@ -16,6 +16,19 @@ const { gigs, ...card } = Astro.props;
     <span class="gig-spine" aria-hidden="true">{gig.category}</span>
   </div>)}
 </div>
+{import.meta.env.DEV && <form class="gig-tune" data-gig-tune>
+  <p>Dark: light</p>
+  <label>Reach <input type="range" name="reach" min="20" max="200" step="5" /><output /></label>
+  <label>Brightness <input type="range" name="glow" min="0.05" max="1.5" step="0.05" /><output /></label>
+  <label>Mouse focus <input type="range" name="focus" min="40" max="400" step="10" /><output /></label>
+  <label><input type="checkbox" name="lightOver" /> Over the spines</label>
+  <p>Light: shadow</p>
+  <label>Length <input type="range" name="shadowLength" min="0.05" max="1" step="0.05" /><output /></label>
+  <label>Darkness <input type="range" name="shadowStrength" min="0.05" max="0.8" step="0.01" /><output /></label>
+  <label>Softness <input type="range" name="lampSize" min="0" max="150" step="5" /><output /></label>
+  <label><input type="checkbox" name="shadowOver" /> Over the spines</label>
+  <label><input type="checkbox" name="hold" checked /> Hold while tuning</label>
+</form>}
 <script>
   for (const shelf of document.querySelectorAll<HTMLElement>('[data-gig-shelf]')) {
     const books = [...shelf.querySelectorAll<HTMLElement>('.gig-book')];
@@ -44,6 +57,7 @@ const { gigs, ...card } = Astro.props;
     gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `#version 300 es
       precision highp float;
       uniform vec2 size; uniform float scale; uniform vec4 card; uniform vec2 mouse; uniform float lit; uniform bool lightTheme;
+      uniform float reach, glow, focus, shadowLength, shadowStrength, lampSize;
       out vec4 color;
       // One emitter on the card's edge: where it sits and which way it faces.
       void edgePoint(float s, out vec2 e, out vec2 n) {
@@ -60,7 +74,7 @@ const { gigs, ...card } = Astro.props;
         vec2 t0 = (card.xy - p) * inv, t1 = (card.xy + card.zw - p) * inv;
         float tIn = max(max(min(t0.x, t1.x), min(t0.y, t1.y)), 0.0), tOut = min(max(t0.x, t1.x), max(t0.y, t1.y));
         if (tIn > tOut || tIn >= far) return 0.0;
-        float reach = (min(far, tOut) - tIn) * 0.45 + 12.0;
+        float reach = (min(far, tOut) - tIn) * shadowLength + 12.0;
         return pow(clamp(1.0 - tIn / reach, 0.0, 1.0), 1.6);
       }
       void main() {
@@ -74,17 +88,17 @@ const { gigs, ...card } = Astro.props;
             vec2 e, n; edgePoint((float(i) + 0.5) * ds, e, n);
             vec2 d = p - e; float dist = length(d);
             float facing = max(dot(n, d), 0.0) / max(dist, 0.001);
-            float emit = 0.06 + exp(-length(e - mouse) / 150.0);
-            sum += emit * facing * exp(-dist / 110.0) / (dist + 24.0);
+            float emit = 0.06 + exp(-length(e - mouse) / focus);
+            sum += emit * facing * exp(-dist / reach) / (dist + 24.0);
           }
-          float light = (1.0 - exp(-sum * ds * 0.8)) * fade;
+          float light = (1.0 - exp(-sum * ds * glow)) * fade;
           color = vec4(vec3(1.0, 0.765, 0.0) * light, 1.0);
         } else {
           // A soft lamp: average the shadow toward points round the mouse, so its edges blur like a real one's.
           float shadow = castShadow(p, mouse);
-          for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236; shadow += castShadow(p, mouse + 70.0 * vec2(cos(a), sin(a))); }
+          for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236; shadow += castShadow(p, mouse + lampSize * vec2(cos(a), sin(a))); }
           shadow /= 13.0;
-          color = vec4(mix(vec3(1.0), vec3(0.42, 0.35, 0.27), shadow * 0.42 * fade), 1.0);
+          color = vec4(mix(vec3(1.0), vec3(0.42, 0.35, 0.27), shadow * shadowStrength * fade), 1.0);
         }
       }`));
     gl.linkProgram(program);
@@ -92,6 +106,9 @@ const { gigs, ...card } = Astro.props;
     gl.useProgram(program);
     const uniform = (name: string) => gl.getUniformLocation(program, name);
     const u = { size: uniform('size'), scale: uniform('scale'), card: uniform('card'), mouse: uniform('mouse'), lit: uniform('lit'), lightTheme: uniform('lightTheme') };
+    // The look. The light sits behind the books and shows round them; the shadow falls across the spines.
+    const look = { reach: 60, glow: 0.45, focus: 150, shadowLength: 0.25, shadowStrength: 0.3, lampSize: 50, lightOver: false, shadowOver: true, hold: false };
+    const numbers = (['reach', 'glow', 'focus', 'shadowLength', 'shadowStrength', 'lampSize'] as const).map(name => [name, uniform(name)] as const);
     // The light is soft, so half resolution is plenty; the open card above it keeps its own crisp edge.
     const scale = 0.5;
     const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -112,7 +129,10 @@ const { gigs, ...card } = Astro.props;
       gl.viewport(0, 0, width, height);
       gl.uniform2f(u.size, c.width, c.height); gl.uniform1f(u.scale, scale);
       gl.uniform4f(u.card, card[0], card[1], card[2], card[3]); gl.uniform2f(u.mouse, mouse[0], mouse[1]);
-      gl.uniform1f(u.lit, lit); gl.uniform1i(u.lightTheme, document.documentElement.dataset.theme === 'light' ? 1 : 0);
+      const lightTheme = document.documentElement.dataset.theme === 'light';
+      canvas.style.zIndex = (lightTheme ? look.shadowOver : look.lightOver) ? '2' : '0';
+      gl.uniform1f(u.lit, lit); gl.uniform1i(u.lightTheme, lightTheme ? 1 : 0);
+      for (const [name, location] of numbers) gl.uniform1f(location, look[name]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       frame = on || lit > 0.002 ? requestAnimationFrame(tick) : 0;
     };
@@ -121,7 +141,25 @@ const { gigs, ...card } = Astro.props;
       target = [event.clientX, event.clientY]; on = true;
       if (!frame) frame = requestAnimationFrame(tick);
     });
-    shelf.addEventListener('pointerleave', () => { on = false; });
+    shelf.addEventListener('pointerleave', () => { on = look.hold; });
+    // Dev only: sliders for the owner to pick the look; the chosen numbers go into the defaults above.
+    const tune = document.querySelector<HTMLFormElement>('[data-gig-tune]');
+    if (tune) {
+      const sync = () => {
+        for (const input of tune.querySelectorAll('input')) {
+          const name = input.name as keyof typeof look;
+          if (input.type === 'checkbox') (look[name] as boolean) = input.checked;
+          else { (look[name] as number) = Number(input.value); input.nextElementSibling!.textContent = input.value; }
+        }
+        if (look.hold && placed) { on = true; if (!frame) frame = requestAnimationFrame(tick); }
+        if (!look.hold && !shelf.matches(':hover')) on = false;
+      };
+      for (const input of tune.querySelectorAll('input')) {
+        const value = look[input.name as keyof typeof look];
+        if (input.type === 'checkbox') { if (input.name !== 'hold') input.checked = value as boolean; } else input.value = String(value);
+      }
+      tune.addEventListener('input', sync); sync();
+    }
   }
 </script>
 <style>
@@ -137,11 +175,11 @@ const { gigs, ...card } = Astro.props;
     /* Exact widths, not flex shares: the opening and closing books trade the same width every frame, so the rest stay still. */
     .gig-book { position: relative; z-index: 1; flex: 0 0 var(--spine); min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
     .gig-book[data-open] { z-index: 3; flex: 0 0 var(--book-open); }
-    /* Solid books, spine and open card alike, so the light lands on them rather than showing through. */
+    /* Solid books, spine and open card alike, so light behind them shows only round them. */
     .gig-book :global(.gig) { background: var(--book-fill); }
-    /* The light falls on the floor and the spines round the open card (screen adds light, multiply adds shadow); it reaches
+    /* Screen adds the light, multiply the shadow; the script layers it behind the books or over the spines. It reaches
        a gutter past the shelf's ends, where the page clips, and fades out before any edge. */
-    .gig-shelf-light { position: absolute; z-index: 2; top: -160px; left: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); height: calc(100% + 320px); pointer-events: none; mix-blend-mode: screen; }
+    .gig-shelf-light { position: absolute; z-index: 0; top: -160px; left: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); height: calc(100% + 320px); pointer-events: none; mix-blend-mode: screen; }
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
@@ -163,6 +201,11 @@ const { gigs, ...card } = Astro.props;
   /* Light mode: a shadow, and the card's gray a shade darker so it stays above 4.5:1 on the book fill. */
   :global([data-theme="light"]) .gig-shelf-light { mix-blend-mode: multiply; }
   :global([data-theme="light"]) .gig-shelf :global(.gig) { --gig-muted: #66686f; }
+  .gig-tune { position: fixed; z-index: 50; right: 16px; bottom: 16px; display: grid; gap: 6px; width: 290px; padding: 12px 16px; border-radius: 10px; background: var(--color-canvas); border: 1px solid color-mix(in srgb, var(--color-fg-max) 20%, transparent); color: var(--color-fg-max); font: 13px/1.3 var(--font-body); }
+  .gig-tune p { margin-top: 6px; font-weight: 700; }
+  .gig-tune label { display: flex; align-items: center; gap: 8px; }
+  .gig-tune input[type="range"] { flex: 1; min-width: 0; }
+  .gig-tune output { flex: none; width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
   }
