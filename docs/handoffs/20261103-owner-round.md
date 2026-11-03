@@ -1,6 +1,6 @@
 # Session handoff: owner review round (2026-11-03)
 
-Current handoff. It replaces `20261103-overnight-review.md` (kept for the overnight's detail) and `20261102-hero-poster.md` for what's next.
+Superseded for what's next by [20261103-home-sections.md](20261103-home-sections.md); kept for this round's detail. It replaces `20261103-overnight-review.md` (kept for the overnight's detail) and `20261102-hero-poster.md` for what's next.
 
 ## State
 
