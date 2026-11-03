@@ -33,6 +33,7 @@ const prompt = aiQuestion ? `Read __PAGE_URL__, then answer: ${aiQuestion}` : 'R
   <div role="status" aria-live="polite" class="page-tools-copy-status sr-only" data-copy-status></div>
 </div>
 <script>
+  import { aiProviderUrl, type AiProvider } from '@/lib/ai-providers';
   for (const root of document.querySelectorAll<HTMLElement>('[data-page-tools]')) {
     let typeahead = '';
     let typeaheadTimer = 0;
@@ -48,8 +49,8 @@ const prompt = aiQuestion ? `Read __PAGE_URL__, then answer: ${aiQuestion}` : 'R
         }
         for (const link of menu.querySelectorAll<HTMLAnchorElement>('[data-ai-link]')) {
           const prompt = (root.dataset.aiPrompt ?? '').replaceAll('__PAGE_URL__', url);
-          const q = encodeURIComponent(prompt), name = link.dataset.aiLink;
-          link.href = name === 'ChatGPT' ? `https://chatgpt.com/?q=${q}` : name === 'Claude' ? `https://claude.ai/new?q=${q}` : name === 'Google AI' ? `https://www.google.com/search?q=${q}&udm=50` : name === 'Grok' ? `https://grok.com/?q=${q}` : `https://www.perplexity.ai/search/?q=${q}`;
+          const name = link.dataset.aiLink;
+          link.href = aiProviderUrl(name as AiProvider, prompt);
         }
         menu.showPopover();
         if (trigger) {
