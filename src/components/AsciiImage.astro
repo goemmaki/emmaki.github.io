@@ -38,7 +38,7 @@ for (const canvas of document.querySelectorAll<HTMLCanvasElement>('[data-ascii-i
   function play() { cancelAnimationFrame(frame); if (visible && !still && cells) frame = requestAnimationFrame(tick); else if (cells) show(false); }
   const seen = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; play(); }); seen.observe(canvas);
   const onMotion = () => { still = reduce.matches; play(); }; reduce.addEventListener('change', onMotion);
-  image.decode().then(() => { sample(); draw(); play(); }).catch(() => {});
+  image.decode().then(() => { sample(); draw(); play(); }).catch(error => console.error('ASCII image decode failed', { src, step: 'decode' }, error));
   const resize = new ResizeObserver(draw); resize.observe(canvas); const theme = new MutationObserver(draw); theme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
 </script>
