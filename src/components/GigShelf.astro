@@ -9,7 +9,7 @@ interface Gig { category: string; title: string; reviews: string; price: string 
 interface Props { gigs: Gig[]; avatar: ImageMetadata; seller: string; badge: string; rating: string; extra?: string }
 const { gigs, ...card } = Astro.props;
 ---
-<div class="gig-shelf" data-gig-shelf>
+<div class="gig-shelf" data-gig-shelf style={`--books: ${gigs.length}`}>
   {gigs.map((gig, i) => <div class="gig-book" tabindex="0" data-open={i === 0 ? '' : undefined}>
     <GigCard {...card} {...gig} />
     <span class="gig-spine" aria-hidden="true">{gig.category}</span>
@@ -23,6 +23,26 @@ const { gigs, ...card } = Astro.props;
       book.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') open(book); });
       book.addEventListener('focusin', () => open(book));
     }
+    // The glow (after vercel.com's hero light) trails the mouse in viewport space; each book gets it in its own
+    // coordinates, so one light glides across the shelf while only the open card shows it.
+    let x = 0, y = 0, tx = 0, ty = 0, frame = 0, lit = false;
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const tick = () => {
+      const k = still.matches ? 1 : 0.1;
+      x += (tx - x) * k; y += (ty - y) * k;
+      for (const book of books) {
+        const r = book.getBoundingClientRect();
+        book.style.setProperty('--lx', `${x - r.left}px`); book.style.setProperty('--ly', `${y - r.top}px`);
+      }
+      frame = lit || Math.abs(tx - x) + Math.abs(ty - y) > 0.5 ? requestAnimationFrame(tick) : 0;
+    };
+    shelf.addEventListener('pointermove', event => {
+      if (event.pointerType !== 'mouse') return;
+      tx = event.clientX; ty = event.clientY;
+      if (!lit) { if (!frame) { x = tx; y = ty; } lit = true; shelf.toggleAttribute('data-lit', true); }
+      if (!frame) frame = requestAnimationFrame(tick);
+    });
+    shelf.addEventListener('pointerleave', () => { lit = false; shelf.toggleAttribute('data-lit', false); });
   }
 </script>
 <style>
@@ -33,12 +53,19 @@ const { gigs, ...card } = Astro.props;
   @media (min-width: 1280px) { .gig-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
   @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-    /* --pace stretches every duration and delay together (owner, 2026-11-03: 2x the Elastic Gallery's). */
-    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --pace: 2; --book-ease: calc(0.7s * var(--pace)) cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
-    .gig-book { position: relative; flex: 1 1 0px; min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
+    /* --pace stretches every duration and delay together (owner, 2026-11-03: 1.6x the Elastic Gallery's). */
+    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --pace: 1.6; --glow: rgb(255 195 0 / 0.22); --spine: calc((100% - var(--book-open) - (var(--books) - 1) * 8px) / (var(--books) - 1)); --book-ease: calc(0.7s * var(--pace)) cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
+    /* Exact widths, not flex shares: the opening and closing books trade the same width every frame, so the rest stay still. */
+    .gig-book { position: relative; flex: 0 0 var(--spine); min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
     .gig-book[data-open] { flex: 0 0 var(--book-open); }
     .gig-book :global(.gig) { background: color-mix(in srgb, var(--color-fg-max) 6%, transparent); transition: background-color var(--book-ease); }
     .gig-book[data-open] :global(.gig) { background: transparent; }
+    .gig-book :global(.gig)::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle 280px at var(--lx, 50%) var(--ly, 50%), var(--glow), transparent 75%);
+      transition: opacity calc(0.5s * var(--pace)) ease;
+    }
+    .gig-shelf[data-lit] .gig-book[data-open] :global(.gig)::before { opacity: 1; }
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
@@ -55,6 +82,9 @@ const { gigs, ...card } = Astro.props;
     }
     .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity calc(0.2s * var(--pace)) ease, scale calc(0.3s * var(--pace)) ease; }
   }
+  /* Light mode: amber, and the card's gray a shade darker so it stays above 4.5:1 at the glow's peak. */
+  :global([data-theme="light"]) .gig-shelf { --glow: rgb(245 158 11 / 0.16); }
+  :global([data-theme="light"]) .gig-shelf :global(.gig) { --gig-muted: #66686f; }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
   }
