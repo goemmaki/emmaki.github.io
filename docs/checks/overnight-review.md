@@ -31,9 +31,12 @@ has held up (`choose-agent-model`). Raise C to Luna high only if a first pass sk
   Playwright 1.64.1 client:
   `/home/emma/.cache/pnpm/dlx/9c456deaad767b138b7b1682f3746de4/mvwrjgg3-d/node_modules/.pacquet/playwright@1.64.1/node_modules/playwright/index.mjs`,
   Firefox at `/home/emma/.cache/ms-playwright/firefox-1532/firefox/firefox` (the only browser that
-  works in the sandbox).
+  works in the sandbox). For request interception, use the 1.61.1 client in
+  `/home/emma/.npm/_npx/e41f203b7505f1fb/node_modules`; 1.64.1's doesn't match that Firefox.
+- **Verify (D):** besides reading diffs, compare full-page screenshots of every route before and after
+  (build the merge commit to a second `--outDir`, serve it on 3022). First run: `docs/journal/20261103-overnight.md`.
 - **Servers, in the background, outside the sandbox:** the dev server for Astro's audit
-  (`pnpm exec astro dev --port 3006`) and the static build (`python3 docs/checks/serve.py dist 3021`).
+  (`pnpm exec astro dev --port 3006`; Astro 7 detaches it, stop with `pnpm exec astro dev stop`) and the static build (`python3 docs/checks/serve.py dist 3021`).
 - **Baseline:** Lighthouse on the build (`docs/checks/lighthouse.cjs`, see `end-of-day.md`), saved
   under `runtime/overnight/lighthouse-before/`.
 - **Briefs:** copy the two briefs below to `runtime/briefs/<date>-overnight-a.md` and `-c.md`, filled in.
@@ -60,7 +63,9 @@ the fix, and how to verify it.
 ## C. Fix (Codex)
 
 Same launch as A, with `-m gpt-6-luna -c model_reasoning_effort='"medium"'`, the `-c` brief and
-`-o runtime/overnight/c-report.md`.
+`-o runtime/overnight/c-report.md`. Add
+`-c 'sandbox_workspace_write.writable_roots=["<git rev-parse --git-common-dir>"]'`: a linked
+worktree's git directory lives in the primary checkout, and Codex can't commit without it.
 
 ## D. Verify and report (Claude)
 
@@ -107,8 +112,8 @@ Cite the doc in the finding. Don't rely on memory of older Astro versions.
   choice, see DESIGN.md "Motion"); GSAP stays; the brand is "emmaki", lowercase; American English.
 - The owner writes all copy. Placeholder text ("X and Y", "Client one", lorem) is known; don't
   report it.
-- The Home hero's dev-only switcher (`form.poster-controls`, only under `import.meta.env.DEV`) is
-  intentional review tooling.
+- Review tooling the owner is still using (dev-only pickers and switchers) is intentional; list
+  what exists when filling in the brief, and report as DECIDE only if one ships to production.
 
 ## Tools (installed; download nothing)
 

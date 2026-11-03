@@ -24,6 +24,7 @@
 
 ## Next action
 
+- Latest (2026-11-03): overnight review and fixes on `review/overnight-20261103`, 13 items await the owner: [docs/handoffs/20261103-overnight-review.md](docs/handoffs/20261103-overnight-review.md).
 - Home hero poster and caution tape (2026-11-03; tape finish, gutters for the words and placeholder h1 await the owner): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
