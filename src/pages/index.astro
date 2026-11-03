@@ -24,6 +24,20 @@ const credibility = [
   { kind: 'note' as const, text: 'Selected to give feedback to Fiverr leadership in Tel Aviv', label: 'In 2018' },
   { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: 'cannon-brooke.webp' } },
 ];
+// The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
+// are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.
+const gigs = [
+  { category: 'Sales Copy', title: 'I will write sales copy for landing pages, sales pages, and funnels', reviews: '435', price: 'From $150' },
+  { category: 'Review & Rewrite', title: 'I will rewrite and improve articles, blogs, and website content', reviews: '∞', price: 'From $100' },
+  { category: 'Press Releases', title: 'I will be your press release writing expert for PR and press release content creation', reviews: '∞', price: 'From $150' },
+  { category: 'Articles & Blog Posts', title: 'I will write engaging SEO articles, do blog writing for targeted b2b and b2c marketing', reviews: '∞', price: 'From $150' },
+  { category: 'Video Scripts', title: 'I will write a high converting video sales letters, vsl, and sales page video content', reviews: '∞', price: 'From $150' },
+  { category: 'Website Content', title: 'I will be your seo website content writer for website copy and website copywriting', reviews: '∞', price: 'From $250' },
+  { category: 'Email Copy', title: 'I will write your email marketing campaign, sales email copywriting, newsletter writing', reviews: '∞', price: 'From $125' },
+  { category: 'AI Content Editing', title: 'I will turn ai slop into authentic thought leadership that converts', reviews: '∞', price: 'From $500' },
+  { category: 'Ghostwriting', title: 'I will be your lead magnet writer, business ebook writer, non fiction ebook ghostwriter', reviews: '∞', price: 'From $125' },
+  { category: 'Product Descriptions', title: 'I will optimize your fiverr gig SEO and gig description for mira', reviews: '∞', price: 'From $150' },
+];
 ---
 <Base>
   <link slot="head" rel="preload" as="image" href={portrait.src} type="image/webp" fetchpriority="high" />
@@ -41,8 +55,8 @@ const credibility = [
   <section class="shell pt-32">
     <p class="type-meta text-fg-2 uppercase">My services</p>
     <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Placeholder: what I can do for you.</h2>
-    <div class="mt-12 grid gap-x-(--gutter) gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-      <GigCard avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" title="I will write sales copy for landing pages, sales pages, and funnels" rating="5.0" reviews={435} price="From $150" extra="Offers video consultations" />
+    <div class="mt-12 grid gap-x-(--gutter) gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {gigs.map(gig => <GigCard avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" rating="5.0" extra="Offers video consultations" {...gig} />)}
     </div>
   </section>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>

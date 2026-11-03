@@ -3,12 +3,12 @@
 // 1x: Fiverr's sizes, spacing and light-mode colors, with a dark mode of its own. Fiverr's heart is left out;
 // the thumbnail is a placeholder until the owner supplies one. No links yet.
 import { Image } from 'astro:assets';
-interface Props { avatar: ImageMetadata; seller: string; badge: string; title: string; rating: string; reviews: number; price: string; extra?: string }
-const { avatar, seller, badge, title, rating, reviews, price, extra } = Astro.props;
+interface Props { avatar: ImageMetadata; category: string; seller: string; badge: string; title: string; rating: string; reviews: string; price: string; extra?: string }
+const { avatar, category, seller, badge, title, rating, reviews, price, extra } = Astro.props;
 ---
 <article class="gig">
   <div class="gig-thumb">
-    <span class="gig-thumb-label" aria-hidden="true">Gig thumbnail</span>
+    <span class="gig-thumb-label" aria-hidden="true">{category}</span>
     <span class="gig-dots" aria-hidden="true"><i data-on></i><i></i><i></i></span>
   </div>
   <div class="gig-seller">
@@ -20,7 +20,7 @@ const { avatar, seller, badge, title, rating, reviews, price, extra } = Astro.pr
   <p class="gig-rating">
     <svg class="gig-star" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .9l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.3l-4.5 2.4.9-5L.8 6.2l5-.7z" /></svg>
     <span aria-hidden="true"><strong>{rating}</strong> <span class="gig-reviews">({reviews})</span></span>
-    <span class="sr-only">Rated {rating} out of 5 from {reviews} reviews</span>
+    <span class="sr-only">Rated {rating} out of 5{reviews === '∞' ? '' : ` from ${reviews} reviews`}</span>
   </p>
   <p class="gig-price">{price}</p>
   {extra && <p class="gig-extra">
