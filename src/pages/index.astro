@@ -9,9 +9,9 @@ import CautionTape from '../components/CautionTape.astro';
 import { heroPortrait } from '@/lib/hero-portrait';
 const portrait = await heroPortrait();
 const links = [
-  { text: 'get understood', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
-  { text: 'get chosen', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
-  { text: 'get results', href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
+  { text: 'get it', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
+  { text: 'want it', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
+  { text: 'buy it', href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
 ];
 const credibility = [
   { kind: 'figure' as const, figure: 'Top Rated Seller', label: 'On Fiverr since 2015', accent: true },
@@ -34,7 +34,7 @@ const credibility = [
     <ClientSlots class="shell" />
   </section>
   <CautionTape />
-  <Statement kicker="Who I am" before="I’m a B2B tech copywriter helping businesses with hard sells" {links} after="." />
+  <Statement kicker="Who I am" before="I write copy for B2B tech and other hard sells, so people" {links} after="." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
   <PageClosing />
