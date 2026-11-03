@@ -24,7 +24,8 @@
 
 ## Next action
 
-- Latest (2026-11-03): owner review round on `review/overnight-20261103` (dev 3004); 7 items await the owner: [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md).
+- Latest (2026-11-03 evening): home h1, Services shelf, page order and My approach on `design/h1-options-20261103` (dev 3004): [docs/handoffs/20261103-home-sections.md](docs/handoffs/20261103-home-sections.md).
+- Earlier (2026-11-03): owner review round on `review/overnight-20261103`, superseded by the line above for what's next: [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md).
 - Home hero and copy (2026-11-03; 2560 composition and placeholder h1 remain): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
