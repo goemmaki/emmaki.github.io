@@ -1,5 +1,7 @@
 # Session handoff: overnight review, hero poster and caution tape (2026-11-03)
 
+Superseded on 2026-11-03 by [the owner-round handoff](20261103-owner-round.md).
+
 Supersedes `20261102-hero-poster.md` for what's next; that file still describes the hero's files.
 
 ## State

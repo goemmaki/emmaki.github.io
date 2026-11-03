@@ -45,3 +45,13 @@ Accessibility 1.0 and best practices 1.0 on every route, both runs. Home perform
 ## Not tested
 
 WebKit, real screen readers, real devices, GPU globe rendering, production hosting.
+
+## Owner review round, 2026-11-03
+
+The owner selected the caution tape's `print` finish, the About page's Statement layout, full-bleed Home background words, and an off-screen pause for the tape. Six commits on `review/overnight-20261103` recorded those decisions and the requested Home portrait preload and documentation: `b4358dcd` (print-only tape), `e9c24387` (pause tape off screen), `80c88bab` (Statement-only About content), `8992f22c` (clip horizontal overflow on `main`), `42152cd0` (preload Home portrait), and `a4c68199` (Motion and visual-polish notes). No push, merge, or copy edit was made.
+
+`run-check -- pnpm run check` and `run-check -- pnpm run build` passed before each of the six commits. The first tape check caught a missing Astro frontmatter delimiter in the rewrite; it was corrected before the passing run. Firefox 1.64.1 captured the `/?tape=print` reference before edits at 1440 and 390 CSS pixels and the tape afterward at both sizes. The print layers and tape geometry were checked visually; animation position varied between captures. Firefox reported both tape tracks `paused` out of view, `running` in view, and `paused` again after scrolling away.
+
+About was captured before from `/about?v=statement`. After the change, `/about` had no layout switcher and one main page `<h1>` at 1440×900 and 390×844 in both themes, with no page console errors. The existing client-logo enhancement stayed in place. On Home, the portrait preload was present with high fetch priority, and `/about` had no image preload.
+
+The overflow run covered 8 routes × 2 themes × 2 viewports (32 cases) with the requested Firefox scrollbar preferences. Every case had `document.documentElement.scrollWidth === clientWidth` (1440 at desktop; 390 at mobile), and `main` computed to `overflow-x: clip`. The blog TOC stayed at 96 px while scrolling; scrolling upward brought the sticky header to top 0. The first Home visit in the matrix hit one Vite dynamic-module load error; separate Home retries at both widths had no console errors. A first attempt to commit the tape observer also failed to create Git's shared index lock; staging and retrying the commit succeeded. No other requested item was skipped.
