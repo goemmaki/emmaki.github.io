@@ -6,7 +6,7 @@ const firstAfter = after.match(/^\S*/)?.[0] ?? '';
 ---
 <section class="shell pt-32" data-statement>
   <p class="type-meta text-fg-2 uppercase">{kicker}</p>
-  <h1 class="mt-6 max-w-[26ch] type-h1 text-fg-max">{before}{' '}{links.map((link, i) => {
+  <h1 class="mt-6 max-w-[36ch] type-h2 text-fg-max">{before}{' '}{links.map((link, i) => {
     const last = i === links.length - 1; const mark = last ? firstAfter : ',';
     return <Fragment>{last && i > 0 && 'and '}<span class="whitespace-nowrap"><a href={link.href} class="statement-link" data-statement-link data-index={i} data-metric={link.metric} data-summary={link.summary} data-client={link.client}>{link.text}<svg class="statement-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg><span class="sr-only"> (case study: {link.metric}, {link.summary}, {link.client})</span></a>{mark}</span>{last ? after.slice(mark.length) : ' '}</Fragment>;
   })}</h1>
