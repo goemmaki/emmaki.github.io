@@ -33,7 +33,8 @@ const { gigs, ...card } = Astro.props;
   @media (min-width: 1280px) { .gig-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
   @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --book-ease: 0.7s cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
+    /* --pace stretches every duration and delay together (owner, 2026-11-03: 2x the Elastic Gallery's). */
+    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --pace: 2; --book-ease: calc(0.7s * var(--pace)) cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
     .gig-book { position: relative; flex: 1 1 0px; min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
     .gig-book[data-open] { flex: 0 0 var(--book-open); }
     .gig-book :global(.gig) { background: color-mix(in srgb, var(--color-fg-max) 6%, transparent); transition: background-color var(--book-ease); }
@@ -41,18 +42,18 @@ const { gigs, ...card } = Astro.props;
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
-    .gig-book :global(.gig-thumb > *) { opacity: 0; transition: opacity 0.2s ease; }
-    .gig-book[data-open] :global(.gig-thumb > *) { opacity: 1; transition: opacity 0.4s ease 0.3s; }
-    .gig-book :global(.gig-body) { width: var(--book-open); opacity: 0; translate: 0 32px; transition: opacity 0.2s ease, translate 0.2s ease; }
-    .gig-book[data-open] :global(.gig-body) { opacity: 1; translate: 0 0; transition: opacity 0.5s ease 0.15s, translate var(--book-ease) 0.1s; }
+    .gig-book :global(.gig-thumb > *) { opacity: 0; transition: opacity calc(0.2s * var(--pace)) ease; }
+    .gig-book[data-open] :global(.gig-thumb > *) { opacity: 1; transition: opacity calc(0.4s * var(--pace)) ease calc(0.3s * var(--pace)); }
+    .gig-book :global(.gig-body) { width: var(--book-open); opacity: 0; translate: 0 32px; transition: opacity calc(0.2s * var(--pace)) ease, translate calc(0.2s * var(--pace)) ease; }
+    .gig-book[data-open] :global(.gig-body) { opacity: 1; translate: 0 0; transition: opacity calc(0.5s * var(--pace)) ease calc(0.15s * var(--pace)), translate var(--book-ease) calc(0.1s * var(--pace)); }
     /* The spine's name sits under the image band, bold and tracked, reading down from the foot. */
     .gig-spine {
       position: absolute; inset: 96px 0 0; display: flex; justify-content: flex-end; align-items: center; padding: 16px 0 28px; pointer-events: none;
       writing-mode: vertical-rl; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
       line-height: 1; white-space: nowrap; color: var(--color-fg-max);
-      transition: opacity 0.4s ease 0.35s, scale 0.4s ease 0.35s;
+      transition: opacity calc(0.4s * var(--pace)) ease calc(0.35s * var(--pace)), scale calc(0.4s * var(--pace)) ease calc(0.35s * var(--pace));
     }
-    .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity 0.2s ease, scale 0.3s ease; }
+    .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity calc(0.2s * var(--pace)) ease, scale calc(0.3s * var(--pace)) ease; }
   }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
