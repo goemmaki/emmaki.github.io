@@ -1,6 +1,7 @@
-// Lighthouse for the end-of-day checks (docs/checks/end-of-day.md). Runs outside Codex's sandbox,
-// which blocks Chrome. Needs the static export served by serve.py.
-// Usage: NODE_PATH=<playwright node_modules> node docs/checks/lighthouse.cjs <out-dir> <port> <page>...
+// Lighthouse for the site checks (docs/checks/end-of-day.md). Claude runs it, outside Codex's sandbox.
+// Needs the static build served by serve.py. RUNS (default 1) repeats each page; the summary keeps
+// the median run by performance score, and every run's JSON is saved.
+// Usage: NODE_PATH=<playwright node_modules> RUNS=<n> node docs/checks/lighthouse.cjs <out-dir> <port> <page>...
 /* eslint-disable @typescript-eslint/no-require-imports -- a plain Node script, run with NODE_PATH, not app code */
 const fs = require("fs");
 const path = require("path");
@@ -9,6 +10,7 @@ const { chromium } = require("playwright");
 const [outDir, port, ...pages] = process.argv.slice(2);
 const OUT = path.resolve(outDir);
 const base = `http://127.0.0.1:${port}`;
+const RUNS = Number(process.env.RUNS ?? 1);
 
 (async () => {
   const { default: lighthouse } = await import(path.resolve("runtime/a11y-tools/node_modules/lighthouse/core/index.js"));
@@ -29,20 +31,29 @@ const base = `http://127.0.0.1:${port}`;
           await p.evaluate((t) => localStorage.setItem("emmaki-theme", t), theme);
           const tag = `${url === "/" ? "home" : url.slice(1).replaceAll("/", "_")}.${mode}.${theme}`;
           try {
-            const r = await lighthouse(base + url, {
-              port: 9223,
-              logLevel: "error",
-              onlyCategories: ["accessibility", "best-practices", "performance", "seo"],
-              disableStorageReset: true,
-              output: "json",
-              ...(mode === "desktop" ? { preset: "desktop" } : {}),
-            });
-            fs.writeFileSync(`${OUT}/lighthouse/${tag}.json`, JSON.stringify(r.lhr, null, 2));
+            const runs = [];
+            for (let i = 0; i < RUNS; i++) {
+              const r = await lighthouse(base + url, {
+                port: 9223,
+                logLevel: "error",
+                onlyCategories: ["accessibility", "best-practices", "performance", "seo"],
+                disableStorageReset: true,
+                output: "json",
+                ...(mode === "desktop" ? { preset: "desktop" } : {}),
+              });
+              const file = RUNS > 1 ? `${tag}.run${i + 1}.json` : `${tag}.json`;
+              fs.writeFileSync(`${OUT}/lighthouse/${file}`, JSON.stringify(r.lhr, null, 2));
+              runs.push({ lhr: r.lhr, file });
+            }
+            runs.sort((a, b) => (a.lhr.categories.performance.score ?? 0) - (b.lhr.categories.performance.score ?? 0));
+            const { lhr, file } = runs[Math.floor((runs.length - 1) / 2)];
             results.push({
               tag,
-              scores: Object.fromEntries(Object.entries(r.lhr.categories).map(([k, v]) => [k, v.score])),
-              runtimeError: r.lhr.runtimeError,
-              failures: Object.values(r.lhr.audits)
+              file,
+              performanceRuns: runs.map((r) => r.lhr.categories.performance.score),
+              scores: Object.fromEntries(Object.entries(lhr.categories).map(([k, v]) => [k, v.score])),
+              runtimeError: lhr.runtimeError,
+              failures: Object.values(lhr.audits)
                 .filter((a) => a.score !== null && a.score < 1)
                 .map((a) => ({ id: a.id, title: a.title, score: a.score, displayValue: a.displayValue })),
             });

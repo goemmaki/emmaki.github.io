@@ -1,8 +1,9 @@
 # Overnight review and cleanup
 
-A whole-site code review, accessibility audit and Astro cleanup, run unattended by Codex with Claude
-checking between phases. Unlike the end-of-day checks (`end-of-day.md`), this one fixes things, but
-only safe ones; anything that changes the look, the copy or a settled decision goes to the owner.
+A whole-site code review, the full site checks and an Astro cleanup, run unattended by Codex with
+Claude checking between phases. What to measure lives in `end-of-day.md` (full mode); this file is
+how to run it overnight and fix what it finds, but only safe things. Anything that changes the
+look, the copy or a settled decision goes to the owner.
 First written 2026-11-03 for the Astro site, replacing the React-era habit of a read-only Sol review.
 
 | Phase | Who | Writes | Model |
@@ -27,18 +28,10 @@ has held up (`choose-agent-model`). Raise C to Luna high only if a first pass sk
 - **Install and build outside the sandbox.** `run-check -- pnpm install --frozen-lockfile`,
   `run-check -- pnpm run check`, `run-check -- pnpm run build`. Codex must never install: a sandboxed
   `pnpm install` once deleted `node_modules`.
-- **Tools.** Copy `runtime/a11y-tools` (axe-core 4.14, Lighthouse 13.5) from another worktree.
-  Playwright 1.64.1 client:
-  `/home/emma/.cache/pnpm/dlx/9c456deaad767b138b7b1682f3746de4/mvwrjgg3-d/node_modules/.pacquet/playwright@1.64.1/node_modules/playwright/index.mjs`,
-  Firefox at `/home/emma/.cache/ms-playwright/firefox-1532/firefox/firefox` (the only browser that
-  works in the sandbox). For request interception, use the 1.61.1 client in
-  `/home/emma/.npm/_npx/e41f203b7505f1fb/node_modules`; 1.64.1's doesn't match that Firefox.
+- **Tools, servers, pages and Lighthouse:** "Tools" and "Prepare" in `end-of-day.md`, full mode.
+  Save the Lighthouse run (`RUNS=3`) as `runtime/overnight/lighthouse-before/`.
 - **Verify (D):** besides reading diffs, compare full-page screenshots of every route before and after
   (build the merge commit to a second `--outDir`, serve it on 3022). First run: `docs/journal/20261103-overnight.md`.
-- **Servers, in the background, outside the sandbox:** the dev server for Astro's audit
-  (`pnpm exec astro dev --port 3006`; Astro 7 detaches it, stop with `pnpm exec astro dev stop`) and the static build (`python3 docs/checks/serve.py dist 3021`).
-- **Baseline:** Lighthouse on the build (`docs/checks/lighthouse.cjs`, see `end-of-day.md`), saved
-  under `runtime/overnight/lighthouse-before/`.
 - **Briefs:** copy the two briefs below to `runtime/briefs/<date>-overnight-a.md` and `-c.md`, filled in.
 
 ## A. Review and audit (Codex, read-only on code)
@@ -71,7 +64,8 @@ worktree's git directory lives in the primary checkout, and Codex can't commit w
 
 - Read the full diff (`git log -p` over the new commits), commit by commit. Revert any commit that
   goes beyond its fix-list item.
-- Rerun check, build, Lighthouse (`lighthouse-after/`) and axe; compare with the baseline.
+- Rerun check, build, Lighthouse (`lighthouse-after/`) and the quick checks from `end-of-day.md`
+  (Codex, its brief, evidence under `runtime/overnight/after/`); compare with Phase A.
 - Look at every page a commit touched, live in Chrome, both themes, desktop and phone. Codex's own
   measurements have missed visual regressions before.
 - Write `docs/journal/<date>-checks.md` (shape of `20261026-baseline.md`), a handoff with everything
@@ -83,7 +77,7 @@ worktree's git directory lives in the primary checkout, and Codex can't commit w
 ```markdown
 # Brief: overnight review and audit of the emmaki site (read-only on code)
 
-Repository: `<worktree>` (branch `<branch>`, at `<commit>`; integrates <branches>). Astro 7.4,
+Repository: `<worktree>` (branch `<branch>`, at `<commit>`; integrates <branches>). Astro 7,
 Tailwind 4, static build. Dev server at http://127.0.0.1:3006 (Astro dev toolbar on); built site
 at http://127.0.0.1:3021. Don't start, stop or rebuild either.
 
@@ -107,7 +101,7 @@ Cite the doc in the finding. Don't rely on memory of older Astro versions.
 
 ## Rules
 
-- No Chrome DevTools MCP, no owner's browser. Playwright Firefox only (see tools).
+- No Chrome DevTools MCP, no owner's browser. Playwright only, with the tools in `end-of-day.md`.
 - Settled decisions, never findings: motion stays with no pause control (WCAG 2.2.2 unmet by
   choice, see DESIGN.md "Motion"); GSAP stays; the brand is "emmaki", lowercase; American English.
 - The owner writes all copy. Placeholder text ("X and Y", "Client one", lorem) is known; don't
@@ -115,33 +109,22 @@ Cite the doc in the finding. Don't rely on memory of older Astro versions.
 - Review tooling the owner is still using (dev-only pickers and switchers) is intentional; list
   what exists when filling in the brief, and report as DECIDE only if one ships to production.
 
-## Tools (installed; download nothing)
-
-- Playwright 1.64.1 client: `<path>`, Firefox: `<path>`. Chrome can't navigate in the sandbox and
-  WebKit doesn't launch; record both as untested.
-- axe-core 4.14: `runtime/a11y-tools/node_modules/axe-core/axe.min.js`.
-- Astro's audit rules: `node_modules/astro/dist/runtime/client/dev-toolbar/apps/audit/rules/`.
-- Theme: `data-theme` on `<html>`, from `localStorage['emmaki-theme']` before paint.
-
 ## Pages
 
 <pages>, plus `/nope` (the 404).
 
 ## Work
 
-1. **Astro audit.** On the dev server, for every page, both themes, open the dev toolbar's Audit
-   app and record every item it lists (rule, element, message). If the toolbar can't be read from
-   Firefox, evaluate the same rules from the rules files against each page and say so.
-2. **`astro check` and build output:** run neither (Claude ran them; logs in `runtime/checks/`);
-   read the newest logs and list every warning.
-3. **Accessibility:** checks 1-9 of the brief in `docs/checks/end-of-day.md`, against the built
-   site on 3021.
-4. **Code review of `src/`:** correctness bugs; leaked listeners, observers and rAF loops; script
+1. **Full site checks:** every check marked F in `docs/checks/end-of-day.md`, on its full matrix
+   and with its tools, against the built site on 3021 (the toolbar on 3006). Don't run check or
+   build: read the logs `<check log>` and `<build log>`. Lighthouse is in
+   `runtime/overnight/lighthouse-before/`. Compare with the last run, `<last journal entry>`.
+2. **Code review of `src/`:** correctness bugs; leaked listeners, observers and rAF loops; script
    duplication across components; one business rule implemented twice; dead code, unused exports,
    files, assets and dependencies; leftovers from the React/Next era; error handling (silent
    catches, fallbacks that hide failures); first-paint and layout-shift risks; image and font
-   weight (for example the 2 MB hero PNGs); SEO metadata per page; Astro idioms per the docs.
-5. **Classify every finding:**
+   weight; SEO metadata per page; Astro idioms per the docs.
+3. **Classify every finding** (checks and review):
    - **FIX-SAFE:** clear fix, no visible change, no copy change, verifiable by a check or a test.
    - **FIX-VISUAL:** the fix changes how something looks or moves. For the owner.
    - **DECIDE:** needs the owner's judgment (product, copy, trade-off).
@@ -178,8 +161,9 @@ Repository: `<worktree>` (branch `<branch>`, at `<commit>`). Fix exactly the ite
 
 ## Verify
 
-For each item, the verification the fix list names, in Playwright Firefox (paths in the fix list)
-against the dev server at http://127.0.0.1:3006, both themes, 1440x900 and 390x844.
+For each item, the verification the fix list names, with Playwright (`docs/checks/end-of-day.md`,
+"Tools") against the dev server at http://127.0.0.1:3006, both themes, 1440x900 and 390x844, in
+the engines the item names.
 
 ## Output
 
