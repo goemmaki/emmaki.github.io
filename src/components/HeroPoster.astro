@@ -87,6 +87,8 @@ import HeroWords from './HeroWords.astro';
       const image = await source(); if (ticket !== generation) return;
       const box = canvas.getBoundingClientRect(), figure = person.getBoundingClientRect(), circle = disk.getBoundingClientRect();
       const dpr = Math.min(devicePixelRatio, 1.5), w = Math.round(box.width * dpr), h = Math.round(box.height * dpr);
+      // Not laid out yet (or mid-navigation): the ResizeObserver draws once the canvas has a size.
+      if (!w || !h) return;
       canvas.width = w; canvas.height = h;
       const sample = document.createElement('canvas'); sample.width = w; sample.height = h;
       const ctx = sample.getContext('2d', { willReadFrequently: true })!;
