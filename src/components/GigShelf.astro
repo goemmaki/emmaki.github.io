@@ -1,0 +1,56 @@
+---
+// The gig cards as a shelf of book spines (after 21st.dev's Elastic Gallery, 2026-11-03): on desktop with a mouse,
+// each closed gig shows the top of its thumbnail and its short name, vertically; the hovered or focused one opens
+// into the full card, which keeps a fixed width so its text never reflows while the spine widens. Touch screens
+// and narrower windows get the plain card grid; reduced motion opens books without the animation.
+import GigCard from './GigCard.astro';
+interface Gig { category: string; title: string; reviews: string; price: string }
+interface Props { gigs: Gig[]; avatar: ImageMetadata; seller: string; badge: string; rating: string; extra?: string }
+const { gigs, ...card } = Astro.props;
+---
+<div class="gig-shelf" data-gig-shelf>
+  {gigs.map((gig, i) => <div class="gig-book" tabindex="0" data-open={i === 0 ? '' : undefined}>
+    <GigCard {...card} {...gig} />
+    <span class="gig-spine" aria-hidden="true">{gig.category}</span>
+  </div>)}
+</div>
+<script>
+  for (const shelf of document.querySelectorAll<HTMLElement>('[data-gig-shelf]')) {
+    const books = [...shelf.querySelectorAll<HTMLElement>('.gig-book')];
+    const open = (book: HTMLElement) => { for (const other of books) other.toggleAttribute('data-open', other === book); };
+    for (const book of books) {
+      book.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') open(book); });
+      book.addEventListener('focusin', () => open(book));
+    }
+  }
+</script>
+<style>
+  .gig-shelf { display: grid; column-gap: var(--gutter); row-gap: 40px; }
+  .gig-spine { display: none; }
+  @media (min-width: 640px) { .gig-shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1024px) { .gig-shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 1280px) { .gig-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+    .gig-shelf { --book-open: 300px; --book-ease: 0.7s cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
+    .gig-book {
+      position: relative; flex: 1 1 0px; min-width: 0; overflow: hidden; border-radius: 8px; outline-offset: 4px;
+      background: color-mix(in srgb, var(--color-fg-max) 6%, transparent);
+      transition: flex var(--book-ease), background-color var(--book-ease);
+    }
+    .gig-book[data-open] { flex: 0 0 var(--book-open); background: transparent; }
+    .gig-book :global(.gig) { width: var(--book-open); }
+    /* Closed: only the thumbnail's top shows; the card's text and the placeholder's label wait for the open. */
+    .gig-book :global(.gig > :not(.gig-thumb)), .gig-book :global(.gig-thumb > *) { opacity: 0; transition: opacity 0.25s ease; }
+    .gig-book[data-open] :global(.gig > :not(.gig-thumb)), .gig-book[data-open] :global(.gig-thumb > *) { opacity: 1; transition: opacity 0.35s ease 0.2s; }
+    .gig-spine {
+      position: absolute; inset: calc(var(--book-open) * 769 / 1280 + 16px) 0 16px; display: flex; align-items: center;
+      writing-mode: vertical-rl; font-family: var(--font-display); font-size: 18px; font-weight: 500; line-height: 1; white-space: nowrap; color: var(--color-fg-max);
+      transition: opacity 0.35s ease 0.15s;
+    }
+    .gig-book[data-open] .gig-spine { opacity: 0; transition: opacity 0.15s ease; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gig-book, .gig-book :global(*), .gig-spine { transition: none !important; }
+  }
+</style>
