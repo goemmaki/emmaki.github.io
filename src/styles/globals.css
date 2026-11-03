@@ -895,7 +895,7 @@
 [data-theme="light"] .client-slot-logo .client-logo-on-dark { display: none; }
 [data-theme="light"] .client-slot:hover .client-slot-logo img { filter: none; }
 
-/* About concepts (AboutConcepts.astro): a figure set huge in the covers' Geist 600. */
+/* About content (AboutContent.astro): a figure set huge in the covers' Geist 600. */
 .about-figure {
   font-family: var(--font-heading);
   font-weight: var(--font-weight-announce);

@@ -1,0 +1,25 @@
+---
+import ClientSlots from './ClientSlots.astro';
+import Testimonials from './Testimonials.astro';
+import Faq from './Faq.astro';
+const lead = 'Owner’s statement: who I am and who I write for, in one or two lines.';
+const body = 'Owner’s paragraph: why buyers hire me, what they get, and where AI carries the load and where 20+ years of judgment takes over. Three or four sentences, written for the buyer rather than as a life story.';
+const steps = [{title:'Brief',body:'Owner’s line: what the client sends and what I read first.'},{title:'Questions',body:'Owner’s line: what I ask before writing a word.'},{title:'Draft',body:'Owner’s line: what the first draft is and when it arrives.'},{title:'Refine',body:'Owner’s line: how feedback works and what the client ends with.'}];
+const figures = [{value:'20+',label:'years writing'},{value:'000',label:'Fiverr reviews (owner’s figure)'},{value:'0.0',label:'Fiverr rating (owner’s figure)'}];
+const faqs = [{question:'Placeholder question: can I message you before ordering?',answer:'Owner’s answer.'},{question:'Placeholder question: what do you need from me to start?',answer:'Owner’s answer.'},{question:'Placeholder question: do you use AI to write?',answer:'Owner’s answer.'},{question:'Placeholder question: how do revisions work?',answer:'Owner’s answer, pointing to the Fiverr package.'},{question:'Placeholder question: which industries do you write for?',answer:'Owner’s answer.'}];
+const bodyClass = 'type-editorial text-fg-2';
+---
+<div id="about-content" class="scroll-mt-16" data-about-content>
+  <section class="shell py-e2"><ClientSlots/></section>
+  <section class="shell pb-e2"><p class="type-h2 max-w-[24ch] text-balance"><span class="text-fg-2">Owner’s setup line, in gray. </span><span class="text-fg-max">{lead}</span></p><p class={`mt-e1 max-w-[60ch] ${bodyClass}`}>{body}</p></section>
+  <section class="shell pb-e2"><dl class="grid border-t border-line sm:grid-cols-3">{figures.map(f=><div class="flex flex-col-reverse gap-2 border-b border-line py-6 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0"><dt class="type-secondary text-fg-2">{f.label}</dt><dd class="about-figure text-fg-max">{f.value}</dd></div>)}</dl></section>
+  <section class="shell pb-e2"><h2 class="type-meta text-fg-2">How I work</h2><ol class="mt-6 grid gap-x-(--gutter) gap-y-8 border-t border-line pt-8 sm:grid-cols-2 lg:grid-cols-4">{steps.map((s,n)=><li class="flex flex-col gap-2"><span class="type-h2 text-fg-2">0{n+1}</span><h3 class="type-h3 text-fg-max">{s.title}</h3><p class={bodyClass}>{s.body}</p></li>)}</ol></section>
+  <section class="shell pb-e2"><Testimonials size="lg" class="max-w-[48ch]"/></section>
+  <section class="shell grid grid-cols-12 gap-x-(--gutter) gap-y-6 pb-e2"><h2 class="col-span-12 type-h2 text-fg-max lg:col-span-4">Questions</h2><div class="col-span-12 lg:col-span-8"><Faq faqs={faqs} bodyText={bodyClass} idPrefix="statement"/></div></section>
+</div>
+<script>
+for (const root of document.querySelectorAll<HTMLElement>('[data-about-content]')) {
+ const enhance = (node: ParentNode) => { const imgs = [...(node instanceof Element && node.matches('.client-slot-logo img') ? [node as HTMLImageElement] : []), ...node.querySelectorAll<HTMLImageElement>('.client-slot-logo img:not([data-color-copy])')]; for (const img of imgs) { if (img.nextElementSibling?.hasAttribute('data-color-copy')) continue; const copy=img.cloneNode(false) as HTMLImageElement; copy.removeAttribute('id'); copy.alt=''; copy.setAttribute('aria-hidden','true'); copy.dataset.colorCopy=''; copy.classList.add('client-logo-color-copy'); img.after(copy); } };
+ enhance(root); new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => { if (node instanceof Element) enhance(node); }))).observe(root,{childList:true,subtree:true});
+}
+</script>
