@@ -1,0 +1,62 @@
+---
+// The My approach list, after 21st.dev's accordion-05 (owner, 2026-11-03): numbered rows with big uppercase titles,
+// faded until hovered or open, one open at a time. Closed answers are hidden="until-found", like the Faq's, so the
+// browser's find-in-page still searches them and opens the row it lands on. The fade stays at or above 3:1, the
+// large-text minimum, in both themes.
+interface Item { title: string; content: string }
+interface Props { items: Item[] }
+const { items } = Astro.props;
+---
+<div class="approach" data-approach>
+  {items.map(({ title, content }, i) => <div class="approach-item">
+    <h4><button id={`approach-trigger-${i}`} type="button" class="approach-trigger" aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`approach-panel-${i}`} data-approach-trigger>
+      <span class="approach-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span class="approach-title">{title}</span>
+    </button></h4>
+    <div id={`approach-panel-${i}`} role="region" aria-labelledby={`approach-trigger-${i}`} class="approach-panel" hidden={i === 0 ? undefined : 'until-found'} data-open={i === 0 ? '' : undefined}>
+      <p set:html={content} />
+    </div>
+  </div>)}
+</div>
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-approach]')) {
+    const triggers = [...root.querySelectorAll<HTMLButtonElement>('[data-approach-trigger]')];
+    const panelFor = (button: HTMLButtonElement) => document.getElementById(button.getAttribute('aria-controls')!)!;
+    const setOpen = (button: HTMLButtonElement, open: boolean) => {
+      const panel = panelFor(button);
+      if ((button.getAttribute('aria-expanded') === 'true') === open) return;
+      button.setAttribute('aria-expanded', String(open));
+      if (open) { panel.removeAttribute('hidden'); panel.dataset.open = ''; panel.style.height = '0px'; requestAnimationFrame(() => { panel.style.height = `${panel.scrollHeight}px`; }); }
+      else { panel.style.height = `${panel.scrollHeight}px`; void panel.offsetHeight; requestAnimationFrame(() => { panel.style.height = '0px'; }); delete panel.dataset.open; }
+    };
+    // One open at a time; opening a row closes the others.
+    const show = (button: HTMLButtonElement) => { for (const other of triggers) setOpen(other, other === button); };
+    for (const button of triggers) {
+      const panel = panelFor(button);
+      button.addEventListener('click', () => { if (button.getAttribute('aria-expanded') === 'true') setOpen(button, false); else show(button); });
+      panel.addEventListener('transitionend', event => {
+        if (event.propertyName !== 'height') return;
+        if (button.getAttribute('aria-expanded') !== 'true') panel.setAttribute('hidden', 'until-found');
+        panel.style.removeProperty('height');
+      });
+      panel.addEventListener('beforematch', () => show(button));
+    }
+  }
+</script>
+<style>
+  .approach { --approach-inset: 24px; --approach-number: 40px; border-top: 1px solid var(--color-line); }
+  @media (min-width: 768px) { .approach { --approach-inset: 56px; } }
+  .approach-item { border-bottom: 1px solid var(--color-line); }
+  .approach-trigger {
+    display: flex; align-items: flex-start; width: 100%; padding: 28px 0 28px var(--approach-inset); text-align: left; cursor: pointer;
+    color: color-mix(in srgb, var(--color-fg-max) 45%, var(--color-canvas)); transition: color 0.2s ease;
+  }
+  .approach-trigger:hover, .approach-trigger:focus-visible, .approach-trigger[aria-expanded="true"] { color: var(--color-fg-max); }
+  .approach-number { flex: none; width: var(--approach-number); padding-top: 0.5em; font-family: var(--font-mono); font-size: 12px; line-height: 1; }
+  .approach-title { font-family: var(--font-display); font-size: clamp(30px, 3.4vw, 48px); font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase; }
+  .approach-panel { height: 0; overflow: hidden; transition: height 0.3s ease-out; }
+  .approach-panel[data-open] { height: auto; }
+  .approach-panel p {
+    max-width: 62ch; padding: 0 0 28px calc(var(--approach-inset) + var(--approach-number));
+    font-size: var(--type-body-lead-size); line-height: var(--type-body-lead-leading); color: var(--color-fg-2);
+  }
+</style>

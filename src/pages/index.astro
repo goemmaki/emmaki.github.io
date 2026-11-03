@@ -8,6 +8,7 @@ import PageClosing from '../components/PageClosing.astro';
 import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
+import ApproachAccordion from '../components/ApproachAccordion.astro';
 import gigAvatar from '@/assets/gig/emma.png';
 import { heroPortrait } from '@/lib/hero-portrait';
 import { getEntry } from 'astro:content';
@@ -29,6 +30,15 @@ const credibility = [
 ];
 // The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
 // are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.
+// My approach: the owner's copy (2026-11-03), to be tightened.
+const approach = [
+  { title: 'Hard sells, mostly', content: "A lot of what I write is for B2B tech and products that take some explaining. Doing the same kind of job over and over for 20 years means I've probably seen your root problem before. If not, I love a good challenge." },
+  { title: "I start with what's wrong", content: "Briefs usually ask for a deliverable. Someone asking for an explainer video might need clearer answers, or a simple automated reply. Before I write anything, I'll tell you what I think the problem is, and you can tell me if I've got it wrong." },
+  { title: "You'll hear what I think", content: "If your plan has a hole in it, you'll hear about it in my first reply, before you've paid anything. And if the job isn't right for me, I'll say so and point you to someone it suits." },
+  { title: 'We decide what "working" means', content: "Some writers will tell you their humanity and experience are the value they bring to the table. Sure, I've got those too, but I also go by data and outcomes, so we agree up front what the copy has to move, whether that's demo requests or replies to a cold email. And yes, if you don't want AI anywhere near my writing, just ask. I managed for 16 years without it." },
+  { title: 'Me on the writing, the machine on the chores', content: "I use AI every day (<em>I built this website with it!</em>). I'm happy to use it for writing where the audience is increasingly non-human, and for pushing digital paper around. I wouldn't call that a skill. It's how I'm adapting, in a way that works for me and my clients, to a world nobody can keep up with. But when it comes to getting humans to do stuff, I do things the hard way." },
+  { title: 'AI reads the results', content: "Outcomes are easier to measure than ever, and for someone like me that's the best use of AI. It shows what the copy earned and where readers dropped off, and I rewrite from there." },
+];
 // The case frame shows the example case study's client until the home page has a real one.
 const example = await getEntry('work', 'placeholder');
 const caseClient = BRANDS.find((brand) => brand.name === example?.data.client);
@@ -70,7 +80,12 @@ const gigs = [
   </section>
   <section class="shell"><CaseFrame brandColor={caseClient.color!} clientName={caseClient.name} facts={[]} /></section>
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
-  <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">My approach</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
+  <section class="shell pt-32">
+    <p class="type-meta text-fg-2 uppercase">My approach</p>
+    <h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">I do the hard part by hand.</h2>
+    <h3 class="mt-16 type-h3 text-fg-max">What you're paying me for</h3>
+    <div class="mt-8"><ApproachAccordion items={approach} /></div>
+  </section>
   <section class="pt-32">
     <ClientSlots class="shell" />
   </section>
