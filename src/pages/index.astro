@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ClientSlots from '../components/ClientSlots.astro';
+import CaseFrame from '../components/CaseFrame.astro';
 import Statement from '../components/Statement.astro';
 import WhyMe from '../components/WhyMe.astro';
 import PageClosing from '../components/PageClosing.astro';
@@ -9,6 +10,8 @@ import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
 import gigAvatar from '@/assets/gig/emma.png';
 import { heroPortrait } from '@/lib/hero-portrait';
+import { getEntry } from 'astro:content';
+import { BRANDS } from '@/lib/content';
 const portrait = await heroPortrait();
 const links = [
   { text: 'get it', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
@@ -26,6 +29,10 @@ const credibility = [
 ];
 // The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
 // are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.
+// The case frame shows the example case study's client until the home page has a real one.
+const example = await getEntry('work', 'placeholder');
+const caseClient = BRANDS.find((brand) => brand.name === example?.data.client);
+if (!caseClient?.color) throw new Error("Home case frame needs the example case study's client and its brand color");
 const gigs = [
   { category: 'Sales Copy', title: 'I will write sales copy for landing pages, sales pages, and funnels', reviews: '435', price: 'From $150' },
   { category: 'Review & Rewrite', title: 'I will rewrite and improve articles, blogs, and website content', reviews: '∞', price: 'From $100' },
@@ -51,7 +58,6 @@ const gigs = [
   </section>
   <CautionTape />
   <Statement kicker="Who I am" before="I write copy for B2B tech and other hard sells, so people" {links} after="." />
-  <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32">
     <div class="lg:flex lg:items-end lg:justify-between lg:gap-gutter">
       <div>
@@ -62,6 +68,11 @@ const gigs = [
     </div>
     <div class="mt-12"><GigShelf {gigs} avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" rating="5.0" extra="Offers video consultations" /></div>
   </section>
-  <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
+  <section class="shell"><CaseFrame brandColor={caseClient.color!} clientName={caseClient.name} facts={[]} /></section>
+  <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
+  <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">My approach</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
+  <section class="pt-32">
+    <ClientSlots class="shell" />
+  </section>
   <PageClosing />
 </Base>
