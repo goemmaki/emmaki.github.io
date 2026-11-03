@@ -8,23 +8,11 @@ import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import { heroPortrait } from '@/lib/hero-portrait';
 const portrait = await heroPortrait();
-// H1 candidates (2026-11-03, Claude's round at the owner's request; ~120 characters for 3 lines at 1440).
-// The build ships the first; in dev, the review picker (or ?h1=N) swaps the words in place until the owner picks one.
-const h1Options = [
-  { label: '1 Complicated products', before: 'I’m a B2B tech copywriter who helps complicated products', links: ['get understood', 'get chosen', 'get results'], after: ', without the AI slop.' },
-  { label: '2 Everyone else', before: 'I’m a copywriter for B2B tech and everyone else with something hard to sell. I get it', links: ['understood', 'chosen', 'bought'], after: '.' },
-  { label: '3 Hard sell', before: 'I write copy for B2B tech and anyone with a hard sell, so it', links: ['gets understood', 'gets chosen', 'gets results'], after: '.' },
-  { label: '4 Other hard sells', before: 'Copywriter for B2B tech and other hard sells. I help you', links: ['explain better', 'sell smarter', 'scale faster'], after: ', without the slop.' },
-  { label: '5 Complicated things to sell', before: 'I’m a B2B tech copywriter. I help businesses with complicated things to sell', links: ['get understood', 'get chosen', 'get results'], after: '.' },
-  { label: '6 Complicated businesses', before: 'B2B tech copywriter. I help complicated businesses', links: ['get understood', 'get chosen', 'get results at scale'], after: ', without the slop.' },
+const links = [
+  { text: 'get understood', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
+  { text: 'get chosen', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
+  { text: 'get results', href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
 ];
-const h1 = h1Options[0];
-const linkCases = [
-  { href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
-  { href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
-  { href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
-];
-const links = linkCases.map((item, i) => ({ ...item, text: h1.links[i] }));
 const credibility = [
   { kind: 'figure' as const, figure: 'Top Rated Seller', label: 'On Fiverr since 2015', accent: true },
   { kind: 'figure' as const, figure: '4.8k', label: 'Orders' },
@@ -46,41 +34,8 @@ const credibility = [
     <ClientSlots class="shell" />
   </section>
   <CautionTape />
-  <Statement kicker="Who I am" before={h1.before} {links} after={h1.after} />
-  {import.meta.env.DEV && <form class="h1-review" aria-label="H1 review" data-h1-review data-options={JSON.stringify(h1Options)}>
-    <label>H1 <select name="h1">{h1Options.map((option, i) => <option value={i + 1}>{option.label}</option>)}</select></label>
-  </form>}
+  <Statement kicker="Who I am" before="I’m a B2B tech copywriter helping businesses with hard sells" {links} after="." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
   <PageClosing />
 </Base>
-<script>
-  // Dev-only H1 review: rewrites the Statement's text nodes so its link listeners survive.
-  const form = document.querySelector<HTMLFormElement>('[data-h1-review]');
-  const h1 = document.querySelector<HTMLElement>('[data-statement] h1');
-  if (form && h1) {
-    const options: { before: string; links: string[]; after: string }[] = JSON.parse(form.dataset.options!);
-    const select = form.querySelector('select')!;
-    const show = (n: number) => {
-      const option = options[n - 1]; if (!option) return;
-      select.value = String(n);
-      h1.firstChild!.nodeValue = `${option.before} `;
-      const links = h1.querySelectorAll('[data-statement-link]');
-      links.forEach((link, i) => { link.firstChild!.nodeValue = option.links[i]; });
-      const mark = option.after.match(/^\S*/)![0];
-      links[links.length - 1].nextSibling!.nodeValue = mark;
-      h1.lastChild!.nodeValue = option.after.slice(mark.length);
-    };
-    show(Number(new URL(location.href).searchParams.get('h1')) || 1);
-    form.addEventListener('submit', event => event.preventDefault());
-    select.addEventListener('change', () => {
-      show(Number(select.value));
-      const next = new URL(location.href); next.searchParams.set('h1', select.value); history.replaceState(null, '', next);
-    });
-  }
-</script>
-<style>
-  .h1-review { position: fixed; z-index: 55; right: var(--layout-gutter); bottom: var(--space-interface-16); padding: var(--space-interface-8); border: var(--shape-border-width) solid var(--color-border-default); border-radius: var(--shape-control-radius); background: var(--color-canvas); color: var(--color-text-secondary); font-family: var(--font-body); font-size: var(--type-meta-default-size); }
-  .h1-review label { display: flex; align-items: center; gap: var(--space-interface-8); }
-  .h1-review select { color: var(--color-text-primary); background: var(--color-canvas); padding: var(--space-interface-4); border-radius: var(--shape-control-radius); border: var(--shape-border-width) solid var(--color-border-default); }
-</style>
