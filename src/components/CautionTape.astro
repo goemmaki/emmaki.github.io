@@ -30,7 +30,10 @@ const copies = Array.from({ length: 18 });
       tape.style.setProperty('--tape-duration', `${(width + pad) / 40}s`);
     };
     document.fonts.ready.then(pace).catch(error => console.error('Tape font failed to load', error));
-
+    const tracks = [...tape.querySelectorAll<HTMLElement>('.tape-track')];
+    new IntersectionObserver(([entry]) => {
+      for (const track of tracks) track.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+    }).observe(tape);
   }
 </script>
 <style>
