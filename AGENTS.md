@@ -24,7 +24,7 @@
 
 ## Next action
 
-- Latest (2026-11-03): owner review round completed on `review/overnight-20261103`; see [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md). The overnight handoff is superseded.
+- Latest (2026-11-03): owner review round on `review/overnight-20261103` (dev 3004); 7 items await the owner: [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md).
 - Home hero and copy (2026-11-03; 2560 composition and placeholder h1 remain): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
 - Ideas kept for later: [docs/ideas.md](docs/ideas.md).
