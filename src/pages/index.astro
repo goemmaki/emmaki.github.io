@@ -6,6 +6,7 @@ import WhyMe from '../components/WhyMe.astro';
 import PageClosing from '../components/PageClosing.astro';
 import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
+import GigCard from '../components/GigCard.astro';
 import { heroPortrait } from '@/lib/hero-portrait';
 const portrait = await heroPortrait();
 const links = [
@@ -36,6 +37,13 @@ const credibility = [
   <CautionTape />
   <Statement kicker="Who I am" before="I write copy for B2B tech and other hard sells, so people" {links} after="." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
+  <section class="shell pt-32">
+    <p class="type-meta text-fg-2 uppercase">My services</p>
+    <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Placeholder: what I can do for you.</h2>
+    <div class="mt-12 grid gap-x-(--gutter) gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      <GigCard seller="Emma R." badge="Vetted Pro" title="I will write sales copy for landing pages, sales pages, and funnels" rating="5.0" reviews={435} price="From $150" extra="Offers video consultations" />
+    </div>
+  </section>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
   <PageClosing />
 </Base>
