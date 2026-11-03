@@ -8,17 +8,15 @@ import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import { heroPortrait } from '@/lib/hero-portrait';
 const portrait = await heroPortrait();
-// H1 candidates (2026-11-03, the owner's shortlist from ChatGPT; American spelling). The build ships the
-// first; in dev, the review picker (or ?h1=N) swaps the words in place until the owner picks one.
+// H1 candidates (2026-11-03, Claude's round at the owner's request; ~120 characters for 3 lines at 1440).
+// The build ships the first; in dev, the review picker (or ?h1=N) swaps the words in place until the owner picks one.
 const h1Options = [
-  { label: '1 Outsourcing the thinking', before: 'I help tech companies and ambitious businesses to', links: ['make complexity clear', 'turn interest into action', 'scale what works'], after: '. Without outsourcing the thinking.' },
-  { label: '2 Commercially aggressive', before: 'I help founders and businesses to', links: ['explain difficult things', 'sell them convincingly', 'do more with less'], after: '. Without sacrificing quality for quantity.' },
-  { label: '3 AI positioning', before: 'I help B2B teams and growing brands to', links: ['communicate clearly', 'convert more prospects', 'put AI to work'], after: '. Without letting AI call the shots.' },
-  { label: '4 More distinctive', before: 'I help technical minds and commercial teams to', links: ['find the right words', 'win over the skeptics', 'make good ideas scale'], after: '. Without watering anything down.' },
-  { label: '5 More strategic', before: 'I help tech companies and ambitious brands to', links: ['clarify their positioning', 'strengthen their persuasion', 'systemize their content'], after: '. Without losing what makes them different.' },
-  { label: '6 Direct, less jargon', before: 'I help businesses with complicated things to sell', links: ['get understood', 'get chosen', 'get results at scale'], after: '. Without making everything more complicated.' },
-  { label: '7 Your judgment', before: 'I help founders and teams to', links: ['make the complex simple', 'make the message compelling', 'make content scale'], after: '. Without replacing experience with automation.' },
-  { label: '8 Shortest', before: 'I help businesses to', links: ['explain better', 'sell smarter', 'scale faster'], after: '. Without losing the human touch.' },
+  { label: '1 Complicated products', before: 'I’m a B2B tech copywriter who helps complicated products', links: ['get understood', 'get chosen', 'get results'], after: ', without the AI slop.' },
+  { label: '2 Everyone else', before: 'I’m a copywriter for B2B tech and everyone else with something hard to sell. I get it', links: ['understood', 'chosen', 'bought'], after: '.' },
+  { label: '3 Hard sell', before: 'I write copy for B2B tech and anyone with a hard sell, so it', links: ['gets understood', 'gets chosen', 'gets results'], after: '.' },
+  { label: '4 Other hard sells', before: 'Copywriter for B2B tech and other hard sells. I help you', links: ['explain better', 'sell smarter', 'scale faster'], after: ', without the slop.' },
+  { label: '5 Complicated things to sell', before: 'I’m a B2B tech copywriter. I help businesses with complicated things to sell', links: ['get understood', 'get chosen', 'get results'], after: '.' },
+  { label: '6 Complicated businesses', before: 'B2B tech copywriter. I help complicated businesses', links: ['get understood', 'get chosen', 'get results at scale'], after: ', without the slop.' },
 ];
 const h1 = h1Options[0];
 const linkCases = [
@@ -67,8 +65,11 @@ const credibility = [
       const option = options[n - 1]; if (!option) return;
       select.value = String(n);
       h1.firstChild!.nodeValue = `${option.before} `;
-      h1.querySelectorAll('[data-statement-link]').forEach((link, i) => { link.firstChild!.nodeValue = option.links[i]; });
-      h1.lastChild!.nodeValue = option.after.slice(1);
+      const links = h1.querySelectorAll('[data-statement-link]');
+      links.forEach((link, i) => { link.firstChild!.nodeValue = option.links[i]; });
+      const mark = option.after.match(/^\S*/)![0];
+      links[links.length - 1].nextSibling!.nodeValue = mark;
+      h1.lastChild!.nodeValue = option.after.slice(mark.length);
     };
     show(Number(new URL(location.href).searchParams.get('h1')) || 1);
     form.addEventListener('submit', event => event.preventDefault());
