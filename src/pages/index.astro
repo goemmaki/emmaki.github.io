@@ -53,8 +53,13 @@ const gigs = [
   <Statement kicker="Who I am" before="I write copy for B2B tech and other hard sells, so people" {links} after="." />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32">
-    <p class="type-meta text-fg-2 uppercase">Services</p>
-    <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Get the brains without the payroll.</h2>
+    <div class="lg:flex lg:items-end lg:justify-between lg:gap-gutter">
+      <div>
+        <p class="type-meta text-fg-2 uppercase">Services</p>
+        <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Get the brains without the payroll.</h2>
+      </div>
+      <p class="mt-6 max-w-[36ch] type-lead text-fg-2 text-pretty lg:mt-0">You shouldn't have to know how to solve a problem before hiring someone to solve it, let alone make every little decision for them.</p>
+    </div>
     <div class="mt-12"><GigShelf {gigs} avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" rating="5.0" extra="Offers video consultations" /></div>
   </section>
   <section class="shell pt-32"><p class="type-meta text-fg-2 uppercase">Why me</p><h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">Placeholder: why hire me, to be designed.</h2></section>
