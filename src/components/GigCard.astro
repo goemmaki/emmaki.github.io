@@ -1,9 +1,10 @@
 ---
 // A replica of the owner's Fiverr gig card (reference: runtime/gig-card/reference.png, 2026-11-03), measured at
 // 1x: Fiverr's sizes, spacing and light-mode colors, with a dark mode of its own. Fiverr's heart is left out;
-// the thumbnail and avatar are placeholders until the owner supplies them. No links yet.
-interface Props { seller: string; badge: string; title: string; rating: string; reviews: number; price: string; extra?: string }
-const { seller, badge, title, rating, reviews, price, extra } = Astro.props;
+// the thumbnail is a placeholder until the owner supplies one. No links yet.
+import { Image } from 'astro:assets';
+interface Props { avatar: ImageMetadata; seller: string; badge: string; title: string; rating: string; reviews: number; price: string; extra?: string }
+const { avatar, seller, badge, title, rating, reviews, price, extra } = Astro.props;
 ---
 <article class="gig">
   <div class="gig-thumb">
@@ -11,7 +12,7 @@ const { seller, badge, title, rating, reviews, price, extra } = Astro.props;
     <span class="gig-dots" aria-hidden="true"><i data-on></i><i></i><i></i></span>
   </div>
   <div class="gig-seller">
-    <span class="gig-avatar" aria-hidden="true"><span class="gig-online"></span></span>
+    <span class="gig-avatar"><Image src={avatar} alt="" width={28} height={28} densities={[1, 2, 3]} format="webp" /><span class="gig-online" aria-hidden="true"></span></span>
     <span class="gig-name">{seller}</span>
     <span class="gig-badge">{badge}</span>
   </div>
@@ -44,6 +45,7 @@ const { seller, badge, title, rating, reviews, price, extra } = Astro.props;
   .gig-dots i[data-on] { background: #fff; }
   .gig-seller { display: flex; align-items: center; gap: 6px; margin-top: 10px; height: 28px; }
   .gig-avatar { position: relative; flex: none; width: 28px; height: 28px; border-radius: 50%; background: #feca01; }
+  .gig-avatar img { width: 100%; height: 100%; border-radius: 50%; }
   .gig-online { position: absolute; right: -2px; bottom: -1px; width: 9px; height: 9px; border-radius: 50%; background: #1dbf73; border: 1.5px solid var(--color-canvas); }
   .gig-name { font-size: 14px; font-weight: 700; color: var(--gig-ink); }
   .gig-badge { margin-left: auto; padding: 0 7px; border-radius: 4px; background: var(--gig-badge-bg); color: var(--gig-badge-ink); font-size: 14px; font-weight: 600; line-height: 20px; }
