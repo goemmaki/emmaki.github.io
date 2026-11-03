@@ -1,9 +1,11 @@
 ---
 import { FIVERR_PROFILE_URL } from '@/lib/content';
 import HeroWords from './HeroWords.astro';
+import { heroPortrait } from '@/lib/hero-portrait';
+const portrait = await heroPortrait();
 // The big line above the fold is a hook, not the page's h1 (that sits in the statement below the fold).
 ---
-<section data-header-clear class="poster-review shell" data-poster>
+<section data-header-clear class="poster-review shell" data-poster data-portrait={portrait.src}>
   <div class="poster-art" aria-hidden="true"><HeroWords /></div>
   <div class="poster-figure" aria-hidden="true">
     <div class="poster-disk"></div>
@@ -45,38 +47,13 @@ import HeroWords from './HeroWords.astro';
   const screen = canvas.getContext('2d')!;
   const disk = root.querySelector<HTMLElement>('.poster-disk')!;
   const person = root.querySelector<HTMLElement>('.poster-person')!;
-  let portrait: Promise<HTMLCanvasElement> | undefined, generation = 0;
+  let portrait: Promise<HTMLImageElement> | undefined, generation = 0;
 
-  // Transparent cutouts work directly. White-backdrop photos use an edge-connected
-  // matte, preserving enclosed whites (skin, reflections) rather than color-keying them.
+  // The portrait arrives already cut out and trimmed (scripts/hero-cutout.mjs), so it only needs decoding.
   function source() {
     return portrait ??= (async () => {
-      const image = new Image(); image.src = '/hero/portrait.png'; await image.decode();
-      const work = document.createElement('canvas');
-      work.height = Math.min(1200, image.naturalHeight); work.width = Math.round(work.height * image.naturalWidth / image.naturalHeight);
-      const c = work.getContext('2d', { willReadFrequently: true })!;
-      c.drawImage(image, 0, 0, work.width, work.height);
-      const pixels = c.getImageData(0, 0, work.width, work.height), p = pixels.data;
-      const w = work.width, h = work.height, seen = new Uint8Array(w * h), queue = new Int32Array(w * h);
-      let start = 0, end = 0;
-      function visit(n: number) {
-        if (seen[n]) return;
-        seen[n] = 1; const i = n * 4;
-        if (p[i + 3] < 16 || (Math.min(p[i], p[i + 1], p[i + 2]) > 230 && Math.max(p[i], p[i + 1], p[i + 2]) - Math.min(p[i], p[i + 1], p[i + 2]) < 20)) queue[end++] = n;
-      }
-      for (let x = 0; x < w; x++) { visit(x); visit((h - 1) * w + x); }
-      for (let y = 0; y < h; y++) { visit(y * w); visit(y * w + w - 1); }
-      while (start < end) {
-        const n = queue[start++], x = n % w, y = Math.floor(n / w); p[n * 4 + 3] = 0;
-        if (x) visit(n - 1); if (x < w - 1) visit(n + 1); if (y) visit(n - w); if (y < h - 1) visit(n + w);
-      }
-      let left = w, top = h, right = 0, bottom = 0;
-      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (p[(y * w + x) * 4 + 3] > 32) { left = Math.min(left, x); top = Math.min(top, y); right = Math.max(right, x); bottom = Math.max(bottom, y); }
-      if (right <= left || bottom <= top) throw new Error('Portrait has no foreground');
-      c.putImageData(pixels, 0, 0);
-      const trimmed = document.createElement('canvas'); trimmed.width = right - left + 1; trimmed.height = bottom - top + 1;
-      trimmed.getContext('2d')!.drawImage(work, left, top, trimmed.width, trimmed.height, 0, 0, trimmed.width, trimmed.height);
-      return trimmed;
+      const image = new Image(); image.src = root.dataset.portrait!; await image.decode();
+      return image;
     })();
   }
 
