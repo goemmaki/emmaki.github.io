@@ -13,6 +13,7 @@ const list = strip.querySelector<HTMLElement>('[data-client-slots]');
 if (list) {
   const clients = [...BRANDS].sort((a, b) => CLIENT_STRIP_ORDER.indexOf(a.name) - CLIENT_STRIP_ORDER.indexOf(b.name));
   let cols = 5, shown: number[] = [], queue: number[] = [], hovered = false, visible = false, timer = 0, preparing = false;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const reels: HTMLElement[] = [];
   const makeLogo = (brand: typeof clients[number]) => {
     const logo = document.createElement('span'); logo.className = 'client-slot-logo';
@@ -43,7 +44,7 @@ if (list) {
   })).then(() => { logosReady = true; start(); }).catch(error => console.error('Client logo preload failed', error));
   const order = () => { const rest = Array.from({length: cols - 1}, (_, i) => i + 1); for (let i = rest.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]]; } return [...rest, 0]; };
   const stop = () => { clearInterval(timer); timer = 0; };
-  const start = () => { if (!logosReady || !visible || hovered || timer) return; timer = window.setInterval(async () => {
+  const start = () => { if (reduce.matches || !logosReady || !visible || hovered || timer) return; timer = window.setInterval(async () => {
     if (preparing) return;
     if (!queue.length) queue = order();
     const c = queue[0]!, reel = reels[c], brands = clients.filter((_, i) => i % cols === c);
@@ -51,17 +52,33 @@ if (list) {
     try {
       const next = makeLogo(brands[(shown[c] + 2) % brands.length]);
       await Promise.all([...next.querySelectorAll('img')].map(img => img.decode()));
-      if (!visible || hovered || !timer || reel !== reels[c] || queue[0] !== c) return;
+      if (reduce.matches || !visible || hovered || !timer || reel !== reels[c] || queue[0] !== c) return;
       queue.shift(); reel.append(next); reel.dataset.rolling = '';
       reel.ontransitionend = (event) => { if (event.target !== reel) return; shown[c]++; reel.firstElementChild?.remove(); delete reel.dataset.rolling; };
     } catch (error) { console.error('Client logo roll preparation failed', error); }
     finally { preparing = false; }
   }, 1400); };
   updateCols();
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; visible ? start() : stop(); }); observer.observe(strip);
-    strip.addEventListener('pointerenter', () => { hovered = true; stop(); }); strip.addEventListener('pointerleave', () => { hovered = false; start(); });
-  }
+  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; visible ? start() : stop(); }); observer.observe(strip);
+  strip.addEventListener('pointerenter', () => { hovered = true; stop(); }); strip.addEventListener('pointerleave', () => { hovered = false; start(); });
+  reduce.addEventListener('change', () => {
+    if (reduce.matches) {
+      stop();
+      for (const reel of reels) if (reel.hasAttribute('data-rolling')) {
+        reel.ontransitionend = null;
+        reel.style.transitionDuration = '0s';
+      }
+    } else {
+      for (const [c, reel] of reels.entries()) if (reel.hasAttribute('data-rolling')) {
+        shown[c]++;
+        reel.firstElementChild?.remove();
+        delete reel.dataset.rolling;
+        reel.ontransitionend = null;
+        reel.style.removeProperty('transition-duration');
+      }
+      start();
+    }
+  });
   for (const query of ['(min-width: 64rem)', '(min-width: 40rem)']) matchMedia(query).addEventListener('change', () => { updateCols(); stop(); start(); });
   window.addEventListener('resize', () => { updateCols(); });
 }
