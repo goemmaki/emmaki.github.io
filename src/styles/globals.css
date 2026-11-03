@@ -235,20 +235,10 @@
  * shell's inner width.
  *   S = (W - gap - cap*rowGap/kH) / (kW + cap*(cap + lead + qBlock*r)/kH)
  * The question takes 35% of the text column on two lines (r = 0.35 * kW / 5.108,
- * the width of "HELP YOU?"), and rect-fit.tsx sizes the H1 into the block beside
+ * the width of "HELP YOU?"), and HeroWords.astro sizes the H1 into the block beside
  * it. When that would go under 16px it sets data-stacked: the question takes the
  * full column and the H1 drops under the rectangle.
  */
-/*
- * The rectangle's height is ~0.383 x its width + 36px (the fixed row gap), so this
- * width is the largest that still fits the first screen under the header (h-16)
- * with 52px above and below.
- */
-.hero-frame {
-  container-type: inline-size;
-  /* the hero runs under the header and stops --peek short of the fold, so the next section shows */
-  max-width: calc((100svh - var(--peek) - 4rem - 2 * var(--space-editorial-52) - 36px) / 0.383);
-}
 :root { --peek: clamp(72px, 14svh, 160px); }
 .hero-poster {
   --cap: 0.72;
@@ -339,7 +329,7 @@
 }
 
 /*
- * Page cover (page-cover.tsx): the page's word in Geist 600 at -0.06em, 30.5% of the width on every
+ * Page cover (PageCover.astro): the page's word in Geist 600 at -0.06em, 30.5% of the width on every
  * page (the owner's pick, from the first Proof mockup, 2026-10-27). A longer word would shrink to
  * fit: --ink is its measured ink width in em at this tracking. The line box is the cap height;
  * as on Crossed Wires, a quarter of it hangs below the window and .page-cover-overhang makes room
@@ -375,7 +365,7 @@
 }
 
 /*
- * Brand wall (brand-wall.tsx): the covers' Geist 600 at -0.06em, sized on the content column (the
+ * Brand wall (BrandWall.astro): the covers' Geist 600 at -0.06em, sized on the content column (the
  * list is its own container, so names never reach the gutter) and capped at 5.5rem: a client list,
  * not a headline, even on a 4K screen. A name too long for the column wraps. Hovering a name turns
  * it the brand's colour (--brand, set per name).
@@ -401,13 +391,13 @@
   color: var(--brand-hover-light, var(--brand, currentColor));
 }
 
-/* Menu opening: layers slide in from the right edge (site-header.tsx sets timing). */
+/* Menu opening: layers slide in from the right edge (SiteHeader.astro sets timing). */
 @keyframes menu-slide-in {
   from { translate: 100% 0; }
 }
 
 /*
- * Flood button (flood-button.tsx): the arrow box is inverse ink (white in dark
+ * Flood button (BlogPost.astro and HeroPoster.astro): the arrow box is inverse ink (white in dark
  * mode, black in light). On hover or focus, yellow floods the button from the
  * left, the arrow box swaps to the page colours (black box and white arrow in
  * dark mode) and the arrow leaves up-right as another arrives from the bottom
@@ -505,7 +495,7 @@
 }
 
 /*
- * Theme switch (theme-toggle.tsx): the new theme grows out of the button as a
+ * Theme switch (ThemeToggle.astro): the new theme grows out of the button as a
  * circle. The clip variable holds the circle shut until the animation starts.
  */
 :root[data-theme-vt]::view-transition-old(root),
@@ -518,7 +508,7 @@
 }
 
 /*
- * Footer (site-footer.tsx, footer-wordmark.tsx), after 21st.dev's dithered footer by otatechie.
+ * Footer (Base.astro and Wordmark.astro), after 21st.dev's dithered footer by otatechie.
  * A field of dots (white in dark mode, black in light), sparse at the top and dense at the bottom,
  * drifts sideways; the wordmark is the gap in it (page-colour letters). A black bar closes the
  * footer in both themes; the field stops at its top edge and the wordmark is cropped there, partway
@@ -588,7 +578,7 @@
     var(--footer-dither);
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* Moving in whole device pixels (--footer-steps, set by footer-wordmark.tsx) keeps every dot
+  /* Moving in whole device pixels (--footer-steps, set by Wordmark.astro) keeps every dot
      crisp; sliding smoothly between pixels made the dots flicker on some screens. */
   .footer-dots { animation: footer-drift 40s steps(var(--footer-steps, 360)) infinite; }
   @supports (animation-timeline: view()) {
@@ -600,7 +590,7 @@
 @keyframes footer-rise { from { translate: 0 30%; } }
 
 /*
- * Post cover (post-cover.tsx). Both modes: a black shade over the photo, heaviest along the top for
+ * Post cover (PostCover.astro). Both modes: a black shade over the photo, heaviest along the top for
  * the header, under a white title. Dark mode: the shade also turns the photo grayscale and melts
  * into the black page at the bottom edge; a spotlight under the mouse or a finger clears it and
  * shows the colour, the footer's: a 190px circle, clear to 35%, fading in and out over 300ms. Light mode: the photo keeps
@@ -658,7 +648,7 @@
  *           background and dark text
  *   10-60   dark mode: the spotlight fails like a dying battery: stutter, brown-out and gasp, flutter, last gasps
  *   0-30    the photo drifts down within its frame (it sits 16svh above it, so no gap opens)
- *   30-85   the photo pixelates in growing steps (post-cover.tsx), the bottom dissolve grows in
+ *   30-85   the photo pixelates in growing steps (PostCover.astro), the bottom dissolve grows in
  *           (10-50) and the cover fades to the page colour, black or white (30-100)
  *   30-130  as the pixelation starts the article card slides up from below at the
  *           page's speed, its see-through top showing the photo; the photo drifts back up as it
@@ -749,7 +739,7 @@
   29%, to { opacity: 0; }
 }
 /* Over a lifting shade no one text colour holds 3:1 against the sky, so the header takes its usual
-   frosted background (site-header.tsx: bg-bg/70 backdrop-blur-md) along with its dark text. */
+   frosted background (SiteHeader.astro: bg-bg/70 backdrop-blur-md) along with its dark text. */
 @keyframes cover-header-ink {
   0%, 19.3% { --color-text-maximum: #fff; --color-text-secondary: #ededed; background-color: transparent; backdrop-filter: none; }
   19.4%, to {
@@ -800,7 +790,7 @@
 }
 
 /*
- * Status light (status-light.tsx): availability as an outlined badge holding a 6px light with a soft
+ * Status light: availability as an outlined badge holding a 6px light with a soft
  * glow of its own colour that dims and returns every 3s. Green and red are the semantic success and
  * error; yellow is the brand's (owner's call, 2026-10-27).
  */
@@ -820,7 +810,7 @@
 :is(a:hover, a:focus-visible) > .menu-link-label { translate: 20px 0; }
 
 /*
- * Bottom blur (bottom-blur.tsx, after supersolid.agency): eight stacked layers, 53svh tall and hanging
+ * Bottom blur (Base.astro, after supersolid.agency): eight stacked layers, 53svh tall and hanging
  * 17svh below the window, each blurring what's behind it harder than the last and masked to its own
  * band, so the page goes soft toward the bottom edge. At the very bottom of the page every layer's
  * radius eases to 0 together, so the footer pulls into focus, and back up on the first scroll up.
@@ -856,30 +846,8 @@
 }
 
 /*
- * Services (services.tsx, after bymonolog.com's "What we can help with"): a mono kicker over the
- * services set huge in the covers' Geist 600. All sit dimmed in the secondary ink; the one under the
- * pointer lights to full ink (the first when none is).
- */
-.services-name {
-  display: block;
-  width: fit-content;
-  font-family: var(--font-heading);
-  font-weight: var(--font-weight-announce);
-  font-size: clamp(2.25rem, 6.5vw, 5.5rem);
-  line-height: 1;
-  letter-spacing: -0.05em;
-  color: var(--color-fg-2);
-  opacity: 0.65;
-  transition: color 0.3s ease-out, opacity 0.3s ease-out;
-}
-.services-list:not(:hover) > li:first-child .services-name,
-.services-name:hover {
-  color: var(--color-fg-max);
-  opacity: 1;
-}
-
 /*
- * Client slots (client-slots.tsx), after grafit.agency: 120px cells between two lines that run to the
+ * Client slots (ClientSlots.astro), after grafit.agency: 120px cells between two lines that run to the
  * window's edges (a border-image outset paints past the box without making the page scroll), with
  * vertical lines only across the content. Logos sit at one height, capped in width, in the page's ink;
  * on hover the theme's version shows its brand colors. The background never changes.
@@ -977,7 +945,7 @@
 @keyframes testimonials-rise { from { opacity: 0; translate: 0 1.5rem; } }
 
 /*
- * Statement (statement.tsx, after grafit.agency's "Who we are"): the linked phrases sit on a faint
+ * Statement (Statement.astro, after grafit.agency's "Who we are"): the linked phrases sit on a faint
  * tint and fill with full ink on hover or keyboard focus. Under a mouse a preview card in reversed
  * ink trails the pointer, scaling in from its corner (grafit's timing); monochrome for now.
  */
@@ -1023,7 +991,7 @@
 .statement-preview[data-open] .statement-preview-inner { opacity: 1; scale: 1; }
 
 /*
- * Why me (why-me.tsx): four squares, then three wider boxes on one-pixel rules.
+ * Why me (WhyMe.astro): four squares, then three wider boxes on one-pixel rules.
  * Each figure and its label form one block. Variety comes from scale, weight and the placement of
  * that block, never from separating its parts. Hover adds seven cropped Swiss posters behind it.
  */
@@ -1229,64 +1197,7 @@
 }
 
 /*
- * Testimonial box (darlings/testimonial-box.tsx), mounted nowhere: the rotating quotes on a ruled,
- * raised ground.
- */
-.testimonial-box { padding: 16px; border: 1px solid var(--color-line); background: var(--color-bg-2); }
-.testimonial-box blockquote { margin-top: 16px; font-size: 1rem; }
-.testimonial-box figcaption { margin-top: 12px; }
-@media (min-width: 64rem) {
-  .testimonial-box { padding: 24px; }
-}
-
-/*
- * Benefit run (darlings/benefit-run.tsx), mounted nowhere: the lane pins at the top and the script
- * sets the run's height and slides the track. Reduced motion: a plain stack.
- */
-.benefit-run-lane { position: sticky; top: 24px; overflow: hidden; }
-.benefit-run-track {
-  display: flex;
-  width: max-content;
-  gap: 16px;
-  padding-inline: max(var(--gutter), (100% - var(--shell-max)) / 2 + var(--gutter));
-  will-change: translate;
-}
-/* Solid brand yellow only so the owner could see the cards while the section was drafted (owner,
-   2026-10-28). */
-.benefit-run-card {
-  flex: none;
-  width: min(20rem, 80vw);
-  min-height: 18rem;
-  padding: 24px;
-  background: var(--color-yellow-splash);
-  color: #000;
-}
-@media (min-width: 64rem) {
-  .benefit-run-track { gap: 24px; }
-  .benefit-run-card { width: 26rem; min-height: min(20rem, 100svh - 56px); padding: 32px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .benefit-run-lane { position: static; }
-  .benefit-run-track { flex-direction: column; width: auto; max-width: var(--shell-max); margin-inline: auto; padding-inline: var(--gutter); }
-  .benefit-run-card { width: auto; }
-}
-
-/*
- * Shading text (darlings/shading-text.tsx, mounted nowhere), after bymonolog.com: each letter
- * starts at a fifth of its ink and comes up to full as it passes 70% of the way down the window, in a
- * soft wave about a tenth of the text wide. The script sets --p, the fraction of the block past that line; each letter knows its
- * place (--i of --n). With reduced motion everything is at full ink.
- */
-.shading-word { display: inline-block; white-space: nowrap; }
-.shading-text [style*="--i"] {
-  opacity: clamp(0.2, 0.2 + 0.8 * (var(--p, 2) - var(--i) / var(--n)) / 0.1, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .shading-text [style*="--i"] { opacity: 1; }
-}
-
-/*
- * Faq (faq.tsx): a question's row lights in reversed ink while hovered, focused or open, and its
+ * Faq (Faq.astro): a question's row lights in reversed ink while hovered, focused or open, and its
  * text steps in 16px from each edge. After bymonolog.com's footer nav: the light comes on quickly
  * and goes out slowly, so a pointer run down the list leaves a fading trail, like fingers along a
  * piano. The ink flips at once both ways, as theirs does. The leaving timing sits on the resting
@@ -1319,7 +1230,7 @@
 }
 
 /*
- * Blog index cover (blog/page.tsx): "Crossed Wires" in Geist runs edge to edge along the bottom of
+ * Blog index cover (src/pages/blog/index.astro): "Crossed Wires" in Geist runs edge to edge along the bottom of
  * the window. Its size is the cover's width over the name's ink width in em (measured). A quarter of
  * its letters hangs below the bottom of the window and shows on scroll; .blog-cover-overhang makes
  * room for it. The tagline above is half the width between the gutters, in Geist Pixel's dots.
@@ -1481,7 +1392,7 @@
 }
 
 /*
- * Proof index (proof-index.tsx), after gorantrickovski.design's works list (owner, 2026-10-29): full-ink
+ * Proof index (ProofIndex.astro), after gorantrickovski.design's works list (owner, 2026-10-29): full-ink
  * rules, tight rows, the client in the Brands typography and the type and tags in a smaller bold,
  * after supersolid.agency's list. Names are 4rem at full width, scaling down with the list. Active rows
  * add a short blurb below the name without changing desktop row height.
