@@ -47,3 +47,8 @@ The owner is "very pleased with the migration"; these are minor but several sit 
 Working well (owner, same review): CTA buttons; Home bento animations; FAQ Ctrl+F; FAQ piano-style opening animations; the JavaScript reduction.
 
 Open items: 1–8, 11, 13–16 and 19 (12 awaiting the owner's Chrome check; 17 and 18 are tracked under 4 and 2).
+
+## To do later (owner, 2026-11-03)
+
+- Home hero at very wide screens (2560): the disk and portrait sit low. Revisit when the owner's real photos replace the AI stand-in.
+- About globe: design real controls; the Globedots review slider and Starwind popover experiments were dropped.
