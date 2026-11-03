@@ -3,11 +3,11 @@ import { PLACEHOLDER_QUOTES } from '@/lib/content';
 interface Props { size?: 'sm'|'lg'; class?: string }
 const { size = 'sm', class: className = '' } = Astro.props;
 ---
-<figure class={`testimonials ${className}`} data-testimonials>
+<div class={`testimonials ${className}`} data-testimonials>
  <div class="testimonials-line"><span class="testimonials-fill" data-held data-fill></span></div>
  <div class="mt-4 flex items-center justify-between"><div class="flex gap-2"><button type="button" class="testimonials-button" aria-label="Previous quote" data-prev><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button><button type="button" class="testimonials-button" aria-label="Next quote" data-next><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6m6 6H3"/></svg></button></div><p class="type-meta text-fg-2" data-count>01 / 03</p></div>
- <div class="testimonials-stack">{PLACEHOLDER_QUOTES.map((t, i) => <div class="testimonials-quote" data-current={i === 0 ? '' : undefined} data-quote><blockquote class={`mt-8 text-fg-max ${size === 'lg' ? 'type-h3' : 'type-editorial'}`}>“{t.quote}”</blockquote><figcaption class="mt-6 flex items-center gap-3 type-secondary text-fg-2"><span class="flex flex-col"><span class="text-fg-max">{t.name}</span><span>{t.role}</span><span>{t.company}</span></span></figcaption>{t.about && <p class="mt-6 type-meta text-fg-2 uppercase">({t.about})</p>}</div>)}</div>
-</figure>
+ <div class="testimonials-stack">{PLACEHOLDER_QUOTES.map((t, i) => <figure class="testimonials-quote" data-current={i === 0 ? '' : undefined} data-quote><blockquote class={`mt-8 text-fg-max ${size === 'lg' ? 'type-h3' : 'type-editorial'}`}>“{t.quote}”</blockquote><figcaption class="mt-6 flex items-center gap-3 type-secondary text-fg-2"><span class="flex flex-col"><span class="text-fg-max">{t.name}</span><span>{t.role}</span><span>{t.company}</span>{t.about && <span class="mt-6 block type-meta text-fg-2 uppercase">({t.about})</span>}</span></figcaption></figure>)}</div>
+</div>
 <script>
 for (const root of document.querySelectorAll<HTMLElement>('[data-testimonials]')) {
  const quotes = [...root.querySelectorAll<HTMLElement>('[data-quote]')], count = root.querySelector<HTMLElement>('[data-count]')!;
