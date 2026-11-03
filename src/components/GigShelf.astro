@@ -10,7 +10,7 @@ interface Props { gigs: Gig[]; avatar: ImageMetadata; seller: string; badge: str
 const { gigs, ...card } = Astro.props;
 ---
 <div class="gig-shelf" data-gig-shelf style={`--books: ${gigs.length}`}>
-  <span class="gig-shelf-glow" aria-hidden="true"></span>
+  <canvas class="gig-shelf-light" aria-hidden="true"></canvas>
   {gigs.map((gig, i) => <div class="gig-book" tabindex="0" data-open={i === 0 ? '' : undefined}>
     <GigCard {...card} {...gig} />
     <span class="gig-spine" aria-hidden="true">{gig.category}</span>
@@ -24,27 +24,104 @@ const { gigs, ...card } = Astro.props;
       book.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') open(book); });
       book.addEventListener('focusin', () => open(book));
     }
-    // The backlight (after vercel.com's triangle): a card-shaped glow behind the solid books, anchored to the open
-    // card and gliding after it from book to book, so only a thin rim of light shows round its edges.
-    let x = 0, y = 0, w = 0, h = 0, frame = 0, lit = false, placed = false;
+    // The open card's light, after vercel.com's triangle (runtime/vercel-triangle/report.md, 2026-11-03). Dark mode
+    // follows Vercel: the card's edges are a row of emitters, brightest near the mouse, and every pixel of the floor
+    // adds up the edges it can see, so light reaches furthest off the side the mouse is on. Light mode turns it round:
+    // the mouse is a lamp above the page and the card, standing on the floor, casts its shadow away from it, longer
+    // the further the mouse sits from the far edge. The canvas lies over the spines and under the open card.
+    const canvas = shelf.querySelector<HTMLCanvasElement>('.gig-shelf-light');
+    const gl = canvas?.getContext('webgl2', { alpha: false, antialias: false });
+    if (!canvas || !gl) continue;
+    const compile = (type: number, source: string) => {
+      const shader = gl.createShader(type)!;
+      gl.shaderSource(shader, source); gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(`Gig shelf light: ${gl.getShaderInfoLog(shader)}`);
+      return shader;
+    };
+    const program = gl.createProgram()!;
+    gl.attachShader(program, compile(gl.VERTEX_SHADER, `#version 300 es
+      void main() { gl_Position = vec4(vec2(gl_VertexID & 1, gl_VertexID >> 1) * 4.0 - 1.0, 0.0, 1.0); }`));
+    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, `#version 300 es
+      precision highp float;
+      uniform vec2 size; uniform float scale; uniform vec4 card; uniform vec2 mouse; uniform float lit; uniform bool lightTheme;
+      out vec4 color;
+      // One emitter on the card's edge: where it sits and which way it faces.
+      void edgePoint(float s, out vec2 e, out vec2 n) {
+        float w = card.z, h = card.w;
+        if (s < w) { e = card.xy + vec2(s, 0.0); n = vec2(0.0, -1.0); }
+        else if (s < w + h) { e = card.xy + vec2(w, s - w); n = vec2(1.0, 0.0); }
+        else if (s < 2.0 * w + h) { e = card.xy + vec2(2.0 * w + h - s, h); n = vec2(0.0, 1.0); }
+        else { e = card.xy + vec2(0.0, 2.0 * (w + h) - s); n = vec2(-1.0, 0.0); }
+      }
+      // From a floor point toward the lamp: in shadow while that ray crosses the card below its height.
+      float castShadow(vec2 p, vec2 lamp) {
+        vec2 toLamp = lamp - p; float far = length(toLamp);
+        vec2 u = toLamp / max(far, 0.001), inv = 1.0 / (u + vec2(equal(u, vec2(0.0))) * 1e-5);
+        vec2 t0 = (card.xy - p) * inv, t1 = (card.xy + card.zw - p) * inv;
+        float tIn = max(max(min(t0.x, t1.x), min(t0.y, t1.y)), 0.0), tOut = min(max(t0.x, t1.x), max(t0.y, t1.y));
+        if (tIn > tOut || tIn >= far) return 0.0;
+        float reach = (min(far, tOut) - tIn) * 0.45 + 12.0;
+        return pow(clamp(1.0 - tIn / reach, 0.0, 1.0), 1.6);
+      }
+      void main() {
+        vec2 p = vec2(gl_FragCoord.x, size.y * scale - gl_FragCoord.y) / scale;
+        vec2 edge = min(p, size - p);
+        float fade = lit * smoothstep(0.0, 40.0, min(edge.x, edge.y));
+        if (!lightTheme) {
+          const int N = 160;
+          float ds = 2.0 * (card.z + card.w) / float(N), sum = 0.0;
+          for (int i = 0; i < N; i++) {
+            vec2 e, n; edgePoint((float(i) + 0.5) * ds, e, n);
+            vec2 d = p - e; float dist = length(d);
+            float facing = max(dot(n, d), 0.0) / max(dist, 0.001);
+            float emit = 0.06 + exp(-length(e - mouse) / 150.0);
+            sum += emit * facing * exp(-dist / 110.0) / (dist + 24.0);
+          }
+          float light = (1.0 - exp(-sum * ds * 0.8)) * fade;
+          color = vec4(vec3(1.0, 0.765, 0.0) * light, 1.0);
+        } else {
+          // A soft lamp: average the shadow toward points round the mouse, so its edges blur like a real one's.
+          float shadow = castShadow(p, mouse);
+          for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236; shadow += castShadow(p, mouse + 70.0 * vec2(cos(a), sin(a))); }
+          shadow /= 13.0;
+          color = vec4(mix(vec3(1.0), vec3(0.42, 0.35, 0.27), shadow * 0.42 * fade), 1.0);
+        }
+      }`));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(`Gig shelf light: ${gl.getProgramInfoLog(program)}`);
+    gl.useProgram(program);
+    const uniform = (name: string) => gl.getUniformLocation(program, name);
+    const u = { size: uniform('size'), scale: uniform('scale'), card: uniform('card'), mouse: uniform('mouse'), lit: uniform('lit'), lightTheme: uniform('lightTheme') };
+    // The light is soft, so half resolution is plenty; the open card above it keeps its own crisp edge.
+    const scale = 0.5;
     const still = matchMedia('(prefers-reduced-motion: reduce)');
+    let card = [0, 0, 0, 0], mouse = [0, 0], target = [0, 0], lit = 0, on = false, placed = false, frame = 0;
     const tick = () => {
       const book = books.find(b => b.hasAttribute('data-open'));
+      const c = canvas.getBoundingClientRect();
+      const width = Math.round(c.width * scale), height = Math.round(c.height * scale);
+      if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
+      const k = still.matches || !placed ? 1 : 0.14;
       if (book) {
-        const s = shelf.getBoundingClientRect(), r = book.getBoundingClientRect();
-        const k = still.matches || !placed ? 1 : 0.14; placed = true;
-        x += (r.left - s.left - x) * k; y += (r.top - s.top - y) * k; w += (r.width - w) * k; h += (r.height - h) * k;
-        shelf.style.setProperty('--gx', `${x}px`); shelf.style.setProperty('--gy', `${y}px`);
-        shelf.style.setProperty('--gw', `${w}px`); shelf.style.setProperty('--gh', `${h}px`);
+        const r = book.getBoundingClientRect(), next = [r.left - c.left, r.top - c.top, r.width, r.height];
+        card = card.map((v, i) => v + (next[i] - v) * k);
+        mouse = mouse.map((v, i) => v + (target[i] - (i ? c.top : c.left) - v) * k);
+        placed = true;
       }
-      frame = lit ? requestAnimationFrame(tick) : 0;
+      lit += ((on ? 1 : 0) - lit) * (still.matches ? 1 : 0.08);
+      gl.viewport(0, 0, width, height);
+      gl.uniform2f(u.size, c.width, c.height); gl.uniform1f(u.scale, scale);
+      gl.uniform4f(u.card, card[0], card[1], card[2], card[3]); gl.uniform2f(u.mouse, mouse[0], mouse[1]);
+      gl.uniform1f(u.lit, lit); gl.uniform1i(u.lightTheme, document.documentElement.dataset.theme === 'light' ? 1 : 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      frame = on || lit > 0.002 ? requestAnimationFrame(tick) : 0;
     };
-    shelf.addEventListener('pointerenter', event => {
+    shelf.addEventListener('pointermove', event => {
       if (event.pointerType !== 'mouse') return;
-      lit = true; shelf.toggleAttribute('data-lit', true);
+      target = [event.clientX, event.clientY]; on = true;
       if (!frame) frame = requestAnimationFrame(tick);
     });
-    shelf.addEventListener('pointerleave', () => { lit = false; shelf.toggleAttribute('data-lit', false); });
+    shelf.addEventListener('pointerleave', () => { on = false; });
   }
 </script>
 <style>
@@ -56,18 +133,15 @@ const { gigs, ...card } = Astro.props;
 
   @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
     /* --pace stretches every duration and delay together (owner, 2026-11-03: 1.6x the Elastic Gallery's). */
-    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --pace: 1.6; --glow: rgb(255 195 0 / 0.32); --book-fill: color-mix(in srgb, var(--color-fg-max) 6%, var(--color-canvas)); --spine: calc((100% - var(--book-open) - (var(--books) - 1) * 8px) / (var(--books) - 1)); --book-ease: calc(0.7s * var(--pace)) cubic-bezier(0.25, 1, 0.5, 1); position: relative; display: flex; gap: 8px; }
+    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --pace: 1.6; --book-fill: color-mix(in srgb, var(--color-fg-max) 6%, var(--color-canvas)); --spine: calc((100% - var(--book-open) - (var(--books) - 1) * 8px) / (var(--books) - 1)); --book-ease: calc(0.7s * var(--pace)) cubic-bezier(0.25, 1, 0.5, 1); position: relative; display: flex; gap: 8px; }
     /* Exact widths, not flex shares: the opening and closing books trade the same width every frame, so the rest stay still. */
     .gig-book { position: relative; z-index: 1; flex: 0 0 var(--spine); min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
-    .gig-book[data-open] { flex: 0 0 var(--book-open); }
-    /* Solid books, spine and open card alike, so the light shows only round them. */
+    .gig-book[data-open] { z-index: 3; flex: 0 0 var(--book-open); }
+    /* Solid books, spine and open card alike, so the light lands on them rather than showing through. */
     .gig-book :global(.gig) { background: var(--book-fill); }
-    .gig-shelf-glow {
-      position: absolute; z-index: 0; left: var(--gx, 0); top: var(--gy, 0); width: var(--gw, 0); height: var(--gh, 0); pointer-events: none;
-      border-radius: 14px; background: var(--glow); box-shadow: 0 0 0 3px var(--glow); filter: blur(10px); opacity: 0;
-      transition: opacity calc(0.5s * var(--pace)) ease;
-    }
-    .gig-shelf[data-lit] .gig-shelf-glow { opacity: 1; }
+    /* The light falls on the floor and the spines round the open card (screen adds light, multiply adds shadow); it reaches
+       a gutter past the shelf's ends, where the page clips, and fades out before any edge. */
+    .gig-shelf-light { position: absolute; z-index: 2; top: -160px; left: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); height: calc(100% + 320px); pointer-events: none; mix-blend-mode: screen; }
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
@@ -84,10 +158,10 @@ const { gigs, ...card } = Astro.props;
     }
     .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity calc(0.2s * var(--pace)) ease, scale calc(0.3s * var(--pace)) ease; }
   }
-  .gig-shelf-glow { display: none; }
-  @media (min-width: 1024px) and (hover: hover) and (pointer: fine) { .gig-shelf-glow { display: block; } }
-  /* Light mode: amber, and the card's gray a shade darker so it stays above 4.5:1 on the book fill. */
-  :global([data-theme="light"]) .gig-shelf { --glow: rgb(245 158 11 / 0.3); }
+  .gig-shelf-light { display: none; }
+  @media (min-width: 1024px) and (hover: hover) and (pointer: fine) { .gig-shelf-light { display: block; } }
+  /* Light mode: a shadow, and the card's gray a shade darker so it stays above 4.5:1 on the book fill. */
+  :global([data-theme="light"]) .gig-shelf-light { mix-blend-mode: multiply; }
   :global([data-theme="light"]) .gig-shelf :global(.gig) { --gig-muted: #66686f; }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
