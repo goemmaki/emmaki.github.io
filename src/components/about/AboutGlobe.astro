@@ -1,96 +1,11 @@
----
-import { Button } from '@/components/starwind/button';
-import { Kbd } from '@/components/starwind/kbd';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/starwind/tooltip';
-
-const stroke = { fill: 'none', stroke: 'currentColor', 'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', viewBox: '0 0 24 24' } as const;
-// The rotation pad: grid area, label, key, chevron. Steps follow globe.rotate (±1 turn, ±2 tilt).
-const pad = [
-  { steps: 2, area: 'up', label: 'Tilt up', key: '↑', path: 'm6 15 6-6 6 6' },
-  { steps: -1, area: 'left', label: 'Turn left', key: '←', path: 'm15 6-6 6 6 6' },
-  { steps: 1, area: 'right', label: 'Turn right', key: '→', path: 'm9 6 6 6-6 6' },
-  { steps: -2, area: 'down', label: 'Tilt down', key: '↓', path: 'm6 9 6 6 6-6' },
-];
----
 <div class="about-globe" data-under-header data-about-globe>
-  <div class="about-globe-stage" data-globe-stage role="slider" tabindex="0" aria-label="Interactive globe" aria-describedby="about-globe-description" aria-valuemin="-180" aria-valuemax="180" aria-valuenow="0" aria-orientation="horizontal">
+  <div class="about-globe-stage" data-globe-stage aria-hidden="true">
     <div class="about-globe-surface about-globe-dots" data-globe-dots-layer aria-hidden="true">
       <canvas class="absolute inset-0 size-full" data-globe-dots></canvas>
     </div>
     <canvas class="about-globe-surface pointer-events-none absolute inset-0 size-full" data-globe-lines aria-hidden="true"></canvas>
   </div>
-  <p id="about-globe-description" class="sr-only">A slowly turning globe of dots, with Crete marked in amber. Use the arrow keys to rotate and Home to reset. In Explore, use plus and minus to zoom.</p>
   <p class="about-globe-statement">From here<span class="text-yellow-splash">.</span><br />To there<span class="text-yellow-splash">.</span></p>
-
-  <div class="globe-dock" data-globe-dock>
-    <div class="globe-dock-bar">
-      <Tooltip class="globe-dock-motion">
-        <TooltipTrigger>
-          <Button variant="ghost" size="icon-sm" data-globe-toggle aria-label="Pause">
-            <svg {...stroke} data-icon="pause"><path d="M9 5.5v13M15 5.5v13"/></svg>
-            <svg {...stroke} class="hidden" data-icon="play"><path d="M8.5 6.2v11.6L17.5 12z"/></svg>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" id="about-globe-toggle-tip">Pause</TooltipContent>
-      </Tooltip>
-      <Tooltip class="globe-dock-motion">
-        <TooltipTrigger>
-          <Button variant="ghost" size="icon-sm" class="globe-dock-rule" data-globe-replay aria-label="Replay intro">
-            <svg {...stroke}><path d="M5.5 12a6.5 6.5 0 1 0 1.9-4.6M7 4.5v3h3"/></svg>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">Replay intro</TooltipContent>
-      </Tooltip>
-      <Button variant="ghost" size="sm" class="globe-dock-explore globe-dock-rule" data-globe-explore aria-expanded="false" aria-controls="about-globe-panel">
-        Explore
-        <svg {...stroke} class="size-4"><path d="M6 12h12"/><path class="globe-dock-plus" d="M12 6v12"/></svg>
-      </Button>
-    </div>
-
-    <div id="about-globe-panel" class="globe-dock-panel" role="group" aria-label="Globe view" data-globe-panel hidden>
-      <div class="globe-dock-pad">
-        {pad.map(b => (
-          <Tooltip class={`globe-dock-${b.area}`}>
-            <TooltipTrigger>
-              <Button variant="ghost" size="icon-sm" data-globe-rotate={b.steps} aria-label={b.label}>
-                <svg {...stroke}><path d={b.path}/></svg>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">{b.label}<Kbd>{b.key}</Kbd></TooltipContent>
-          </Tooltip>
-        ))}
-        <Tooltip class="globe-dock-center">
-          <TooltipTrigger>
-            <Button variant="ghost" size="icon-sm" class="globe-dock-home" data-globe-reset aria-label="Reset view">
-              <span aria-hidden="true"></span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="left">Reset view<Kbd>Home</Kbd></TooltipContent>
-        </Tooltip>
-      </div>
-      <div class="globe-dock-zoom">
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant="ghost" size="icon-sm" data-globe-zoom="1.18" aria-label="Zoom in">
-              <svg {...stroke}><path d="M6 12h12M12 6v12"/></svg>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="left">Zoom in<Kbd>+</Kbd></TooltipContent>
-        </Tooltip>
-        <span class="globe-dock-track" aria-hidden="true"><span data-globe-zoom-level></span></span>
-        <Tooltip>
-          <TooltipTrigger>
-            <Button variant="ghost" size="icon-sm" data-globe-zoom="0.85" aria-label="Zoom out">
-              <svg {...stroke}><path d="M6 12h12"/></svg>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="left">Zoom out<Kbd>−</Kbd></TooltipContent>
-        </Tooltip>
-      </div>
-      <p class="globe-dock-hint type-meta" data-globe-instructions>Drag to rotate<br />Scroll to zoom</p>
-    </div>
-  </div>
-
 </div>
 
 <style>
@@ -110,12 +25,11 @@ const pad = [
   .about-globe > * {
     pointer-events: auto;
   }
+  /* Decorative: the globe turns on its own and takes no input. */
   .about-globe-stage {
     position: absolute;
     inset: 0;
-    touch-action: pan-y;
-    cursor: grab;
-    outline: none;
+    pointer-events: none;
   }
   .about-globe-surface {
     position: absolute;
@@ -141,22 +55,6 @@ const pad = [
   :global([data-theme="light"]) .about-globe-dots {
     mix-blend-mode: multiply;
   }
-  [data-explored] .about-globe-surface {
-    --globe-fade: 100%;
-  }
-  [data-dragging] .about-globe-stage {
-    cursor: grabbing;
-  }
-  .about-globe-stage:focus-visible {
-    outline: 1px solid var(--color-focus-ring);
-    outline-offset: -1px;
-  }
-  [data-compact]:not([data-explored]) .about-globe-stage {
-    pointer-events: none;
-  }
-  [data-explored] .about-globe-stage {
-    touch-action: none;
-  }
   :global(.page-cover:has([data-about-globe]) .page-cover-word) {
     position: relative;
     z-index: 4;
@@ -178,128 +76,8 @@ const pad = [
     text-transform: uppercase;
     color: var(--color-fg-max);
   }
-  /* The dock: one hairline box, a toolbar that opens into a view panel. */
-  .globe-dock {
-    --cell: 2.25rem;
-    position: absolute;
-    z-index: 5;
-    right: var(--gutter);
-    top: calc(4rem + 2svh);
-    border: 1px solid var(--color-line);
-    border-radius: var(--shape-control-radius);
-    background: color-mix(in oklab, var(--color-bg) 72%, transparent);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-  }
-  @media (pointer: coarse) {
-    .globe-dock {
-      --cell: 2.75rem;
-    }
-  }
-  .globe-dock :global([data-slot="button"]) {
-    width: var(--cell);
-    height: var(--cell);
-    border-radius: 0;
-  }
-  .globe-dock :global([data-slot="button"]:focus-visible) {
-    outline-offset: -5px;
-  }
-  .globe-dock-bar, .globe-dock-panel {
-    display: grid;
-    grid-template-columns: repeat(5, var(--cell));
-  }
-  .globe-dock .globe-dock-rule {
-    border-left: 1px solid var(--color-line);
-  }
-  /* EXPLORE over three cells; its +/− sits in the last, above the zoom column. */
-  .globe-dock .globe-dock-explore {
-    grid-column: span 3;
-    width: auto;
-    justify-content: space-between;
-    padding-inline: .75rem calc(var(--cell) / 2 - .5rem);
-    color: var(--color-fg-max);
-  }
-  .globe-dock-plus {
-    transform-origin: center;
-    transition: scale .25s var(--ease);
-  }
-  [aria-expanded="true"] .globe-dock-plus {
-    scale: 1 0;
-  }
-  .globe-dock-panel {
-    grid-template-areas: "pad pad pad . zoom" "hint hint hint hint hint";
-    padding-top: .5rem;
-    border-top: 1px solid var(--color-line);
-    transition: opacity .2s var(--ease), translate .2s var(--ease);
-  }
-  @starting-style {
-    .globe-dock-panel {
-      opacity: 0;
-      translate: 0 -.25rem;
-    }
-  }
-  .globe-dock-panel[hidden] {
-    display: none;
-  }
-  .globe-dock-pad {
-    grid-area: pad;
-    display: grid;
-    grid-template: repeat(3, var(--cell)) / repeat(3, var(--cell));
-    grid-template-areas: ". up ." "left center right" ". down .";
-  }
-  .globe-dock-up { grid-area: up; }
-  .globe-dock-left { grid-area: left; }
-  .globe-dock-right { grid-area: right; }
-  .globe-dock-down { grid-area: down; }
-  .globe-dock-center { grid-area: center; }
-  .globe-dock-home span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--globe-accent);
-    transition: scale .2s var(--ease);
-  }
-  .globe-dock-home:hover span {
-    scale: 1.3;
-  }
-  .globe-dock-zoom {
-    grid-area: zoom;
-    display: grid;
-    grid-template-rows: var(--cell) 1fr var(--cell);
-  }
-  .globe-dock-track {
-    position: relative;
-    justify-self: center;
-    width: 1px;
-    margin-block: .25rem;
-    background: var(--color-line-strong);
-  }
-  .globe-dock-track span {
-    position: absolute;
-    left: 50%;
-    bottom: calc(var(--zoom, .14) * 100%);
-    width: 3px;
-    height: .6rem;
-    translate: -50% 50%;
-    background: var(--color-fg-max);
-    transition: bottom .4s var(--ease);
-  }
-  .globe-dock-hint {
-    grid-area: hint;
-    margin-top: .5rem;
-    padding: .6rem .75rem .7rem;
-    border-top: 1px solid var(--color-line);
-    color: var(--color-fg-muted);
-  }
-  [data-reduced] .globe-dock-motion, [data-no-webgl] .globe-dock {
-    display: none;
-  }
-  [data-reduced] .globe-dock .globe-dock-explore {
-    grid-column: 1 / -1;
-    border-left: 0;
-  }
   @media (prefers-reduced-motion: reduce) {
-    .about-globe-surface, .globe-dock-panel, .globe-dock-plus, .globe-dock-track span {
+    .about-globe-surface {
       transition: none;
     }
   }
@@ -316,9 +94,6 @@ const pad = [
       top: calc(4.5rem + 2svh);
       font-size: clamp(1.4rem, 6vw, 2.1rem);
     }
-    .globe-dock {
-      top: calc(var(--statement-bottom) + .75rem);
-    }
   }
 </style>
 
@@ -326,63 +101,14 @@ const pad = [
   import { hasWebGL, mountGlobe } from './globe';
   const root = document.querySelector<HTMLElement>('[data-about-globe]');
   if (root) {
-    const toggle = root.querySelector<HTMLButtonElement>('[data-globe-toggle]')!;
-    const explore = root.querySelector<HTMLButtonElement>('[data-globe-explore]')!;
-    const panel = root.querySelector<HTMLElement>('[data-globe-panel]')!;
-    const zoomLevel = root.querySelector<HTMLElement>('[data-globe-zoom-level]')!;
-    const compact = matchMedia('(width < 1100px), (pointer: coarse)').matches;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!hasWebGL()) {
+    if (!hasWebGL())
       root.dataset.noWebgl = '';
-      const stage = root.querySelector<HTMLElement>('[data-globe-stage]')!;
-      stage.removeAttribute('role');
-      stage.removeAttribute('tabindex');
-      stage.removeAttribute('aria-describedby');
-      for (const attribute of [...stage.attributes]) if (attribute.name.startsWith('aria-value')) stage.removeAttribute(attribute.name);
-    } else {
+    else {
+      const compact = matchMedia('(width < 1100px), (pointer: coarse)').matches;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (compact)
         root.dataset.compact = '';
-      // Without motion there is nothing to pause or replay.
-      if (reduced)
-        root.dataset.reduced = '';
-      const globe = mountGlobe(root, {
-        animate: !compact && !reduced,
-        onState: () => {
-          const label = globe.paused ? 'Play' : 'Pause';
-          toggle.setAttribute('aria-label', label);
-          document.getElementById('about-globe-toggle-tip')!.firstChild!.textContent = label;
-          toggle.querySelector('[data-icon="pause"]')!.classList.toggle('hidden', globe.paused);
-          toggle.querySelector('[data-icon="play"]')!.classList.toggle('hidden', !globe.paused);
-          zoomLevel.style.setProperty('--zoom', String(globe.zoomLevel));
-        }
-      });
-      const setExploring = (value: boolean) => {
-        globe.setExploring(value);
-        explore.setAttribute('aria-expanded', String(value));
-        panel.hidden = !value;
-      };
-      toggle.addEventListener('click', () => {
-        if (!globe.paused)
-          globe.pause();
-        else
-          globe.play();
-      });
-      root.querySelector('[data-globe-replay]')!.addEventListener('click', () => globe.replay());
-      explore.addEventListener('click', () => setExploring(panel.hidden));
-      root.querySelectorAll<HTMLButtonElement>('[data-globe-rotate]').forEach(b => b.addEventListener('click', () => globe.rotate(Number(b.dataset.globeRotate))));
-      root.querySelectorAll<HTMLButtonElement>('[data-globe-zoom]').forEach(b => b.addEventListener('click', () => globe.zoom(Number(b.dataset.globeZoom))));
-      root.querySelector('[data-globe-reset]')!.addEventListener('click', () => globe.reset());
-      panel.addEventListener('keydown', e => globe.handleKey(e));
-      if (matchMedia('(pointer: coarse)').matches)
-        root.querySelector<HTMLElement>('[data-globe-instructions]')!.innerHTML = 'Drag to rotate<br>Pinch to zoom';
-      addEventListener('keydown', e => {
-        if (e.key !== 'Escape' || panel.hidden)
-          return;
-        const inside = root.contains(document.activeElement);
-        setExploring(false);
-        if (inside)
-          explore.focus({ preventScroll: true });
-      });
+      const globe = mountGlobe(root, { animate: !compact && !reduced, onState: () => {} });
       new IntersectionObserver(([entry]) => globe.setVisible(entry.isIntersecting)).observe(root);
       new MutationObserver(() => globe.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     }
