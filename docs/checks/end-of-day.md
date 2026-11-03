@@ -4,8 +4,8 @@ What to measure on the emmaki site and how. Two modes, one checklist:
 
 - **Quick** runs at the end of a working session, before the journal entry: did today's work break
   anything, and are the numbers moving?
-- **Full** runs overnight (`overnight-review.md`), after large changes and before launch: is the site
-  right everywhere, in every browser?
+- **Full** runs only when the owner asks for it, usually overnight through `overnight-review.md`:
+  is the site right everywhere, in every browser?
 
 Both modes measure; they don't fix. Fixing is `overnight-review.md`'s job. Earlier results, for
 comparison: `docs/journal/20261026-baseline.md` (first run, React era), `20261103-overnight.md`
@@ -19,20 +19,22 @@ Codex must never install anything (a sandboxed `pnpm install` once deleted `node
 Installed; download nothing during a run.
 
 - **Playwright 1.61.1 client:** `/home/emma/.npm/_npx/e41f203b7505f1fb/node_modules/playwright`.
-  Chromium, Firefox and WebKit (26.5, Safari's engine) all launch with it, inside Codex's sandbox
+  Chromium, Firefox and WebKit (26.5, Safari's engine; this is the Safari test) all launch with it, inside Codex's sandbox
   too (checked 2026-11-04 with `codex sandbox`). The 1.64.1 client in the pnpm dlx cache can't drive
   the cached WebKit or intercept requests in Firefox; don't use it.
 - **axe-core 4.14 and Lighthouse 13.5** in `runtime/a11y-tools`. Copy it from another worktree's
-  `runtime/`, or `npm install --prefix runtime/a11y-tools axe-core@^4.14 lighthouse@^13.5`.
+  `runtime/`, or `npm install --prefix runtime/a11y-tools axe-core@^4.14 lighthouse@^13.5 vnu-jar`.
 - **Astro's audit rules:** `node_modules/astro/dist/runtime/client/dev-toolbar/apps/audit/rules/`.
 - **Astro 7 docs:** the context7 MCP. Cite the page when a finding depends on Astro behavior.
-- Not available: real Safari, real devices, real screen readers, field Core Web Vitals (the site has
-  no production URL or visitors yet). Report these as untested; don't simulate a substitute and
-  call it the real thing.
+- **Nu HTML Checker** (`vnu-jar`, Java is installed) in `runtime/a11y-tools`:
+  `java -jar runtime/a11y-tools/node_modules/vnu-jar/build/dist/vnu.jar --skip-non-html --format json dist`.
+- Not available: real screen readers and field Core Web Vitals (no production URL or visitors yet).
+  Report both as untested in one line each.
 
 ## Prepare (Claude)
 
 - `run-check -- pnpm run check` and `run-check -- pnpm run build` (writes `dist/`). Keep both logs.
+  Full mode also: `run-check -- pnpm audit --prod` (needs network, so Claude runs it).
 - Static build: `python3 docs/checks/serve.py dist 3021` in the background (GitHub Pages behavior,
   including the 404 status). Full mode also needs the dev server for Astro's toolbar:
   `pnpm exec astro dev --port 3006` (Astro 7 detaches it; stop with `pnpm exec astro dev stop`).
@@ -89,25 +91,29 @@ Q = quick, F = full.
    unreadable. The sparkles, footer drift, blog masks, 404 nebula, caution tape and globe run
    without a pause control by the owner's decision (`docs/design-system/DESIGN.md`, "Motion"):
    accepted, not a finding. Report only a new animation that starts by itself and runs over 5 s.
-8. **Responsive layout (Q, F).** Per viewport: no horizontal overflow
+8. **Theme and first paint (Q, F).** A first visit with no stored theme follows
+   `prefers-color-scheme`; the toggle persists; no flash of the wrong theme or unstyled content and
+   no layout jump while fonts and scripts load.
+9. **Responsive layout (Q, F).** Per viewport: no horizontal overflow
    (`scrollWidth === clientWidth`), nothing overlapping, cut off or unreadable, no blurry upscaled
    images or lost layout at 4K, sticky and fixed elements behave on short viewports. Full mode:
    rotate 390×844 to 844×390 and back mid-visit; text zoom to 200% and reflow at 320 px wide (1.4.4,
-   1.4.10).
-9. **Touch (F).** On the touch contexts: tap every control; nothing that only works on hover
+   1.4.10); text spacing overrides (1.4.12); forced colors (`forcedColors: 'active'`), where
+   controls, focus and icons must stay visible; visual order matches reading and focus order (1.3.2).
+10. **Touch (F).** On the touch contexts: tap every control; nothing that only works on hover
    (`pointer: coarse`); target size at least 24×24 px or spaced (2.5.8); scrolling, swiping and
    scroll-linked effects work; no stuck hover states after a tap.
-10. **Cross-browser (Q, F).** Screenshots per engine and route; differences that matter (layout,
+11. **Cross-browser (Q, F).** Screenshots per engine and route; differences that matter (layout,
     fonts, animation fallbacks such as `animation-timeline`, `:has`, view transitions, canvas and
     WebGL) and console errors and warnings per engine.
-11. **Function (F).** Every interactive component does its job: navigation and header menu, theme
+12. **Function (F).** Every interactive component does its job: navigation and header menu, theme
     toggle (and that it persists), accordions and FAQ (closed answers still found by Ctrl+F, i.e.
     `hidden="until-found"`), page tools (copy, share, AI links), back-to-top, gig shelf, client
     logos, tooltips, the globe. Every internal link, `src` and `srcset` in `dist/` resolves; list
     external links and check they're well formed, without fetching them (never contact Fiverr or
     Upwork). The 404 returns status 404 with the 404 page. Pages without JavaScript: what still
     works, what breaks.
-12. **Performance (Q, F).** Lighthouse scores and failing audits against the last run. Full mode, per
+13. **Performance (Q, F).** Lighthouse scores and failing audits against the last run. Full mode, per
     page, in Chromium:
     - LCP element and time, CLS and its sources, total blocking time; an INP proxy from Event
       Timing on the main interactions (menu, toggle, accordion, shelf).
@@ -122,14 +128,24 @@ Q = quick, F = full.
       visible, code duplicated across components, long tasks.
     - Animation: frame rate and long tasks while scrolling Home and About (a performance trace);
       animations that keep running off screen or in a hidden tab.
-13. **SEO (Q basic, F).** Per page: `<title>` and meta description (present, unique), `lang`,
+14. **SEO (Q basic, F).** Per page: `<title>` and meta description (present, unique), `lang`,
     robots and noindex, canonical, Open Graph and Twitter tags (the image exists and is the right
-    size), structured data (valid JSON-LD), favicon. Sitemap and canonical URLs depend on `site`,
+    size), structured data (valid JSON-LD), favicon and touch icons, `robots.txt`, and whether
+    `public/llms.txt` and `public/agents.md` match the pages they describe. Sitemap and canonical URLs depend on `site`,
     which stays unset until launch (owner, 2026-11-01): report them as blocked by that, not as
     defects.
-14. **Resilience (F).** Images blocked, fonts blocked, slow 3G with CPU throttling: what the user
-    sees.
-15. **Visual regression (Q, F).** Full-page screenshots of every route, both themes, under reduced
+15. **Resilience (F).** Images blocked, fonts blocked, slow 3G with CPU throttling: what the user
+    sees. Then leave Home and About open for 5 minutes, idle and scrolling: heap growth, CPU,
+    timers and animation loops that pile up.
+16. **Standards (F).** Nu HTML Checker errors on every page in `dist/` (duplicate ids, invalid
+    nesting, bad attributes); Claude runs it if Java is blocked in the sandbox.
+17. **Security and privacy (F).** Every third-party request per page (fonts, scripts, images,
+    trackers: none expected); `target="_blank"` links and their `rel`; mixed content; nothing in
+    `dist/` that shouldn't ship (source maps, dev-only files, drafts, secrets, absolute local
+    paths); `pnpm audit` results.
+18. **Copy QA (F).** Spelling (American English), doubled words, broken markup showing as text,
+    lowercase "emmaki". Report only: the owner writes all copy.
+19. **Visual regression (Q, F).** Full-page screenshots of every route, both themes, under reduced
     motion, compared pixel by pixel with the last run's set (quick: quick matrix in Chromium; full:
     every viewport and engine, plus each animation at its start and paused at a fixed time).
     Report what changed and whether a commit explains it. Keep the set under
