@@ -1,7 +1,8 @@
 ---
 // The gig cards as a shelf of book spines (after 21st.dev's Elastic Gallery, 2026-11-03): on desktop with a mouse,
 // each closed gig is a spine with its image at the top and its short name running down; the hovered or focused one opens
-// into the full card, which keeps a fixed width so its text never reflows while the spine widens. Touch screens
+// into the full card. Nothing cross-fades: the image grows down from spine band to thumbnail while the name shrinks
+// away and the card's text, at a fixed width so it never reflows, rises into place. Touch screens
 // and narrower windows get the plain card grid; reduced motion opens books without the animation.
 import GigCard from './GigCard.astro';
 interface Gig { category: string; title: string; reviews: string; price: string }
@@ -11,7 +12,7 @@ const { gigs, ...card } = Astro.props;
 <div class="gig-shelf" data-gig-shelf>
   {gigs.map((gig, i) => <div class="gig-book" tabindex="0" data-open={i === 0 ? '' : undefined}>
     <GigCard {...card} {...gig} />
-    <span class="gig-spine" aria-hidden="true"><span class="gig-spine-art"></span><span class="gig-spine-word">{gig.category}</span></span>
+    <span class="gig-spine" aria-hidden="true">{gig.category}</span>
   </div>)}
 </div>
 <script>
@@ -32,30 +33,26 @@ const { gigs, ...card } = Astro.props;
   @media (min-width: 1280px) { .gig-shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
   @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-    .gig-shelf { --book-open: 300px; --book-ease: 0.7s cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
-    .gig-book {
-      position: relative; flex: 1 1 0px; min-width: 0; overflow: hidden; border-radius: 12px; outline-offset: 4px;
-      transition: flex var(--book-ease);
-    }
+    .gig-shelf { --book-open: 300px; --thumb-open: calc(var(--book-open) * 769 / 1280); --book-ease: 0.7s cubic-bezier(0.25, 1, 0.5, 1); display: flex; gap: 8px; }
+    .gig-book { position: relative; flex: 1 1 0px; min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
     .gig-book[data-open] { flex: 0 0 var(--book-open); }
-    .gig-book :global(.gig) { width: var(--book-open); opacity: 0; transition: opacity 0.25s ease; }
-    .gig-book[data-open] :global(.gig) { opacity: 1; transition: opacity 0.35s ease 0.2s; }
-    /* Closed, a book is its spine: the gig image as a band at the top (placeholder tone until the thumbnails
-       arrive), then the short name, bold and tracked, reading down from the foot (after the Elastic Gallery). */
+    .gig-book :global(.gig) { background: color-mix(in srgb, var(--color-fg-max) 6%, transparent); transition: background-color var(--book-ease); }
+    .gig-book[data-open] :global(.gig) { background: transparent; }
+    /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
+    .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
+    .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
+    .gig-book :global(.gig-thumb > *) { opacity: 0; transition: opacity 0.2s ease; }
+    .gig-book[data-open] :global(.gig-thumb > *) { opacity: 1; transition: opacity 0.4s ease 0.3s; }
+    .gig-book :global(.gig-body) { width: var(--book-open); opacity: 0; translate: 0 32px; transition: opacity 0.2s ease, translate 0.2s ease; }
+    .gig-book[data-open] :global(.gig-body) { opacity: 1; translate: 0 0; transition: opacity 0.5s ease 0.15s, translate var(--book-ease) 0.1s; }
+    /* The spine's name sits under the image band, bold and tracked, reading down from the foot. */
     .gig-spine {
-      position: absolute; inset: 0; display: flex; flex-direction: column; border-radius: inherit;
-      background: color-mix(in srgb, var(--color-fg-max) 6%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-fg-max) 12%, transparent);
-      transition: opacity 0.35s ease 0.3s;
-    }
-    .gig-book[data-open] .gig-spine { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
-    .gig-spine-art { flex: none; height: 96px; background: color-mix(in srgb, var(--color-fg-max) 10%, transparent); }
-    .gig-spine-word {
-      flex: 1; display: flex; justify-content: flex-end; align-items: center; padding: 16px 0 28px;
+      position: absolute; inset: 96px 0 0; display: flex; justify-content: flex-end; align-items: center; padding: 16px 0 28px; pointer-events: none;
       writing-mode: vertical-rl; font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
       line-height: 1; white-space: nowrap; color: var(--color-fg-max);
-      transition: opacity 0.5s ease 0.5s, scale 0.5s ease 0.5s;
+      transition: opacity 0.4s ease 0.35s, scale 0.4s ease 0.35s;
     }
-    .gig-book[data-open] .gig-spine-word { opacity: 0; scale: 0.5; transition: opacity 0.2s ease, scale 0.2s ease; }
+    .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity 0.2s ease, scale 0.3s ease; }
   }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }

@@ -1,7 +1,8 @@
 ---
 // A replica of the owner's Fiverr gig card (reference: runtime/gig-card/reference.png, 2026-11-03), measured at
-// 1x: Fiverr's sizes, spacing and light-mode colors, with a dark mode of its own. Fiverr's heart is left out;
-// the thumbnail is a placeholder until the owner supplies one. No links yet.
+// 1x: Fiverr's sizes, spacing, heart and light-mode colors, with a dark mode of its own; outlined, with the
+// image flush at the top and a link arrow in the corner (owner, 2026-11-03). The thumbnail is a placeholder until
+// the owner supplies one. No links yet.
 import { Image } from 'astro:assets';
 interface Props { avatar: ImageMetadata; category: string; seller: string; badge: string; title: string; rating: string; reviews: string; price: string; extra?: string }
 const { avatar, category, seller, badge, title, rating, reviews, price, extra } = Astro.props;
@@ -9,36 +10,47 @@ const { avatar, category, seller, badge, title, rating, reviews, price, extra } 
 <article class="gig">
   <div class="gig-thumb">
     <span class="gig-thumb-label" aria-hidden="true">{category}</span>
+    <svg class="gig-heart" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.3 3.6 12.2A5.3 5.3 0 0 1 12 5.1a5.3 5.3 0 0 1 8.4 7.1Z" /></svg>
     <span class="gig-dots" aria-hidden="true"><i data-on></i><i></i><i></i></span>
   </div>
-  <div class="gig-seller">
-    <span class="gig-avatar"><Image src={avatar} alt="" width={28} height={28} densities={[1, 2, 3]} format="webp" /><span class="gig-online" aria-hidden="true"></span></span>
-    <span class="gig-name">{seller}</span>
-    <span class="gig-badge">{badge}</span>
+  <div class="gig-body">
+    <div class="gig-seller">
+      <span class="gig-avatar"><Image src={avatar} alt="" width={28} height={28} densities={[1, 2, 3]} format="webp" /><span class="gig-online" aria-hidden="true"></span></span>
+      <span class="gig-name">{seller}</span>
+      <span class="gig-badge">{badge}</span>
+    </div>
+    <h3 class="gig-title">{title}</h3>
+    <p class="gig-rating">
+      <svg class="gig-star" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .9l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.3l-4.5 2.4.9-5L.8 6.2l5-.7z" /></svg>
+      <span aria-hidden="true"><strong>{rating}</strong> <span class="gig-reviews">({reviews})</span></span>
+      <span class="sr-only">Rated {rating} out of 5{reviews === '∞' ? '' : ` from ${reviews} reviews`}</span>
+    </p>
+    <p class="gig-price">{price}</p>
+    {extra && <p class="gig-extra">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="10" height="8.5" rx="1" /><path d="M11 7.2l3.6-2.2v6.5L11 9.3" /></svg>
+      {extra}
+    </p>}
+    <svg class="gig-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
   </div>
-  <h3 class="gig-title">{title}</h3>
-  <p class="gig-rating">
-    <svg class="gig-star" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 .9l2.2 4.6 5 .7-3.6 3.5.9 5L8 12.3l-4.5 2.4.9-5L.8 6.2l5-.7z" /></svg>
-    <span aria-hidden="true"><strong>{rating}</strong> <span class="gig-reviews">({reviews})</span></span>
-    <span class="sr-only">Rated {rating} out of 5{reviews === '∞' ? '' : ` from ${reviews} reviews`}</span>
-  </p>
-  <p class="gig-price">{price}</p>
-  {extra && <p class="gig-extra">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="10" height="8.5" rx="1" /><path d="M11 7.2l3.6-2.2v6.5L11 9.3" /></svg>
-    {extra}
-  </p>}
 </article>
 <style>
   .gig {
     --gig-ink: var(--color-text-maximum); --gig-text: #c5c6c9; --gig-muted: #95979d;
     --gig-badge-bg: #2b2c66; --gig-badge-ink: #d2d3ff; --gig-thumb: #1c1c1e; --gig-thumb-ink: #95979d;
-    width: 100%; font-family: var(--font-display); color: var(--gig-text);
+    --gig-line: color-mix(in srgb, var(--color-fg-max) 14%, transparent);
+    position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 12px;
+    font-family: var(--font-display); color: var(--gig-text);
   }
+  /* The outline sits over the flush image, so the line runs unbroken round the whole card. */
+  .gig::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--gig-line); border-radius: inherit; pointer-events: none; }
   :global([data-theme="light"]) .gig {
     --gig-ink: #222325; --gig-text: #404145; --gig-muted: #74767e;
     --gig-badge-bg: #d2d3ff; --gig-badge-ink: #282773; --gig-thumb: #e4e5e7; --gig-thumb-ink: #74767e;
   }
-  .gig-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 1280 / 769; border-radius: 8px; overflow: hidden; background: var(--gig-thumb); }
+  .gig-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 1280 / 769; overflow: hidden; background: var(--gig-thumb); }
+  .gig-heart { position: absolute; top: 20px; right: 20px; width: 24px; height: 22px; fill: #f85d5d; stroke: #fff; stroke-width: 2; stroke-linejoin: round; }
+  .gig-body { position: relative; padding: 0 12px 14px; }
+  .gig-arrow { position: absolute; right: 12px; bottom: 16px; width: 18px; height: 18px; color: var(--gig-muted); }
   .gig-thumb-label { font-family: var(--font-body); font-size: var(--type-meta-default-size); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gig-thumb-ink); }
   .gig-dots { position: absolute; bottom: 20px; left: 50%; translate: -50% 0; display: flex; gap: 5px; }
   .gig-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgb(255 255 255 / 0.6); box-shadow: 0 0 2px rgb(0 0 0 / 0.35); }
