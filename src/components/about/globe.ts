@@ -2,18 +2,11 @@
 // controller retain the framing, intro, grid, Crete, and dock behavior.
 import { createDots, CRETE_LATTICE, DOT_COUNT, DOT_RATIO, FAR_HEMISPHERE } from './globedots';
 import { CRETE_COAST } from './geo';
-// Natural Earth 1:10m land, delivered separately from the renderer.
-import landUrl from './land.png?url';
-
-type LatLon = [number, number];
-type Vec3 = [number, number, number];
-type Rgb = [number, number, number];
-type View = { phi: number; theta: number; scale: number; cx: number; cy: number };
+import { clamp, clamp01, css, hasGpu, hasWebGL, land, landReady, project, R, rgbOf, smooth, toRad, unit, type LatLon, type Rgb, type Vec3, type View } from './sphere';
 
 const CRETE: LatLon = [35.3, 24.8];
 const [creteX, creteY, creteZ] = CRETE_LATTICE.point;
 const CRETE_DOT: Vec3 = [creteZ, creteY, -creteX];
-const R = 0.8;
 const INTRO_SECONDS = 3.3;
 // The globe faces Crete until it starts to turn.
 const FINAL_LON = CRETE[1];
@@ -28,18 +21,8 @@ const MIN_SPACING_PX = 6;
 // Backing-store budget per canvas, so a 4K screen doesn't shade 18 million pixels a frame.
 const PIXEL_BUDGET = 8e6;
 
-const toRad = (deg: number) => deg * Math.PI / 180;
-const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
-const clamp01 = (n: number) => clamp(n, 0, 1);
 const ease = (t: number) => 1 - (1 - t) ** 4;
-const smooth = (t: number) => t * t * (3 - 2 * t);
 const phiFacing = (lon: number) => -Math.PI / 2 - toRad(lon);
-
-function unit([lat, lon]: LatLon): Vec3 {
-  const a = toRad(lat);
-  const b = toRad(lon) - Math.PI;
-  return [-Math.cos(a) * Math.cos(b), Math.sin(a), Math.cos(a) * Math.sin(b)];
-}
 
 // Fill Crete's outline with a hexagonal lattice (even spacing at any angle, so no stripes).
 function islandDots(spacing: number): Vec3[] {
@@ -67,17 +50,6 @@ function islandDots(spacing: number): Vec3[] {
 }
 const ISLAND = ISLAND_SPACINGS.map(islandDots);
 
-// Shared orthographic projection; x and y in CSS pixels.
-function project(p: Vec3, v: View, height: number) {
-  const ct = Math.cos(v.theta), st = Math.sin(v.theta);
-  const cp = Math.cos(v.phi), sp = Math.sin(v.phi);
-  const x = cp * p[0] + sp * p[2];
-  const y = sp * st * p[0] + ct * p[1] - cp * st * p[2];
-  const z = -sp * ct * p[0] + st * p[1] + cp * ct * p[2];
-  const half = R * v.scale * height / 2;
-  return { x: v.cx + x * half, y: v.cy - y * half, z };
-}
-
 // Settled framing per viewport class: a dominant globe running down behind ABOUT.
 function frameFor(width: number, height: number, statementBottom: number, rem: number) {
   const wide = width >= 1100;
@@ -93,33 +65,7 @@ function frameFor(width: number, height: number, statementBottom: number, rem: n
   };
 }
 
-function rgbOf(color: string): Rgb {
-  const c = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!;
-  c.fillStyle = color;
-  c.fillRect(0, 0, 1, 1);
-  const [r, g, b] = c.getImageData(0, 0, 1, 1).data;
-  return [r / 255, g / 255, b / 255];
-}
-const css = (c: Rgb, alpha = 1) => `rgb(${c.map(n => Math.round(n * 255)).join(' ')} / ${alpha})`;
-
-const land = new Image();
-land.src = landUrl;
-const landReady = land.decode();
-
-export function hasWebGL() {
-  const c = document.createElement('canvas');
-  return Boolean(c.getContext('webgl2'));
-}
-
-// A software renderer (no graphics card) can draw the globe but not animate it smoothly.
-export function hasGpu() {
-  const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
-  if (!gl)
-    return false;
-  const info = gl.getExtension('WEBGL_debug_renderer_info');
-  const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
-  return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
-}
+export { hasGpu, hasWebGL };
 
 export type GlobeHandle = {
   setVisible(value: boolean): void;

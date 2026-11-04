@@ -20,12 +20,13 @@ function replace(source: string, before: string, after: string) {
   return source.replace(before, after);
 }
 
-export function createDots(canvas: HTMLCanvasElement, land: HTMLImageElement) {
+export function createDots(canvas: HTMLCanvasElement, land: HTMLImageElement, options: { hiddenIndex?: number } = {}) {
   const gl = canvas.getContext('webgl2', { alpha: true, antialias: false });
   if (!gl)
     throw new Error('Globedots requires WebGL2');
   let center: [number, number] = [0, 0];
   let farSideOpacity = FAR_HEMISPHERE;
+  const hiddenIndex = options.hiddenIndex ?? CRETE_LATTICE.index;
   const shaderSource = gl.shaderSource.bind(gl);
   gl.shaderSource = (shader, source) => {
     if (source.includes('out vec3 vRay;')) {
@@ -87,7 +88,7 @@ export function createDots(canvas: HTMLCanvasElement, land: HTMLImageElement) {
     const program = gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram;
     gl.uniform2f(gl.getUniformLocation(program, 'uCenter'), ...center);
     gl.uniform1i(gl.getUniformLocation(program, 'uLandCols'), land.naturalWidth);
-    gl.uniform1i(gl.getUniformLocation(program, 'uCreteIndex'), CRETE_LATTICE.index);
+    gl.uniform1i(gl.getUniformLocation(program, 'uCreteIndex'), hiddenIndex);
     gl.uniform1f(gl.getUniformLocation(program, 'uFarSideOpacity'), farSideOpacity);
     drawArrays(mode, first, count);
   };

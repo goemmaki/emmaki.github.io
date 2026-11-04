@@ -92,6 +92,10 @@ export type Testimonial = {
   company: string;
   photo?: string;
   about?: string;
+  city?: string;
+  country?: string;
+  lat?: number;
+  lng?: number;
 };
 
 // Real client quotes, as the owner supplied them (2026-10-28).
@@ -104,6 +108,40 @@ export const TESTIMONIALS: Testimonial[] = [
     company: "Cumulus Vision",
     photo: "brett-smith.webp",
     about: "A San Francisco Salesforce partner with 100+ clients since 2012.",
+    city: "San Francisco",
+    country: "us",
+    lat: 37.77,
+    lng: -122.42,
+  },
+  {
+    quote: "Emma quickly understood our needs during the consultation and pointed out many things that we hadn’t thought of. She went above and beyond by providing more value than we expected, even giving several variants of the same text using different approaches. It’s clear that she is a master at her craft, and we would love to work with her on future projects!",
+    name: "René Samson",
+    role: "Founder & CEO",
+    company: "Samson Digital",
+    city: "Isle Madame, Nova Scotia",
+    country: "ca",
+    lat: 45.51,
+    lng: -60.99,
+  },
+  {
+    quote: "Emma was a pleasure to work with on a 60-second comedy ad script and its 15-second cutdown. She asked sharp questions up front, pitched ideas of her own, and took notes quickly and graciously, including a big change of direction halfway through. Both drafts came in ahead of schedule, the script is genuinely funny, and her voice-over notes are clear and fun to work from. She even caught a word-count mistake on our side. Professional, quick and witty. Highly recommended for short-form ad scripts.",
+    name: "Shilo Abramovicz",
+    role: "AI Engineer Lead",
+    company: "Fiverr",
+    city: "Tel Aviv",
+    country: "il",
+    lat: 32.08,
+    lng: 34.78,
+  },
+  {
+    quote: "Emma delivers value, every time. Not only is she a persuasive writer, she is a first-rate problem solver. She takes the time to understand what I need and comes up with ideas that wouldn’t have occurred to me.",
+    name: "Ronna Lichtenberg",
+    role: "Former SVP",
+    company: "Prudential Securities",
+    city: "New York",
+    country: "us",
+    lat: 40.71,
+    lng: -74.01,
   },
 ];
 

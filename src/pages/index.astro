@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import ClientSlots from '../components/ClientSlots.astro';
-import CaseFrame from '../components/CaseFrame.astro';
+import TestimonialGlobe from '../components/TestimonialGlobe.astro';
 import Statement from '../components/Statement.astro';
 import WhyMe from '../components/WhyMe.astro';
 import PageClosing from '../components/PageClosing.astro';
@@ -13,8 +13,7 @@ import gigAvatar from '@/assets/gig/emma.png';
 import salesCopyThumb from '@/assets/gig/sales-copy.png';
 import fiverrOptimisationThumb from '@/assets/gig/fiverr-optimisation.png';
 import { heroPortrait } from '@/lib/hero-portrait';
-import { getEntry } from 'astro:content';
-import { BRANDS } from '@/lib/content';
+import { TESTIMONIALS } from '@/lib/content';
 const portrait = await heroPortrait();
 const links = [
   { text: 'get it', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
@@ -53,10 +52,6 @@ const approach = [
   { title: 'I judge success by outcomes', content: "Before we start work, we’ll agree on what success looks like. Once the project is live, I use those outcomes and any performance data to judge whether it worked." },
   { title: 'I’m an unapologetic Luddite', content: "I use AI every day, but I don’t outsource creativity or judgment. I divide the labor by what humans and machines do best to save time without cutting corners that lead to slop. The AI works behind the writing, on research, admin and the workflows around a project. If you want it nowhere near your project at all, just ask. That means switching off the workflows I’ve built, so the job will take longer and cost more." },
 ];
-// The case frame shows the example case study's client until the home page has a real one.
-const example = await getEntry('work', 'placeholder');
-const caseClient = BRANDS.find((brand) => brand.name === example?.data.client);
-if (!caseClient?.color) throw new Error("Home case frame needs the example case study's client and its brand color");
 // Titles, categories and prices as listed on Fiverr (Second Brain business/emmaki/fiverr/gigs/); images where a gig has one.
 const gigs = [
   { category: 'Sales Copy', title: 'I will write sales copy for landing pages, sales pages, and sales funnels', reviews: '435', price: 'From $150', image: salesCopyThumb },
@@ -93,7 +88,7 @@ const gigs = [
     </div>
     <div class="mt-12"><GigShelf {gigs} avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" rating="5.0" extra="Offers video consultations" /></div>
   </section>
-  <section class="shell"><CaseFrame brandColor={caseClient.color!} clientName={caseClient.name} facts={[]} /></section>
+  <TestimonialGlobe reviews={TESTIMONIALS} />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32">
     <p class="type-meta text-fg-2 uppercase">My approach</p>

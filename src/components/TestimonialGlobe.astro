@@ -1,0 +1,105 @@
+---
+import type { Testimonial } from '@/lib/content';
+interface Props { reviews: Testimonial[] }
+const { reviews } = Astro.props;
+const initials = (name: string) => name.split(/\s+/).map(part => part[0]).slice(0, 2).join('').toUpperCase();
+---
+<section class="testimonial-globe shell mt-e2" data-testimonial-globe>
+  <div class="testimonial-layout">
+    <!-- Placeholder copy until the owner writes it. -->
+    <header class="testimonial-heading">
+      <p class="type-meta text-fg-2 uppercase">Kind words</p>
+      <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">What clients say, from where they say it.</h2>
+    </header>
+    <div class="testimonial-sphere-wrap">
+      <div class="testimonial-sphere" data-sphere>
+        <div class="testimonial-dots" data-dots-layer aria-hidden="true"><canvas data-sphere-dots></canvas></div>
+        <canvas class="testimonial-grid" data-sphere-grid aria-hidden="true"></canvas>
+        <div class="testimonial-fallback" aria-hidden="true"></div>
+        <div class="testimonial-pins" data-pins>
+          {reviews.map((review, index) => <button type="button" class="testimonial-pin" data-pin data-index={index} data-lat={review.lat} data-lng={review.lng} aria-label={`${review.name}, ${review.city}`} tabindex={index === 0 ? 0 : -1}>
+            {review.photo
+              ? <img src={`/testimonials/${review.photo}`} alt="" width="56" height="56" loading="lazy" decoding="async" />
+              : <span aria-hidden="true">{initials(review.name)}</span>}
+          </button>)}
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-panel">
+      <div class="testimonial-card">
+        <div class="testimonial-review-stack" data-review-card aria-live="polite">
+          {reviews.map((review, index) => <figure class="testimonial-review" data-review data-current={index === 0 ? '' : undefined}>
+            <p class="testimonial-stars" aria-label="5 out of 5 stars">★★★★★</p>
+            <blockquote class="mt-5 type-editorial text-fg-max">“{review.quote}”</blockquote>
+            <figcaption class="mt-6 flex items-center gap-3">
+              {review.photo
+                ? <img class="testimonial-avatar" src={`/testimonials/${review.photo}`} alt="" width="56" height="56" loading="lazy" decoding="async" />
+                : <span class="testimonial-avatar testimonial-initials" aria-hidden="true">{initials(review.name)}</span>}
+              <span class="testimonial-person"><span class="testimonial-name">{review.name}</span><span class="testimonial-role">{review.role}, {review.company}</span></span>
+              <span class="testimonial-location"><img src={`/flags/${review.country}.svg`} alt="" width="20" height="15" /><span class="type-meta uppercase">{review.city}</span></span>
+            </figcaption>
+          </figure>)}
+        </div>
+      </div>
+      <div class="testimonial-controls">
+        <div class="flex gap-2">
+          <button type="button" class="testimonials-button" aria-label="Previous review" data-prev><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button>
+          <button type="button" class="testimonials-button" aria-label="Next review" data-next><svg class="size-4" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6m6 6H3"/></svg></button>
+        </div>
+        <p class="type-meta text-fg-2" data-count>01 / 04</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonial-globe { --testimonial-star: var(--color-yellow-splash); }
+  .testimonial-layout { display: grid; grid-template-columns: repeat(12,minmax(0,1fr)); gap: 2rem var(--gutter); align-items: center; }
+  .testimonial-heading,.testimonial-panel { grid-column: 1 / -1; }
+  .testimonial-sphere-wrap { grid-column: 1 / -1; display: grid; place-items: center; }
+  .testimonial-sphere { position: relative; width: min(100%,360px); aspect-ratio: 1; }
+  .testimonial-dots,.testimonial-grid,.testimonial-pins,.testimonial-fallback { position: absolute; inset: 0; }
+  .testimonial-dots { mix-blend-mode: screen; }
+  .testimonial-dots canvas,.testimonial-grid { display: block; width: 100%; height: 100%; }
+  .testimonial-dots canvas { filter: contrast(1.04); }
+  .testimonial-grid { pointer-events: none; }
+  .testimonial-fallback { inset: 10%; border: 1px solid var(--color-line); border-radius: 50%; display: none; }
+  [data-testimonial-globe][data-no-webgl] .testimonial-dots { display: none; }
+  [data-testimonial-globe][data-no-webgl] .testimonial-fallback { display: block; }
+  .testimonial-pins { pointer-events: none; }
+  .testimonial-pin { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; overflow: hidden; border: 2px solid color-mix(in srgb,var(--color-green-crisp) 48%,transparent); border-radius: 50%; background: var(--color-raised); color: var(--color-fg-max); font-family: var(--font-heading); font-size: var(--type-meta-size); font-weight: 500; pointer-events: auto; opacity: 0; translate: -50% -50%; transition: opacity .16s ease,border-color .16s ease; }
+  .testimonial-pin img { width: 100%; height: 100%; object-fit: cover; }
+  .testimonial-pin[data-active] { border-color: var(--color-green-crisp); }
+  .testimonial-pin:focus-visible { outline: 2px solid var(--color-fg-max); outline-offset: 3px; }
+  .testimonial-card { border: 1px solid var(--color-line); border-radius: var(--shape-control-radius); padding: 1.5rem; }
+  .testimonial-review-stack { display: grid; }
+  .testimonial-review { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .2s ease; }
+  .testimonial-review[data-current] { opacity: 1; visibility: visible; }
+  .testimonial-stars { color: var(--testimonial-star); letter-spacing: .08em; }
+  .testimonial-person { min-width: 0; display: flex; flex-direction: column; }
+  .testimonial-name { color: var(--color-fg-max); font-weight: 500; }
+  .testimonial-role { color: var(--color-fg-2); }
+  .testimonial-avatar { flex: none; width: 56px; height: 56px; border-radius: var(--shape-control-radius); object-fit: cover; }
+  .testimonial-initials { display: grid; place-items: center; background: var(--color-raised); color: var(--color-fg-max); font-family: var(--font-heading); font-weight: 500; }
+  .testimonial-location { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: .5rem; color: var(--color-fg-2); text-align: right; }
+  .testimonial-location img { flex: none; width: 20px; height: 15px; border: 1px solid var(--color-line); border-radius: 2px; }
+  .testimonial-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; }
+  :global([data-theme="light"]) .testimonial-globe { --testimonial-star: #C78500; }
+  :global([data-theme="light"]) .testimonial-dots { mix-blend-mode: multiply; }
+  :global([data-theme="light"]) .testimonial-dots canvas { filter: contrast(1.04) invert(1); }
+  @media (min-width: 640px) { .testimonial-sphere { width: min(100%,440px); } }
+  @media (min-width: 1100px) {
+    .testimonial-layout { row-gap: 2rem; }
+    .testimonial-heading { grid-column: 7 / -1; align-self: end; }
+    .testimonial-sphere-wrap { grid-column: 1 / span 5; grid-row: 1 / span 2; }
+    .testimonial-sphere { width: 100%; max-width: none; }
+    .testimonial-panel { grid-column: 7 / -1; align-self: start; }
+  }
+  @media (prefers-reduced-motion: reduce) { .testimonial-pin,.testimonial-review { transition: none; } }
+</style>
+
+<script>
+  import { mountTestimonialGlobe } from './testimonial-globe';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-testimonial-globe]'))
+    mountTestimonialGlobe(root);
+</script>
