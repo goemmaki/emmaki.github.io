@@ -63,7 +63,7 @@ if (list) {
     } catch (error) { console.error('Client logo roll preparation failed', error); }
     finally { preparing = false; }
   }, 1400); };
-  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; visible ? start() : stop(); }); observer.observe(strip);
+  const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; if (visible) start(); else stop(); }); observer.observe(strip);
   // Logos load once the strip is within a viewport of the screen, not on page load.
   const preloadObserver = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { prepare(); preloadObserver.disconnect(); } }, { rootMargin: `${window.innerHeight}px 0px` });
   preloadObserver.observe(strip);

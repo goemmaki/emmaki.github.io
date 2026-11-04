@@ -11,5 +11,5 @@ const { aiQuestion } = Astro.props;
   </ul>
 </div>
 <script is:inline define:vars={{ question: aiQuestion ?? '', providerUrls: AI_PROVIDER_URLS }}>
-  (function(){var root=document.currentScript&&document.currentScript.previousElementSibling;if(!root)return;var url=location.href,prompt=question?`Read ${url}, then answer: ${question}`:`Read from ${url} so I can ask questions about it`,encoded=encodeURIComponent(prompt);root.querySelectorAll('[data-ai-badge]').forEach(function(link){var name=link.getAttribute('data-ai-badge');link.href=providerUrls[name].replace('__PROMPT__',encoded)})})()
+  (function(){const root=document.currentScript&&document.currentScript.previousElementSibling;if(!root)return;const url=location.href,prompt=question?`Read ${url}, then answer: ${question}`:`Read from ${url} so I can ask questions about it`,encoded=encodeURIComponent(prompt);root.querySelectorAll('[data-ai-badge]').forEach(function(link){const name=link.getAttribute('data-ai-badge');link.href=providerUrls[name].replace('__PROMPT__',encoded)})})()
 </script>

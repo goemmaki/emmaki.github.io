@@ -3,7 +3,7 @@ interface Props { class?: string; iconClass?: string }
 const { class: className = "", iconClass = "" } = Astro.props;
 ---
 <button type="button" aria-label="Dark mode" aria-pressed="true" class={`icon-action ${className}`} data-theme-toggle><svg class={`dark:hidden ${iconClass || 'size-4'}`} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><svg class={`hidden dark:block ${iconClass || 'size-4'}`} viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6.5 6.5 0 0 0 8.268 8.268c.344-.215.825-.003.803.401"/></svg></button>
-<script is:inline>(function(){var r=document.documentElement;document.querySelectorAll('[data-theme-toggle]').forEach(function(b){b.setAttribute('aria-pressed',String(r.dataset.theme!=='light'))})})()</script>
+<script is:inline>(function(){const r=document.documentElement;document.querySelectorAll('[data-theme-toggle]').forEach(function(b){b.setAttribute('aria-pressed',String(r.dataset.theme!=='light'))})})()</script>
 <script>
 const root = document.documentElement;
 const update = () => document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach(button => button.setAttribute('aria-pressed', String(root.dataset.theme !== 'light')));

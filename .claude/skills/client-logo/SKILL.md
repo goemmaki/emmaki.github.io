@@ -47,7 +47,7 @@ Every client the owner names is confirmed. Don't add "pending verification" note
    - Add the name to `CLIENT_STRIP_ORDER`, ordered by how likely a buyer is to know it, best known first. Ask the owner where a new name goes.
 6. **Check** both themes in the browser, at rest and on hover: Home at desktop width and at 375px. Then:
    ```bash
-   run-check -- pnpm exec tsc --noEmit && run-check -- pnpm exec eslint src
+   run-check -- pnpm exec tsc --noEmit && run-check -- pnpm run lint
    ```
 
 The scripts need Playwright and Chrome. Playwright isn't a site dependency: run them with `NODE_PATH` pointing at a Playwright install (on the owner's host, an npx cache such as `~/.npm/_npx/<hash>/node_modules`) and Chrome at `/usr/bin/google-chrome`. Codex's sandbox can't run Chrome, so Claude runs them.

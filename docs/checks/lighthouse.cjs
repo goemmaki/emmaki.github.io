@@ -2,7 +2,6 @@
 // Needs the static build served by serve.py. RUNS (default 1) repeats each page; the summary keeps
 // the median run by performance score, and every run's JSON is saved.
 // Usage: NODE_PATH=<playwright node_modules> RUNS=<n> node docs/checks/lighthouse.cjs <out-dir> <port> <page>...
-/* eslint-disable @typescript-eslint/no-require-imports -- a plain Node script, run with NODE_PATH, not app code */
 const fs = require("fs");
 const path = require("path");
 const { chromium } = require("playwright");

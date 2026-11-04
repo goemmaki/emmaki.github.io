@@ -27,7 +27,8 @@ const words = [
     // plus a brighter copy masked to a soft circle under the pointer.
     const art = document.createElement('canvas'), artCtx = art.getContext('2d')!;
     const glow = document.createElement('canvas'), glowCtx = glow.getContext('2d')!;
-    let base = 0.075, dpr = 1, pointer: { x: number; y: number } | null = null, light = { x: 0, y: 0, a: 0 }, frame = 0;
+    const light = { x: 0, y: 0, a: 0 };
+    let base = 0.075, dpr = 1, pointer: { x: number; y: number } | null = null, frame = 0;
 
     const paint = () => {
       const w = canvas.clientWidth, h = canvas.clientHeight;
