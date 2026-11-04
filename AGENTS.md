@@ -43,7 +43,7 @@
 
 # Fiverr assets
 
-Fiverr gig thumbnails and portfolio images live in `fiverr/`, not in the site code. When asked for a "Fiverr gig thumbnail", work in `fiverr/gig-thumbnails/`. When asked for a "portfolio thumbnail", "portfolio cover", or Fiverr portfolio images, work in `fiverr/portfolio-thumbnails/`. Start from the `_template/` SVGs and follow the specs and rules in `fiverr/README.md` (1280 × 769 canvas, per-template safe areas, pure black background).
+This repository holds only the site and its assets. Fiverr gig thumbnails, portfolio images, their templates and the Fiverr art direction live in studio (`slashrepeat/studio`, `projects/emmaki/fiverr/`; start at its `README.md`). Final gig images, as published, live with each gig in Second Brain `business/emmaki/fiverr/gigs/<gig>/`.
 
 # Knowledge hub
 
