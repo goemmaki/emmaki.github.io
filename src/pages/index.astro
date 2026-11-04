@@ -8,7 +8,7 @@ import PageClosing from '../components/PageClosing.astro';
 import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
-import ApproachStory from '../components/ApproachStory.astro';
+import ApproachStack from '../components/ApproachStack.astro';
 import Resources from '../components/Resources.astro';
 import TapeCut from '../components/TapeCut.astro';
 import gigAvatar from '@/assets/gig/emma.png';
@@ -105,7 +105,7 @@ const gigs = [
   <TestimonialGlobe reviews={globeReviews} />
   <div class="mt-32"><WhyMe kicker="Why me" heading="A convincing pitch takes minutes. A track record takes years." {credibility} /></div>
   <section class="pt-32" aria-labelledby="approach-heading">
-    <ApproachStory items={approach} />
+    <ApproachStack items={approach} />
   </section>
   <TapeCut />
   <Resources />

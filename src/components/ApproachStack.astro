@@ -1,0 +1,73 @@
+---
+interface Props { items: { title: string; content: string }[] }
+const { items } = Astro.props;
+const rotations = [-8, 4, -3, 5, -4, 6, 3, -6, 2, -5];
+---
+<!-- Text-only hover stack; surfaces await the owner's design pass (2026-11-05). -->
+<div class="approach-stack" data-approach-stack>
+  <div class="shell">
+    <header>
+      <p class="type-meta text-fg-2 uppercase">My approach</p>
+      <h2 id="approach-heading" class="mt-6 max-w-[36ch] type-h2 text-fg-max">Copywriting is only part of my job.</h2>
+    </header>
+    <div class="stack-stage">
+      <ul class="stack-items" role="list" style={`--stack-intervals: ${Math.max(1, items.length - 1)}`}>
+        {items.map(({ title, content }, i) => <li class="stack-card" tabindex="0" style={`--index: ${i}; --rotation: ${rotations[i % rotations.length] + (i % 2)}deg; --direction: 0`}>
+          <h3 class="type-h3 text-fg-max">{title}</h3>
+          <p class="stack-body text-fg-2">{content}</p>
+        </li>)}
+      </ul>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-approach-stack]').forEach((root) => {
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('.stack-card'));
+    const list = root.querySelector<HTMLElement>('.stack-items')!;
+    const stage = root.querySelector<HTMLElement>('.stack-stage')!;
+    // Explicit updates also invalidate transforms in browsers that cache container units on resize.
+    new ResizeObserver(([entry]) => {
+      list.style.setProperty('--stack-step', `${(entry.contentRect.width - cards[0].offsetWidth) / Math.max(1, cards.length - 1)}px`);
+    }).observe(stage);
+    let hovered: HTMLElement | null = null;
+    const update = () => {
+      const focused = cards.find((card) => card.contains(document.activeElement));
+      const active = focused ?? hovered;
+      const index = active ? cards.indexOf(active) : -1;
+      root.toggleAttribute('data-engaged', index !== -1);
+      cards.forEach((card, i) => {
+        card.toggleAttribute('data-active', card === active);
+        card.style.setProperty('--direction', index === -1 ? '0' : String(Math.sign(i - index)));
+      });
+    };
+    cards.forEach((card) => {
+      card.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'touch') return;
+        hovered = card;
+        update();
+      });
+      card.addEventListener('pointerleave', () => { hovered = null; update(); });
+    });
+    root.addEventListener('focusin', update);
+    // Focus has moved to its next target by the time this microtask runs.
+    root.addEventListener('focusout', () => queueMicrotask(update));
+  });
+</script>
+<style>
+  .approach-stack { overflow-x: clip; }
+  .stack-stage { container-type: inline-size; }
+  .stack-items { margin-top: var(--space-editorial-52); display: grid; gap: var(--gutter); padding: 0; list-style: none; }
+  .stack-card { padding: var(--space-interface-32); background: var(--color-raised); border: 1px solid var(--color-line); border-radius: var(--shape-control-radius); }
+  .stack-body { margin-top: var(--space-interface-24); font-size: var(--type-body-default-size); line-height: var(--type-body-default-leading); }
+  .stack-card:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: var(--space-interface-4); }
+  @media (min-width: 1024px) and (pointer: fine) {
+    /* Container units keep the resting span fitted before scripts load and on every resize. */
+    .stack-items { --card-width: 300px; --card-height: 380px; --stack-step: calc((100cqw - var(--card-width)) / var(--stack-intervals)); --stack-push: max(0px, calc(var(--card-width) - var(--stack-step) + var(--space-interface-32))); --hover-lift: 30px; --spread-offset: 9.6px; position: relative; display: block; height: calc(var(--card-height) + 2 * var(--space-interface-32) + 2 * var(--space-interface-24)); isolation: isolate; }
+    .stack-card { position: absolute; top: calc(2 * var(--space-interface-32)); left: 0; width: var(--card-width); height: var(--card-height); z-index: calc(var(--index) + 1); transform: translate3d(calc(var(--index) * var(--stack-step) + var(--direction) * var(--stack-push)), calc(var(--direction) * var(--spread-offset)), 0) rotate(var(--rotation)); transition: transform calc(500ms * 480 / 700) cubic-bezier(.4, 0, .2, 1); }
+    [data-engaged] .stack-card { transition: transform 500ms cubic-bezier(.22, 1, .36, 1); }
+    [data-engaged] .stack-card[data-active] { z-index: 999; transform: translate3d(calc(var(--index) * var(--stack-step)), calc(-1 * var(--hover-lift)), 0) rotate(0deg) scale(1.035); transition: transform 500ms cubic-bezier(.22, 1.6, .32, 1); }
+  }
+  @media (min-width: 1024px) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+    .stack-card, [data-engaged] .stack-card, [data-engaged] .stack-card[data-active] { transform: translate3d(calc(var(--index) * var(--stack-step)), 0, 0) rotate(var(--rotation)); transition: none; }
+  }
+</style>
