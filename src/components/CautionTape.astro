@@ -14,7 +14,7 @@ const copies = Array.from({ length: 18 });
     </div>
   ))}
   <!-- Ink wobble for the printed letters: a faint displacement, so the type isn't vector-perfect. -->
-  <svg class="tape-defs" width="0" height="0"><filter id="tape-ink"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" /><feDisplacementMap in="SourceGraphic" scale="1.8" /></filter></svg>
+  <svg class="tape-defs" width="0" height="0"><filter id="tape-ink"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="inkNoise" /><feDisplacementMap in="SourceGraphic" in2="inkNoise" scale="1.8" /></filter></svg>
 </div>
 <script>
   const tape = document.querySelector<HTMLElement>('[data-tape]');
