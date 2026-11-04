@@ -35,8 +35,9 @@ const { avatar, category, seller, badge, title, rating, reviews, price, extra } 
 </article>
 <style>
   .gig {
-    --gig-ink: var(--color-text-maximum); --gig-text: #c5c6c9; --gig-muted: #95979d;
-    --gig-badge-bg: #2b2c66; --gig-badge-ink: #d2d3ff; --gig-thumb: #1c1c1e; --gig-thumb-ink: #95979d;
+    /* The site's grays, not Fiverr's; muted text on fg-2 keeps 4.5:1 on the card, the thumb and the shelf fill. */
+    --gig-ink: var(--color-fg-max); --gig-text: var(--color-fg); --gig-muted: var(--color-fg-2);
+    --gig-badge-bg: #2b2c66; --gig-badge-ink: #d2d3ff; --gig-thumb: var(--color-raised); --gig-thumb-ink: var(--color-fg-2);
     --gig-line: color-mix(in srgb, var(--color-fg-max) 14%, transparent);
     position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 12px;
     font-family: var(--font-display); color: var(--gig-text);
@@ -44,8 +45,7 @@ const { avatar, category, seller, badge, title, rating, reviews, price, extra } 
   /* The outline sits over the flush image, so the line runs unbroken round the whole card. */
   .gig::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--gig-line); border-radius: inherit; pointer-events: none; }
   :global([data-theme="light"]) .gig {
-    --gig-ink: #222325; --gig-text: #404145; --gig-muted: #74767e;
-    --gig-badge-bg: #d2d3ff; --gig-badge-ink: #282773; --gig-thumb: #e4e5e7; --gig-thumb-ink: #74767e;
+    --gig-badge-bg: #d2d3ff; --gig-badge-ink: #282773;
   }
   .gig-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 1280 / 769; overflow: hidden; background: var(--gig-thumb); }
   .gig-heart { position: absolute; top: 20px; right: 20px; width: 24px; height: 22px; fill: #f85d5d; stroke: #fff; stroke-width: 2; stroke-linejoin: round; }

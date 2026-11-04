@@ -65,8 +65,6 @@ const { gigs, ...card } = Astro.props;
   }
   @property --beam { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
   @keyframes gig-beam { to { --beam: 360deg; } }
-  /* Light mode: the card's gray a shade darker so it stays above 4.5:1 on the book fill. */
-  :global([data-theme="light"]) .gig-shelf :global(.gig) { --gig-muted: #66686f; }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
     .gig-book::after, .gig-book[data-open]::after { transition: none; animation: none; }
