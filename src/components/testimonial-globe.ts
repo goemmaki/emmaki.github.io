@@ -20,6 +20,7 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   const ctx = gridCanvas.getContext('2d')!;
   const reviews = [...root.querySelectorAll<HTMLElement>('[data-review]')];
   const count = root.querySelector<HTMLElement>('[data-count]')!;
+  const stack = root.querySelector<HTMLElement>('[data-review-card]')!;
   const pins: Pin[] = [...root.querySelectorAll<HTMLButtonElement>('[data-pin]')].map(button => {
     const lat = Number(button.dataset.lat), lng = Number(button.dataset.lng);
     return { button, lat, lng, point: unit([lat, lng]), index: Number(button.dataset.index) };
@@ -164,6 +165,43 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     return others.reduce((best, pin) => ahead(pin.lng) < ahead(best.lng) ? pin : best).index;
   }
 
+  // Ease the card from its old height to its new one (a long review opening or giving way to a short one).
+  function animateHeight(from: number) {
+    const to = stack.offsetHeight;
+    if (from === to || motion.matches)
+      return;
+    stack.style.height = `${from}px`;
+    void stack.offsetHeight;
+    stack.style.height = `${to}px`;
+    stack.addEventListener('transitionend', () => { stack.style.height = ''; }, { once: true });
+  }
+
+  // Long quotes clamp at five lines; See more opens them to full height and See less closes them again.
+  function setOpen(review: HTMLElement, open: boolean, animate = true) {
+    const quote = review.querySelector<HTMLElement>('[data-quote]')!;
+    const more = review.querySelector<HTMLButtonElement>('[data-more]')!;
+    more.textContent = open ? 'See less' : 'See more';
+    more.setAttribute('aria-expanded', String(open));
+    if (open) {
+      quote.toggleAttribute('data-open', true);
+      quote.style.maxHeight = `${quote.scrollHeight}px`;
+      return;
+    }
+    quote.style.maxHeight = '';
+    if (!animate || motion.matches || !quote.hasAttribute('data-open'))
+      quote.removeAttribute('data-open');
+    else
+      quote.addEventListener('transitionend', () => { if (!quote.style.maxHeight) quote.removeAttribute('data-open'); }, { once: true });
+  }
+
+  function markLong() {
+    for (const review of reviews) {
+      const quote = review.querySelector<HTMLElement>('[data-quote]')!;
+      if (!quote.hasAttribute('data-open'))
+        review.toggleAttribute('data-long', quote.scrollHeight > quote.clientHeight + 1);
+    }
+  }
+
   function select(index: number, manual: boolean) {
     if (manual) {
       autoplay = false;
@@ -173,7 +211,13 @@ export function mountTestimonialGlobe(root: HTMLElement) {
       return;
     moveCamera(performance.now());
     current = index;
+    const previous = reviews.find(review => review.hasAttribute('data-current'));
+    const from = stack.offsetHeight;
     reviews.forEach((review, i) => review.toggleAttribute('data-current', i === current));
+    animateHeight(from);
+    // An opened review closes once it has faded out, ready to start clamped next time.
+    if (previous?.querySelector('[data-quote][data-open]'))
+      window.setTimeout(() => { if (!previous.hasAttribute('data-current')) setOpen(previous, false, false); }, 400);
     count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(reviews.length).padStart(2, '0')}`;
     const pin = pins[current];
     const targetPhi = phiFacing(pin.lng);
@@ -235,6 +279,12 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   sphere.addEventListener('pointercancel', endDrag);
   // A drag that ends on a pin is not a click on it.
   sphere.addEventListener('click', event => { if (dragged) { event.stopPropagation(); dragged = false; } }, true);
+
+  for (const review of reviews) {
+    const more = review.querySelector<HTMLButtonElement>('[data-more]')!;
+    more.addEventListener('click', () => setOpen(review, more.getAttribute('aria-expanded') !== 'true'));
+  }
+  new ResizeObserver(markLong).observe(stack);
 
   root.querySelector('[data-prev]')?.addEventListener('click', () => select((current + reviews.length - 1) % reviews.length, true));
   root.querySelector('[data-next]')?.addEventListener('click', () => select((current + 1) % reviews.length, true));

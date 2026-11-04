@@ -40,7 +40,8 @@ const initials = (name: string) => name.split(/\s+/).map(part => part[0]).slice(
         </div>
         <div class="testimonial-review-stack" data-review-card aria-live="polite">
           {reviews.map((review, index) => <figure class="testimonial-review" data-review data-current={index === 0 ? '' : undefined}>
-            <blockquote class="type-editorial text-fg-max">{review.quote}</blockquote>
+            <blockquote class="testimonial-quote type-editorial text-fg-max" id={`testimonial-quote-${index}`} data-quote>{review.quote}</blockquote>
+            <button type="button" class="testimonial-more type-secondary" aria-controls={`testimonial-quote-${index}`} aria-expanded="false" data-more>See more</button>
             <figcaption class="mt-6 flex items-center gap-3">
               {review.photo
                 ? <Picture src={review.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[56, 112, 168]} sizes="56px" width={56} height={56} alt="" loading="lazy" decoding="async" class="testimonial-avatar" />
@@ -71,19 +72,26 @@ const initials = (name: string) => name.split(/\s+/).map(part => part[0]).slice(
   [data-testimonial-globe][data-no-webgl] .testimonial-dots { display: none; }
   [data-testimonial-globe][data-no-webgl] .testimonial-fallback { display: block; }
   .testimonial-pins { pointer-events: none; }
-  .testimonial-pin { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; overflow: hidden; border: 2px solid color-mix(in srgb,var(--color-green-crisp) 48%,transparent); border-radius: 50%; background: var(--color-raised); color: var(--color-fg-max); font-family: var(--font-heading); font-size: var(--type-meta-size); font-weight: 500; pointer-events: auto; opacity: 0; translate: -50% -50%; transition: opacity .16s ease,border-color .16s ease; }
+  .testimonial-pin { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; overflow: hidden; border: 2px solid color-mix(in srgb,var(--color-green-crisp) 48%,transparent); border-radius: 50%; background: var(--color-raised); color: var(--color-fg-max); font-family: var(--font-heading); font-size: var(--type-meta-size); font-weight: 500; pointer-events: auto; opacity: 0; translate: -50% -50%; transition: opacity .16s ease,border-color .16s ease,scale .3s cubic-bezier(.2,0,0,1); }
   .testimonial-pin :global(picture) { display: block; width: 100%; height: 100%; }
   .testimonial-pin :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .testimonial-pin[data-active] { border-color: var(--color-green-crisp); }
+  /* The pin whose review is in the card grows a little, so the globe and the card point at the same person. */
+  .testimonial-pin[data-active] { z-index: 1; scale: 1.2; border-color: var(--color-green-crisp); }
   .testimonial-pin:focus-visible { outline: 2px solid var(--color-fg-max); outline-offset: 3px; }
   .testimonial-card { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 2.5rem; border: 1px solid var(--color-line); border-radius: var(--shape-control-radius); padding: 1.5rem; }
   /* A quiet opening mark in the corner, under the text; the quotes themselves carry no quote marks. */
   .testimonial-mark { position: absolute; z-index: -1; top: 4.25rem; left: 1rem; font-family: var(--font-heading); font-size: 10rem; font-weight: 600; line-height: 1; color: var(--color-raised); pointer-events: none; user-select: none; }
   .testimonial-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-  /* Every review sits in one grid cell, so the card keeps the longest one's height; each pins to the bottom. */
-  .testimonial-review-stack { flex: 1; display: grid; }
-  .testimonial-review { grid-area: 1 / 1; align-self: end; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
-  .testimonial-review[data-current] { opacity: 1; visibility: visible; transition: opacity .2s ease; }
+  /* The current review sets the card's height; the others lie over it while they fade. The script animates the height when it changes. */
+  .testimonial-review-stack { position: relative; overflow: hidden; transition: height .35s cubic-bezier(.2,0,0,1); }
+  .testimonial-review { position: absolute; inset: 0 0 auto; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility 0s .2s; }
+  .testimonial-review[data-current] { position: relative; opacity: 1; visibility: visible; transition: opacity .2s ease; }
+  /* Every quote reserves five lines, so the first line always starts in the same place; longer ones clamp and open with See more. */
+  .testimonial-quote { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; min-height: 5lh; max-height: 5lh; overflow: hidden; transition: max-height .35s cubic-bezier(.2,0,0,1); }
+  .testimonial-quote[data-open] { display: block; -webkit-line-clamp: unset; }
+  .testimonial-more { margin-top: .5rem; padding: 0; color: var(--color-fg-2); text-decoration: underline; text-underline-offset: .2em; visibility: hidden; }
+  .testimonial-more:hover { color: var(--color-fg-max); }
+  .testimonial-review[data-current][data-long] .testimonial-more { visibility: visible; }
   .testimonial-stars { color: var(--testimonial-star); letter-spacing: .08em; }
   .testimonial-person { min-width: 0; display: flex; flex-direction: column; }
   .testimonial-name { color: var(--color-fg-max); font-weight: 500; }
@@ -104,7 +112,7 @@ const initials = (name: string) => name.split(/\s+/).map(part => part[0]).slice(
     .testimonial-sphere { width: 100%; max-width: none; }
     .testimonial-panel { grid-column: 7 / -1; align-self: start; }
   }
-  @media (prefers-reduced-motion: reduce) { .testimonial-pin,.testimonial-review { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .testimonial-pin,.testimonial-review,.testimonial-review-stack,.testimonial-quote { transition: none; } }
 </style>
 
 <script>
