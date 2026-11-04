@@ -20,10 +20,6 @@ const FINAL_LON = CRETE[1];
 const FINAL_TILT = CRETE[0] * Math.PI / 180;
 const SPIN = (2 * Math.PI) / 100; // One revolution every 100 s.
 const SPIN_IN = 0.5; // Share of the intro after which the spin starts easing in.
-const DRAG_SPEED = 0.0045;
-const KEY_STEP = Math.PI / 24;
-const MIN_ZOOM = 0.8;
-const MAX_ZOOM = 1.6;
 // Island lattice spacings in degrees. The intro opens on big dots (about 2.4% of the
 // viewport width apart) and switches to coarser lattices so they never get closer than 6 px.
 const ISLAND_SPACINGS = [0.03, 0.06, 0.12, 0.24];
@@ -115,43 +111,35 @@ export function hasWebGL() {
   return Boolean(c.getContext('webgl2'));
 }
 
+// A software renderer (no graphics card) can draw the globe but not animate it smoothly.
+export function hasGpu() {
+  const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true });
+  if (!gl)
+    return false;
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+  return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
+}
+
 export type GlobeHandle = {
-  play(): void;
-  pause(): void;
-  replay(): void;
-  rotate(steps: number): void;
-  zoom(factor: number): void;
-  reset(): void;
-  setExploring(value: boolean): void;
   setVisible(value: boolean): void;
   refreshTheme(): void;
-  /** Arrows rotate, +/− zoom, Home resets; returns whether the key was handled. */
-  handleKey(e: KeyboardEvent): boolean;
-  readonly paused: boolean;
-  /** Zoom between its limits, 0 (out) to 1 (in), on a log scale. */
-  readonly zoomLevel: number;
-  readonly settled: boolean;
 };
 
-export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(): void }): GlobeHandle {
+/** `intro` plays the pull-back from Crete; `spin` turns the globe once it settles. Without either it is a still. */
+export function mountGlobe(root: HTMLElement, opts: { intro: boolean; spin: boolean }): GlobeHandle {
   const dotsCanvas = root.querySelector<HTMLCanvasElement>('[data-globe-dots]')!;
   const lines = root.querySelector<HTMLCanvasElement>('[data-globe-lines]')!;
-  const stage = root.querySelector<HTMLElement>('[data-globe-stage]')!;
   const ctx = lines.getContext('2d')!;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const coarse = matchMedia('(pointer: coarse)').matches;
 
   let width = 0, height = 0, dpr = 1;
   let frame = { scale: 1, cx: 0, cy: 0, startScale: 1 };
   let colors = { line: [1, 1, 1] as Rgb, accent: [1, 0.76, 0] as Rgb, dark: true };
-  let clock = opts.animate ? 0 : INTRO_SECONDS;
-  let paused = false, visible = true, exploring = false, raf = 0, last = 0;
-  // The settled camera: rotation, zoom and center, plus inertia from a drag.
-  let phi = phiFacing(FINAL_LON), theta = FINAL_TILT;
-  let scale = 1, cx = 0, cy = 0, targetScale = 1;
-  let velocityX = 0, velocityY = 0;
-  let glide: { from: View; elapsed: number } | null = null;
-  let drag: { x: number; y: number; time: number } | null = null;
+  let clock = opts.intro ? 0 : INTRO_SECONDS;
+  let visible = true, raf = 0, last = 0;
+  // The settled camera faces Crete.
+  let phi = phiFacing(FINAL_LON);
+  const theta = FINAL_TILT;
   let globe: ReturnType<typeof createDots> | null = null;
   let shaderPending = false;
 
@@ -174,10 +162,6 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     const statementBottom = statement.getBoundingClientRect().bottom - root.getBoundingClientRect().top;
     root.style.setProperty('--statement-bottom', `${statementBottom}px`);
     frame = frameFor(width, height, statementBottom, parseFloat(getComputedStyle(document.documentElement).fontSize));
-    scale = targetScale = frame.scale;
-    cx = frame.cx;
-    cy = frame.cy;
-    glide = null;
     for (const c of [dotsCanvas, lines]) {
       c.width = Math.round(width * dpr);
       c.height = Math.round(height * dpr);
@@ -187,7 +171,7 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
   // During the intro the camera pulls back from Crete, centered and enlarged, to the settled framing.
   function view(): View {
     if (introDone())
-      return { phi, theta, scale, cx, cy };
+      return { phi, theta, scale: frame.scale, cx: frame.cx, cy: frame.cy };
     const t = smooth(clock / INTRO_SECONDS);
     return {
       phi,
@@ -282,47 +266,23 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     ctx.clearRect(0, 0, lines.width, lines.height);
     drawGrid(v);
     drawCrete(v);
-    const facing = Math.round(((-(v.phi + Math.PI / 2) * 180 / Math.PI) % 360 + 540) % 360 - 180);
-    if (facing !== lastFacing) {
-      lastFacing = facing;
-      stage.setAttribute('aria-valuenow', String(facing));
-      stage.setAttribute('aria-valuetext', `Facing ${Math.abs(facing)}° ${facing < 0 ? 'west' : 'east'}`);
-    }
   }
-  let lastFacing = NaN;
 
-  const spinning = () => introDone() && !paused && !reduced && !drag;
-  // Pause stops the intro and the spin; zoom glides and drag inertia still finish.
-  const moving = () => shaderPending || (!reduced && (glide !== null || Math.abs(velocityX) > 1e-4 || Math.abs(velocityY) > 1e-4
-    || (!paused && (!introDone() || spinning()))));
+  const moving = () => shaderPending || !introDone() || opts.spin;
 
   function tick(ms: number) {
     raf = 0;
     const dt = last ? Math.min(0.05, (ms - last) / 1000) : 0;
     last = ms;
-    if (!introDone() && !paused) {
+    if (!introDone()) {
       clock = Math.min(INTRO_SECONDS, clock + dt);
       // The zoom-out's eased tail barely moves, so the spin eases in over it and
       // reaches full speed as the intro ends: no pause before the globe turns.
-      phi += SPIN * dt * smooth(clamp01((clock / INTRO_SECONDS - SPIN_IN) / (1 - SPIN_IN)));
+      if (opts.spin)
+        phi += SPIN * dt * smooth(clamp01((clock / INTRO_SECONDS - SPIN_IN) / (1 - SPIN_IN)));
     }
-    else if (spinning())
+    else if (opts.spin)
       phi += SPIN * dt;
-    if (!drag && (Math.abs(velocityX) > 1e-4 || Math.abs(velocityY) > 1e-4)) {
-      phi += velocityX * dt * 60;
-      theta = clamp(theta + velocityY * dt * 60, -toRad(65), toRad(65));
-      velocityX *= 0.9;
-      velocityY *= 0.9;
-    }
-    if (glide) {
-      glide.elapsed += dt;
-      const t = ease(clamp01(glide.elapsed / 0.6));
-      scale = glide.from.scale + (targetScale - glide.from.scale) * t;
-      cx = glide.from.cx + (frame.cx - glide.from.cx) * t;
-      cy = glide.from.cy + (frame.cy - glide.from.cy) * t;
-      if (t >= 1)
-        glide = null;
-    }
     render();
     if (moving() && visible && !document.hidden)
       raf = requestAnimationFrame(tick);
@@ -336,144 +296,6 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
       raf = requestAnimationFrame(tick);
     }
   }
-
-  // Take over from the intro (or a zoom) wherever the camera is, then ease the framing home.
-  function takeOver() {
-    const current = view();
-    clock = INTRO_SECONDS;
-    phi = current.phi;
-    theta = current.theta;
-    scale = current.scale;
-    cx = current.cx;
-    cy = current.cy;
-    if (reduced) {
-      scale = targetScale;
-      cx = frame.cx;
-      cy = frame.cy;
-      glide = null;
-    }
-    else {
-      glide = { from: current, elapsed: 0 };
-    }
-    opts.onState();
-  }
-
-  function zoom(factor: number) {
-    if (!exploring)
-      return;
-    targetScale = clamp(targetScale * factor, frame.scale * MIN_ZOOM, frame.scale * MAX_ZOOM);
-    takeOver();
-    render();
-    wake();
-  }
-
-  function rotate(steps: number) {
-    if (!introDone())
-      takeOver();
-    velocityX = velocityY = 0;
-    if (Math.abs(steps) === 2)
-      theta = clamp(theta + Math.sign(steps) * KEY_STEP, -toRad(65), toRad(65));
-    else
-      phi += steps * KEY_STEP;
-    render();
-    wake();
-  }
-
-  function reset() {
-    clock = INTRO_SECONDS;
-    phi = phiFacing(FINAL_LON);
-    theta = FINAL_TILT;
-    scale = targetScale = frame.scale;
-    cx = frame.cx;
-    cy = frame.cy;
-    glide = null;
-    velocityX = velocityY = 0;
-    render();
-    wake();
-    opts.onState();
-  }
-
-  stage.addEventListener('pointerdown', e => {
-    if (!exploring && (e.pointerType === 'touch' || coarse))
-      return;
-    if (!introDone())
-      takeOver();
-    drag = { x: e.clientX, y: e.clientY, time: e.timeStamp };
-    velocityX = velocityY = 0;
-    root.dataset.dragging = '';
-    stage.setPointerCapture(e.pointerId);
-    e.preventDefault();
-    wake();
-  });
-  stage.addEventListener('pointermove', e => {
-    if (!drag || pinch)
-      return;
-    const dx = e.clientX - drag.x;
-    const dy = e.clientY - drag.y;
-    const frames = Math.max(1, e.timeStamp - drag.time) / 16.7;
-    drag = { x: e.clientX, y: e.clientY, time: e.timeStamp };
-    phi += dx * DRAG_SPEED;
-    theta = clamp(theta + dy * DRAG_SPEED, -toRad(65), toRad(65));
-    if (!reduced) {
-      velocityX = clamp(dx * DRAG_SPEED / frames, -0.06, 0.06);
-      velocityY = clamp(dy * DRAG_SPEED / frames, -0.06, 0.06);
-    }
-    if (!raf)
-      render();
-  });
-  const release = () => {
-    if (!drag)
-      return;
-    drag = null;
-    delete root.dataset.dragging;
-    wake();
-  };
-  stage.addEventListener('pointerup', release);
-  stage.addEventListener('pointercancel', release);
-
-  let pinch = 0;
-  const spread = (e: TouchEvent) =>
-    Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-  stage.addEventListener('touchstart', e => {
-    if (exploring && e.touches.length === 2) {
-      release();
-      pinch = spread(e);
-    }
-  }, { passive: true });
-  stage.addEventListener('touchend', () => {
-    pinch = 0;
-  }, { passive: true });
-  stage.addEventListener('touchmove', e => {
-    if (!exploring || e.touches.length !== 2)
-      return;
-    e.preventDefault();
-    const now = spread(e);
-    if (pinch)
-      zoom(now / pinch);
-    pinch = now;
-  }, { passive: false });
-  stage.addEventListener('wheel', e => {
-    if (!exploring)
-      return;
-    e.preventDefault();
-    zoom(Math.exp(-e.deltaY * 0.001));
-  }, { passive: false });
-  function handleKey(e: KeyboardEvent) {
-    const steps: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: 2, ArrowDown: -2 };
-    if (e.key in steps)
-      rotate(steps[e.key]);
-    else if (e.key === '+' || e.key === '=')
-      zoom(1.12);
-    else if (e.key === '-')
-      zoom(1 / 1.12);
-    else if (e.key === 'Home')
-      reset();
-    else
-      return false;
-    e.preventDefault();
-    return true;
-  }
-  stage.addEventListener('keydown', handleKey);
 
   new ResizeObserver(() => {
     size();
@@ -502,41 +324,7 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
   render();
   wake();
 
-  queueMicrotask(opts.onState);
   return {
-    play() {
-      paused = false;
-      wake();
-      opts.onState();
-    },
-    pause() {
-      paused = true;
-      opts.onState();
-    },
-    replay() {
-      if (reduced)
-        return;
-      reset();
-      clock = 0;
-      paused = false;
-      wake();
-      opts.onState();
-    },
-    rotate,
-    zoom,
-    reset,
-    setExploring(value) {
-      exploring = value;
-      root.toggleAttribute('data-explored', value);
-      if (!value) {
-        targetScale = frame.scale;
-        takeOver();
-      }
-      else if (!introDone()) {
-        takeOver();
-      }
-      wake();
-    },
     setVisible(value) {
       visible = value;
       if (value) {
@@ -552,16 +340,6 @@ export function mountGlobe(root: HTMLElement, opts: { animate: boolean; onState(
     refreshTheme() {
       readColors();
       render();
-    },
-    handleKey,
-    get paused() {
-      return paused || reduced;
-    },
-    get zoomLevel() {
-      return clamp01(Math.log(targetScale / frame.scale / MIN_ZOOM) / Math.log(MAX_ZOOM / MIN_ZOOM));
-    },
-    get settled() {
-      return introDone();
     },
   };
 }
