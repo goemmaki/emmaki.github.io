@@ -1,0 +1,14 @@
+---
+import CautionTape from './CautionTape.astro';
+// A second tape starts the joke before the free tools (owner, 2026-11-04).
+---
+<div data-tape-cut><CautionTape cuttable /></div>
+<script>
+  import { initTapeCut } from './tape-cut';
+  document.querySelectorAll<HTMLElement>('[data-tape-cut]').forEach(initTapeCut);
+</script>
+<style is:global>
+  .tape-cut-confetti { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 100; pointer-events: none; }
+  .tape-cut-message { position: fixed; inset: 0; z-index: 101; display: grid; place-items: center; padding: var(--gutter); pointer-events: none; font-family: var(--font-heading); font-size: var(--type-display-mega-size); font-weight: 800; line-height: var(--type-display-mega-leading); letter-spacing: var(--type-display-mega-tracking); text-align: center; color: var(--color-fg-max); text-shadow: 0 0 var(--space-interface-24) var(--color-canvas); }
+  @media (prefers-reduced-motion: reduce) { .tape-cut-confetti, .tape-cut-message { display: none; } }
+</style>

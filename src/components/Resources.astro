@@ -1,0 +1,43 @@
+---
+interface Resource { title: string; date: string; datetime: string; href: string }
+// Placeholder content until the owner's tools exist (owner, 2026-11-04).
+const resources: Resource[] = [
+  { title: 'Lorem ipsum dolor sit', date: 'Nov 2026', datetime: '2026-11', href: '#' },
+  { title: 'Amet consectetur adipiscing elit', date: 'Nov 2026', datetime: '2026-11', href: '#' },
+  { title: 'Sed do eiusmod tempor', date: 'Nov 2026', datetime: '2026-11', href: '#' },
+];
+---
+<section class="shell pt-32" aria-labelledby="resources-heading">
+  <div class="lg:flex lg:items-end lg:justify-between lg:gap-gutter">
+    <div>
+      <p class="type-meta text-fg-2 uppercase">Resources</p>
+      <h2 id="resources-heading" class="mt-6 max-w-[36ch] type-h2 text-fg-max">Things you may like, on the house.</h2>
+    </div>
+    <p class="mt-6 max-w-[36ch] type-lead text-fg-2 text-pretty lg:mt-0">Calculators and other fun little business tools I built because I needed them and felt like procrastinating.</p>
+  </div>
+  <ul class="resources-grid mt-12">
+    {resources.map((resource, i) => (
+      <li>
+        <a class="resource" href={resource.href} aria-labelledby={`resource-title-${i}`}>
+          <div class="resource-image" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8" cy="8" r="1.5" /><path d="m3 17 5-5 4 4 4-6 5 7" /></svg>
+          </div>
+          <p class="mt-4 type-meta text-fg-2"><time datetime={resource.datetime}>{resource.date}</time></p>
+          <h3 id={`resource-title-${i}`} class="mt-2 type-h3 text-fg-max"><span class="text-link">{resource.title}</span></h3>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+<style>
+  .resources-grid { container-type: inline-size; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gutter); list-style: none; padding: 0; }
+  .resources-grid > li { grid-column: span 12; min-width: 0; }
+  .resource { display: block; }
+  .resource-image { display: grid; place-items: center; aspect-ratio: 16 / 9; border-radius: 12px; background: var(--color-raised); color: var(--color-fg-muted); }
+  .resource-image svg { width: var(--space-interface-32); height: var(--space-interface-32); }
+  .resource .text-link { text-decoration-color: transparent; }
+  .resource:hover .text-link, .resource:focus-visible .text-link { text-decoration-color: var(--color-fg-max); }
+  @media (prefers-reduced-motion: no-preference) { .resource .text-link { transition: text-decoration-color .2s ease-out; } }
+  @media (min-width: 768px) { .resources-grid > li { grid-column: span 6; } .resources-grid > li:first-child { grid-column: span 12; } .resource-image { aspect-ratio: 16 / 11; } }
+  @media (min-width: 1024px) { .resources-grid > li { grid-column: span 3; } .resources-grid > li:first-child { grid-column: span 6; } .resource-image { aspect-ratio: auto; height: calc((100cqw - var(--gutter)) * 11 / 32); } }
+</style>

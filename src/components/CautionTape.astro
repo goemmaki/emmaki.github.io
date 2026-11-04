@@ -5,17 +5,19 @@
 const phrase = 'Fun’s over';
 // Enough repeated tiles to cover the widest screen without a moving loop.
 const copies = Array.from({ length: 48 });
+interface Props { cuttable?: boolean }
+const { cuttable = false } = Astro.props;
 ---
-<div class="tape" data-tape aria-hidden="true">
-  {[true, false].map(back => (
-    <div class:list={['tape-band', back && 'tape-band--back']}>
+<div class="tape" data-tape data-cuttable={cuttable || undefined} aria-hidden="true">
+  {[true, false].flatMap(back => (cuttable ? ['left', 'right'] : [undefined]).map(half => (
+    <div class:list={['tape-band', back && 'tape-band--back']} data-tape-half={half} style={cuttable ? `--cut: ${back ? 48 : 53}%` : undefined}>
       <div class="tape-track">{copies.map(() => <span class="tape-tile"><span class="tape-item">{phrase}</span><svg class="tape-sign" viewBox="0 0 24 22"><path fill-rule="evenodd" d="M12 .5 23.5 21.5H.5ZM10.7 7.5h2.6l-.45 7.6h-1.7ZM12 16.4a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 1 0 0-2.9Z" /></svg></span>)}</div>
     </div>
-  ))}
+  )))}
 </div>
 <script>
-  const tape = document.querySelector<HTMLElement>('[data-tape]');
-  if (tape) {
+  // Astro bundles this script once; each tape needs its own alignment and visibility (2026-11-04).
+  for (const tape of document.querySelectorAll<HTMLElement>('[data-tape]')) {
     const STRIPE = 16;
     const tiles = [...tape.querySelectorAll<HTMLElement>('.tape-tile')];
     const alignStripes = () => {
@@ -38,6 +40,10 @@ const copies = Array.from({ length: 48 });
   .tape-band { --tilt: -3deg; position: relative; grid-area: 1 / 1; width: 110vw; margin-left: -5vw; display: flex; height: clamp(2.75rem, 3.6vw, 3.5rem); background: var(--tape-yellow); color: var(--tape-black); overflow: hidden; rotate: var(--tilt); }
   /* The strip underneath is a shade darker and runs the other way. */
   .tape-band--back { --tilt: 3deg; }
+  .tape-band[data-tape-half="left"] { clip-path: inset(0 calc(100% - var(--cut)) 0 0); transform-origin: var(--cut) 50%; }
+  .tape-band[data-tape-half="right"] { clip-path: inset(0 0 0 var(--cut)); transform-origin: var(--cut) 50%; }
+  .tape[data-cut] .tape-band { animation: none; }
+  .tape[data-cleared] .tape-band { visibility: hidden; }
   .tape-track { display: flex; width: max-content; }
   .tape-band:not(.tape-band--back) { filter: drop-shadow(0 3px 2px rgb(0 0 0 / 0.45)) drop-shadow(0 10px 14px rgb(0 0 0 / 0.3)); }
   .tape-band--back { filter: brightness(0.72) saturate(0.9); }
@@ -52,6 +58,7 @@ const copies = Array.from({ length: 48 });
     .tape[data-paused], .tape[data-paused] * { animation-play-state: paused; }
   }
   @keyframes tape-sway { from { rotate: var(--tilt); translate: 0 0; } to { rotate: calc(var(--tilt) + 0.7deg); translate: 0 -5px; } }
+  @media (prefers-reduced-motion: reduce) { .tape[data-cuttable] .tape-band { visibility: hidden; } }
   /* Over a narrow screen ±3° barely diverges, so phones get a steeper cross. */
   @media (max-width: 599px) {
     .tape-band { --tilt: -7deg; }

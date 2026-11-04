@@ -9,6 +9,8 @@ import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
 import ApproachStory from '../components/ApproachStory.astro';
+import Resources from '../components/Resources.astro';
+import TapeCut from '../components/TapeCut.astro';
 import gigAvatar from '@/assets/gig/emma.png';
 import salesCopyThumb from '@/assets/gig/sales-copy.png';
 import fiverrOptimisationThumb from '@/assets/gig/fiverr-optimisation.png';
@@ -105,6 +107,8 @@ const gigs = [
   <section class="pt-32" aria-labelledby="approach-heading">
     <ApproachStory items={approach} />
   </section>
+  <TapeCut />
+  <Resources />
   <section class="pt-32">
     <ClientSlots class="shell" />
   </section>
