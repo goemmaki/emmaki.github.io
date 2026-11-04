@@ -38,10 +38,15 @@ if (list) {
     const brands = clients.filter((_, i) => i % cols === c);
     reel.replaceChildren(makeLogo(brands[shown[c] % brands.length]), makeLogo(brands[(shown[c] + 1) % brands.length]));
   };
-  let logosReady = false;
-  Promise.all([...new Set(clients.flatMap(brand => [brand.logo.light, brand.logo.dark]))].map(file => {
-    const image = new Image(); image.src = `/clients/${file}`; return image.decode();
-  })).then(() => { logosReady = true; start(); }).catch(error => console.error('Client logo preload failed', error));
+  let logosReady = false, prepared = false;
+  const prepare = () => {
+    if (prepared) return;
+    prepared = true;
+    updateCols();
+    Promise.all([...new Set(clients.flatMap(brand => [brand.logo.light, brand.logo.dark]))].map(file => {
+      const image = new Image(); image.src = `/clients/${file}`; return image.decode();
+    })).then(() => { logosReady = true; start(); }).catch(error => console.error('Client logo preload failed', error));
+  };
   const order = () => { const rest = Array.from({length: cols - 1}, (_, i) => i + 1); for (let i = rest.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]]; } return [...rest, 0]; };
   const stop = () => { clearInterval(timer); timer = 0; };
   const start = () => { if (reduce.matches || !logosReady || !visible || hovered || timer) return; timer = window.setInterval(async () => {
@@ -58,8 +63,10 @@ if (list) {
     } catch (error) { console.error('Client logo roll preparation failed', error); }
     finally { preparing = false; }
   }, 1400); };
-  updateCols();
   const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; visible ? start() : stop(); }); observer.observe(strip);
+  // Logos load once the strip is within a viewport of the screen, not on page load.
+  const preloadObserver = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { prepare(); preloadObserver.disconnect(); } }, { rootMargin: `${window.innerHeight}px 0px` });
+  preloadObserver.observe(strip);
   strip.addEventListener('pointerenter', () => { hovered = true; stop(); }); strip.addEventListener('pointerleave', () => { hovered = false; start(); });
   reduce.addEventListener('change', () => {
     if (reduce.matches) {
@@ -79,8 +86,8 @@ if (list) {
       start();
     }
   });
-  for (const query of ['(min-width: 64rem)', '(min-width: 40rem)']) matchMedia(query).addEventListener('change', () => { updateCols(); stop(); start(); });
-  window.addEventListener('resize', () => { updateCols(); });
+  for (const query of ['(min-width: 64rem)', '(min-width: 40rem)']) matchMedia(query).addEventListener('change', () => { if (prepared) { updateCols(); stop(); start(); } });
+  window.addEventListener('resize', () => { if (prepared) updateCols(); });
 }
 }
 </script>
