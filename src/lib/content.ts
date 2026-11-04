@@ -3,6 +3,13 @@ import brettSmith from "@/assets/testimonials/brett-smith.webp";
 import reneSamson from "@/assets/testimonials/rene-samson.png";
 import shiloAbramovicz from "@/assets/testimonials/shilo-abramovicz.jpg";
 import ronnaLichtenberg from "@/assets/testimonials/ronna-lichtenberg.jpg";
+import markMcShane from "@/assets/testimonials/mark-mcshane.jpg";
+import antoniaLukacinova from "@/assets/testimonials/antonia-lukacinova.jpg";
+import samuelRomanov from "@/assets/testimonials/samuel-romanov.jpg";
+import rooWright from "@/assets/testimonials/roo-wright.png";
+import louChalmer from "@/assets/testimonials/lou-chalmer.jpg";
+import ziahOrion from "@/assets/testimonials/ziah-orion.jpg";
+import justinReckling from "@/assets/testimonials/justin-reckling.png";
 
 export const FIVERR_INBOX_URL = "https://www.fiverr.com/inbox/emmaki";
 export const FIVERR_PROFILE_URL = "https://www.fiverr.com/emmaki";
@@ -99,12 +106,12 @@ export type Testimonial = {
   photo?: ImageMetadata;
   about?: string;
   city?: string;
-  country?: string;
+  country?: string; // Flag file in public/flags: ISO 3166 code, lowercase (gb-sct for Scotland).
   lat?: number;
   lng?: number;
 };
 
-// Real client quotes, as the owner supplied them (2026-10-28).
+// Real client quotes, as the owner supplied them (2026-10-28, 2026-11-04), word for word.
 export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
@@ -151,6 +158,83 @@ export const TESTIMONIALS: Testimonial[] = [
     country: "us",
     lat: 40.71,
     lng: -74.01,
+  },
+  {
+    quote: "Absolutely outstanding copywriter, well worth the cost to get an amazing end product with very little revision ever needing done.",
+    name: "Mark McShane",
+    role: "Managing Director",
+    company: "Skills Training Group",
+    photo: markMcShane,
+    city: "Paisley",
+    country: "gb-sct",
+    lat: 55.85,
+    lng: -4.42,
+  },
+  {
+    quote: "Emma is easy to work, pleasant to cooperate. After repeated orders she already knows key points whenever new order comes and her delivery comes most of the time much earlier before due date. Of course with perfect outcome. She always takes care to be very clear from beginning, asking questions before starting the work to be 100% correct and understand the topic. I don’t remember if I ever ask for any change… and my business and industry is very niche.",
+    name: "Antónia Lukačínová",
+    role: "Founder & CEO",
+    company: "MEDIA Tribune | Publisher, JetBook",
+    photo: antoniaLukacinova,
+    city: "Prague",
+    country: "cz",
+    lat: 50.08,
+    lng: 14.44,
+  },
+  {
+    quote: "Absolute pleasure - Emma took my jumbled bag of words and turned it into something that far exceeded my expectations. Looking forward to working with her in the future",
+    name: "Samuel Romanov",
+    role: "Founder & Director",
+    company: "Cornerstone Technology Solutions",
+    photo: samuelRomanov,
+    city: "Canberra",
+    country: "au",
+    lat: -35.28,
+    lng: 149.13,
+  },
+  {
+    quote: "Emma understands what is needed to get a press-worthy article written! I wouldn’t use anyone else.",
+    name: "Roo Wright",
+    role: "Founder",
+    company: "SignalTo.ai & BoostBox | Former CEO, Wag.io",
+    photo: rooWright,
+    city: "Brisbane",
+    country: "au",
+    lat: -27.47,
+    lng: 153.03,
+  },
+  {
+    quote: "Working with Emma was a truly great experience! Her attention to detail and eloquence made the website content shine. Emma’s adaptability to the brief, along with her quick responsiveness and willingness to go above and beyond, ensured a seamless collaboration. I always felt in the loop thanks to her clear communication, and her helpful suggestions elevated the final product. Highly recommend!",
+    name: "Lou Chalmer",
+    role: "Founder",
+    company: "Wholly Her",
+    photo: louChalmer,
+    city: "Victoria",
+    country: "au",
+    lat: -37.81,
+    lng: 144.96,
+  },
+  {
+    quote: "Great work! Emma went above and beyond to help us create copy for our website. We will absolutely use her again for our copywriting needs!",
+    name: "Ziah Orion",
+    role: "Founder & CEO",
+    company: "DeepGem Interactive",
+    photo: ziahOrion,
+    city: "Denver",
+    country: "us",
+    lat: 39.74,
+    lng: -104.99,
+  },
+  {
+    quote: "We can always rely on Emma to help us put that final polish on our efforts. It’s strange how much the little details make such a big difference in how our services are explained to a future client. We’re always confident that the copy is as fine-tuned as it possibly can be with her services, which brings some peace of mind in the chaotic world of marketing.",
+    name: "Justin Reckling",
+    role: "Founder",
+    company: "Umbric Data Services",
+    photo: justinReckling,
+    city: "Las Vegas",
+    country: "us",
+    lat: 36.17,
+    lng: -115.14,
   },
 ];
 
