@@ -48,9 +48,11 @@ const { avatar, image, category, seller, badge, title, rating, reviews, price, e
   }
   .gig-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 1280 / 769; overflow: hidden; background: var(--gig-thumb); }
   .gig-body { position: relative; padding: 0 12px 14px; }
-  /* The arrow is the price-and-extra span over φ (owner, 2026-11-04). */
-  .gig-arrow { position: absolute; right: 13.5px; bottom: 15.5px; width: 32px; height: 32px; color: var(--gig-ink); overflow: visible; }
-  .gig-arrow path { vector-effect: non-scaling-stroke; stroke-width: 3px; }
+  /* The link arrow: as tall as the price line (24px drawn), muted until the card is hovered or focused, like
+     the site's quiet links (owner, 2026-11-04). The box is the path; the stroke spills 1.75px each side. */
+  .gig-arrow { position: absolute; right: 13.75px; bottom: 15.75px; width: 20.5px; height: 20.5px; color: var(--gig-muted); overflow: visible; transition: color .2s ease-out; }
+  .gig-arrow path { vector-effect: non-scaling-stroke; stroke-width: 3.5px; }
+  .gig:hover .gig-arrow, :global(:focus-visible) > .gig .gig-arrow { color: var(--gig-ink); }
   .gig-thumb-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .gig-thumb-label { font-family: var(--font-body); font-size: var(--type-meta-default-size); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gig-thumb-ink); }
   .gig-dots { position: absolute; bottom: 20px; left: 50%; translate: -50% 0; display: flex; gap: 5px; }
