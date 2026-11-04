@@ -22,24 +22,36 @@ const links = [
   { text: 'buy it', href: '/proof', metric: '000+', summary: 'Placeholder: the result in one line', client: 'Client three' },
 ];
 const credibility = [
-  { kind: 'figure' as const, figure: 'Top Rated Seller', label: 'On Fiverr since 2015', accent: true },
+  { kind: 'pair' as const, accent: true, figures: [
+    { figure: 'Top Rated Seller', label: 'On Fiverr since 2015' },
+    { figure: 'Pro Verified', label: 'On Fiverr since 2017' },
+  ] },
   { kind: 'figure' as const, figure: '4.8k', label: 'Orders' },
   { kind: 'figure' as const, figure: '2.6k', label: 'Clients' },
   { kind: 'figure' as const, figure: '13', label: 'Years on Fiverr', dynamicYear: true },
-  { kind: 'figure' as const, figure: 'Pro Verified', label: 'On Fiverr since 2017' },
+  // Not clients: investors behind the owner's clients (owner, 2026-11-04). Logos from Brandfetch, files in public/clients;
+  // each height balances the wordmarks optically. y-combinator.svg is the on-dark file in YC orange: its Y is cut out, so the monochrome filter keeps it.
+  { kind: 'logos' as const, label: 'Clients backed by', note: 'and other investors', logos: [
+    { name: 'Citi', light: 'citi.svg', dark: 'citi-on-dark.svg', height: 26 },
+    { name: 'Y Combinator', light: 'y-combinator.svg', dark: 'y-combinator-on-dark.svg', height: 22 },
+    { name: 'Khosla Ventures', light: 'khosla-ventures.svg', dark: 'khosla-ventures-on-dark.png', height: 15 },
+    { name: '500 Global', light: '500-global.svg', dark: '500-global-on-dark.svg', height: 22 },
+  ] },
   { kind: 'note' as const, text: 'Selected to give feedback to Fiverr leadership in Tel Aviv', label: 'In 2018' },
   { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: 'cannon-brooke.webp' } },
 ];
 // The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
 // are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.
-// My approach: the owner's copy (2026-11-03), to be tightened.
+// My approach: the owner's copy (2026-11-04); the Luddite row's last three sentences are Claude's draft from the owner's notes.
 const approach = [
-  { title: 'Hard sells, mostly', content: "A lot of what I write is for B2B tech and products that take some explaining. Doing the same kind of job over and over for 20 years means I've probably seen your root problem before. If not, I love a good challenge." },
-  { title: "I start with what's wrong", content: "Briefs usually ask for a deliverable. Someone asking for an explainer video might need clearer answers, or a simple automated reply. Before I write anything, I'll tell you what I think the problem is, and you can tell me if I've got it wrong." },
-  { title: "You'll hear what I think", content: "If your plan has a hole in it, you'll hear about it in my first reply, before you've paid anything. And if the job isn't right for me, I'll say so and point you to someone it suits." },
-  { title: 'We decide what "working" means', content: "Some writers will tell you their humanity and experience are the value they bring to the table. Sure, I've got those too, but I also go by data and outcomes, so we agree up front what the copy has to move, whether that's demo requests or replies to a cold email. And yes, if you don't want AI anywhere near my writing, just ask. I managed for 16 years without it." },
-  { title: 'Me on the writing, the machine on the chores', content: "I use AI every day (<em>I built this website with it!</em>). I'm happy to use it for writing where the audience is increasingly non-human, and for pushing digital paper around. I wouldn't call that a skill. It's how I'm adapting, in a way that works for me and my clients, to a world nobody can keep up with. But when it comes to getting humans to do stuff, I do things the hard way." },
-  { title: 'AI reads the results', content: "Outcomes are easier to measure than ever, and for someone like me that's the best use of AI. It shows what the copy earned and where readers dropped off, and I rewrite from there." },
+  { title: 'I like the complicated stuff', content: "I mostly write for B2B tech and products that need explaining. People aren’t buying your innovation but something that makes the pain go away, and I connect those dots." },
+  { title: 'I build things, too', content: "I build AI workflows that automate boring, repeatable processes and run my own infrastructure. I understand both the marketing and the tech, which saves everyone some time." },
+  { title: 'I challenge dodgy briefs', content: "Want a video sales letter? If the offer is the problem, a script won’t fix your sales. I’ll ask why you want to do things a certain way and flag any concerns before we start work." },
+  { title: 'I tell you what I think', content: "I’m not in the business of massaging people’s egos when I can boost their bank accounts instead. I’m an experienced copywriter, not a desperate yes-man." },
+  { title: 'You don’t have to chase me', content: "I send daily progress updates through the Fiverr inbox. I deliver on or ahead of schedule. If something goes wrong, I’ll tell you when there’s still time to fix it." },
+  { title: 'I know what I don’t know', content: "Your team knows things about your business that I don’t. As an outsider, I want to hear from the builders as much as I do the marketers before I try to sell it." },
+  { title: 'I judge success by outcomes', content: "Before we start work, we’ll agree on what success looks like. Once the project is live, I use those outcomes and any performance data to judge whether it worked." },
+  { title: 'I’m an unapologetic Luddite', content: "I use AI every day, but I don’t outsource creativity or judgment. I divide the labor by what humans and machines do best to save time without cutting corners that lead to slop. The AI works behind the writing, on research, admin and the workflows around a project. If you want it nowhere near your project at all, just ask. That means switching off the workflows I’ve built, so the job will take longer and cost more." },
 ];
 // The case frame shows the example case study's client until the home page has a real one.
 const example = await getEntry('work', 'placeholder');
@@ -85,9 +97,8 @@ const gigs = [
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32">
     <p class="type-meta text-fg-2 uppercase">My approach</p>
-    <h2 class="mt-6 max-w-[26ch] type-h1 text-fg-max">I do the hard part by hand.</h2>
-    <h3 class="mt-16 type-h3 text-fg-max">What you're paying me for</h3>
-    <div class="mt-8"><ApproachAccordion items={approach} /></div>
+    <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Copywriting is only part of my job.</h2>
+    <div class="mt-12"><ApproachAccordion items={approach} /></div>
   </section>
   <section class="pt-32">
     <ClientSlots class="shell" />

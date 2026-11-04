@@ -894,7 +894,7 @@
 /*
  * Why me (WhyMe.astro): four squares, then three wider boxes on one-pixel rules.
  * Each figure and its label form one block. Variety comes from scale, weight and the placement of
- * that block, never from separating its parts. Hover adds seven cropped Swiss posters behind it.
+ * that block, never from separating its parts. Hover adds a cropped Swiss poster behind it in every box but Clients backed by.
  */
 .why-me-proof {
   display: grid;
@@ -934,10 +934,17 @@
 .why-me-proof-value { font-family: var(--font-display); font-weight: 600; }
 .why-me-proof-label { color: var(--color-fg-2); }
 
-/* 1 Top Rated Seller: the leading credential, anchored at the bottom. */
+/* 1 Top Rated Seller over Pro Verified: the square split in two by a rule across its middle, each
+ * credential anchored at the bottom of its half. The row gap is twice the padding, so each half
+ * keeps the box's padding against the rule. */
+.why-me-proof-box:nth-child(1) { grid-template-rows: 1fr 1fr; row-gap: 32px; }
+.why-me-proof-box:nth-child(1)::after { content: ""; position: absolute; inset-inline: 0; top: 50%; z-index: 1; height: 1px; background: var(--color-line); }
+.why-me-proof-box:nth-child(1) .why-me-proof-block { gap: 8px; }
+/* Below desktop the split square outgrows its width, so the first row sizes to it instead of to squares. */
+@media (max-width: 63.999rem) { .why-me-proof-box:nth-child(-n + 4) { aspect-ratio: auto; min-height: 11rem; } }
 .why-me-proof-box:nth-child(1) .why-me-proof-value {
   max-width: 9ch;
-  font-size: clamp(1.5rem, 16cqw, 3rem);
+  font-size: clamp(1rem, 11cqw, 2.25rem);
   line-height: 1;
   letter-spacing: -0.035em;
 }
@@ -962,13 +969,6 @@
   font-weight: 250;
   line-height: 1.15;
   letter-spacing: -0.06em;
-}
-/* 5 Pro Verified: top aligned, leaving the lower half open. */
-.why-me-proof-box:nth-child(5) .why-me-proof-block { align-self: start; transform-origin: left top; }
-.why-me-proof-box:nth-child(5) .why-me-proof-value {
-  font-size: clamp(1.75rem, 9cqw, 3rem);
-  line-height: 1.05;
-  letter-spacing: -0.03em;
 }
 /* 6 Tel Aviv: a compact sentence and date, read together in the middle. */
 .why-me-proof-box:nth-child(6) .why-me-proof-block { align-self: center; transform-origin: left center; }
@@ -1007,10 +1007,27 @@
   transition: filter 0.2s var(--ease);
 }
 
+/* 5 Clients backed by: investor logos, smaller than the client strip's, between a heading at the
+ * quote's size and a mono note. Monochrome at rest, their own colors while the box is hovered. */
+.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; min-width: 0; }
+.why-me-proof-box:nth-child(5) .why-me-proof-value {
+  font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: start; gap: 24px 40px; }
+.why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: brightness(0) invert(1); transition: filter 0.2s var(--ease); }
+.why-me-backers .why-me-backer-on-light { display: none; }
+[data-theme="light"] .why-me-backers img { filter: brightness(0); }
+[data-theme="light"] .why-me-backers .why-me-backer-on-light { display: block; }
+[data-theme="light"] .why-me-backers .why-me-backer-on-dark { display: none; }
+
 @media (hover: hover) and (pointer: fine) {
   .why-me-proof-box[data-accent]:hover { --poster-paper: var(--color-yellow-splash); background: var(--color-yellow-splash); color: #000; }
   .why-me-proof-box[data-accent]:hover .why-me-proof-label { color: inherit; }
   .why-me-proof-box:hover .why-me-proof-photo { filter: none; }
+  .why-me-proof-box:hover .why-me-backers img { filter: none; }
 }
 /* A small inward scale keeps each figure and label together, with no layout shift. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
@@ -1063,9 +1080,6 @@
   .why-me-proof-box:hover .why-me-slash { animation: why-me-slash-in 800ms var(--ease) both; }
   .why-me-proof-box:hover .why-me-moire-slide { animation: why-me-interference 7s ease-in-out infinite alternate; }
   .why-me-proof-box:hover .why-me-rings { animation: why-me-rings-in 1400ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-stripe { animation: why-me-stripe-in 850ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-stripe-1 { animation-delay: 70ms; }
-  .why-me-proof-box:hover .why-me-stripe-2 { animation-delay: 140ms; }
   .why-me-proof-box:hover .why-me-module { animation: why-me-module-in 480ms var(--ease) both; }
   .why-me-proof-box:hover .why-me-module-1 { animation-delay: 55ms; }
   .why-me-proof-box:hover .why-me-module-2 { animation-delay: 110ms; }
@@ -1081,7 +1095,6 @@
 @keyframes why-me-slash-in { from { transform: translate(60px, -90px); } to { transform: translate(0, 0); } }
 @keyframes why-me-interference { from { transform: rotate(-26deg) translateY(-5px); } to { transform: rotate(-19.8deg) translateY(16px); } }
 @keyframes why-me-rings-in { from { transform: scale(.72); } to { transform: scale(1); } }
-@keyframes why-me-stripe-in { from { transform: translateY(68%); } to { transform: translateY(0); } }
 @keyframes why-me-module-in { from { opacity: 0; transform: scaleY(.05); } to { opacity: 1; transform: scaleY(1); } }
 @keyframes why-me-quote-in { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
@@ -1095,6 +1108,7 @@
   .why-me-proof { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .why-me-proof-box { grid-column: span 3; padding: 24px; }
   .why-me-proof-box:nth-child(n + 5) { grid-column: span 4; min-height: 22rem; padding: 32px; }
+  .why-me-proof-box:nth-child(1) { row-gap: 48px; }
 }
 
 /*
