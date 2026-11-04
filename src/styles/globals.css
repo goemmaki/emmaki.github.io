@@ -1007,16 +1007,19 @@
   transition: filter 0.2s var(--ease);
 }
 
-/* 5 Clients backed by: investor logos, smaller than the client strip's, between a heading at the
- * quote's size and a mono note. Monochrome at rest, their own colors while the box is hovered. */
-.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; min-width: 0; }
+/* 5 Clients backed by: centered, the investor logos in a two-by-two grid on the bento's one-pixel
+ * rules, between a heading at the quote's size and a mono note. The logos are smaller than the
+ * client strip's: monochrome at rest, their own colors while the box is hovered. */
+.why-me-proof-box:nth-child(5) { place-items: center; }
+.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 28px; width: 100%; max-width: 22rem; min-width: 0; text-align: center; }
 .why-me-proof-box:nth-child(5) .why-me-proof-value {
   font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
-.why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: start; gap: 24px 40px; }
+.why-me-backers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; width: 100%; background: var(--color-line); }
+.why-me-backers li { display: flex; align-items: center; justify-content: center; min-height: 5rem; padding: 16px; background: var(--poster-paper); }
 .why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: brightness(0) invert(1); transition: filter 0.2s var(--ease); }
 .why-me-backers .why-me-backer-on-light { display: none; }
 [data-theme="light"] .why-me-backers img { filter: brightness(0); }
