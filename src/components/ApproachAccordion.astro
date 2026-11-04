@@ -51,7 +51,7 @@ const { items } = Astro.props;
     color: color-mix(in srgb, var(--color-fg-max) 45%, var(--color-canvas)); transition: color 0.2s ease;
   }
   .approach-trigger:hover, .approach-trigger:focus-visible, .approach-trigger[aria-expanded="true"] { color: var(--color-fg-max); }
-  .approach-number { flex: none; width: var(--approach-number); padding-top: 0.5em; color: var(--color-fg-max); font-family: var(--font-mono); font-size: 12px; line-height: 1; }
+  .approach-number { flex: none; width: var(--approach-number); padding-top: 0.5em; color: color-mix(in srgb, var(--color-fg-max) 55%, var(--color-canvas)); font-family: var(--font-mono); font-size: 12px; line-height: 1; }
   .approach-title { font-family: var(--font-display); font-size: clamp(30px, 3.4vw, 48px); font-weight: 500; line-height: 1.05; letter-spacing: -0.02em; text-transform: uppercase; }
   .approach-panel { height: 0; overflow: hidden; transition: height 0.3s ease-out; }
   .approach-panel[data-open] { height: auto; }
