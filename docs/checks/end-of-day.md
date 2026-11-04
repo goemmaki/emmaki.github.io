@@ -91,8 +91,8 @@ Q = quick, F = full.
    unreadable. The sparkles, footer drift, blog masks, 404 nebula, caution tape and globe run
    without a pause control by the owner's decision (`docs/design-system/DESIGN.md`, "Motion"):
    accepted, not a finding. Report only a new animation that starts by itself and runs over 5 s.
-8. **Theme and first paint (Q, F).** A first visit with no stored theme follows
-   `prefers-color-scheme`; the toggle persists; no flash of the wrong theme or unstyled content and
+8. **Theme and first paint (Q, F).** A first visit with no stored theme is dark, whatever the system
+   prefers (owner, 2026-11-04: dark always; visitors switch with the toggle); the toggle persists; no flash of the wrong theme or unstyled content and
    no layout jump while fonts and scripts load.
 9. **Responsive layout (Q, F).** Per viewport: no horizontal overflow
    (`scrollWidth === clientWidth`), nothing overlapping, cut off or unreadable, no blurry upscaled
