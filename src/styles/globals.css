@@ -1009,8 +1009,8 @@
 
 /* 5 Clients backed by: one flush-left group anchored bottom-left (owner, 2026-11-04), so the row
  * steps bottom, middle, top across Clients, Tel Aviv and the quote: a heading at the quote's size,
- * then the investor logos and their note 24px below. The logos are
- * smaller than the client strip's: monochrome at rest, their own colors while the box is hovered. */
+ * then the investor logos and their note 24px below. The logos are smaller than the client strip's
+ * and grayscale, like the testimonial portrait, with no hover change (owner, 2026-11-04). */
 .why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; align-self: end; gap: 24px; min-width: 0; }
 .why-me-proof-box:nth-child(5) .why-me-proof-value {
   font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
@@ -1021,9 +1021,8 @@
 .why-me-backers-group { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
 .why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: start; gap: 20px 40px; }
 .why-me-backers li { display: flex; align-items: center; }
-.why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: brightness(0) invert(1); transition: filter 0.2s var(--ease); }
+.why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: grayscale(1); }
 .why-me-backers .why-me-backer-on-light { display: none; }
-[data-theme="light"] .why-me-backers img { filter: brightness(0); }
 [data-theme="light"] .why-me-backers .why-me-backer-on-light { display: block; }
 [data-theme="light"] .why-me-backers .why-me-backer-on-dark { display: none; }
 
@@ -1031,7 +1030,6 @@
   .why-me-proof-box[data-accent]:hover { --poster-paper: var(--color-yellow-splash); background: var(--color-yellow-splash); color: #000; }
   .why-me-proof-box[data-accent]:hover .why-me-proof-label { color: inherit; }
   .why-me-proof-box:hover .why-me-proof-photo { filter: none; }
-  .why-me-proof-box:hover .why-me-backers img { filter: none; }
 }
 /* A small inward scale keeps each figure and label together, with no layout shift. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
