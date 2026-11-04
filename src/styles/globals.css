@@ -893,7 +893,6 @@
 
 /* Why me: the owner's black-ground mockup, with static graphics (2026-11-04). */
 .why-me-section { --why-me-accent: var(--color-green-crisp); --why-me-hover-in: .18s; --why-me-hover-out: .4s; --why-me-rule: color-mix(in srgb, var(--color-fg-max) 32%, var(--color-bg)); }
-.why-me-section[data-accent="yellow"] { --why-me-accent: var(--color-yellow-splash); }
 .why-me-proof { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--shape-border-width); margin-top: var(--space-editorial-52); border: var(--shape-border-width) solid var(--why-me-rule); background: var(--why-me-rule); }
 .why-me-proof-box { position: relative; isolation: isolate; overflow: clip; display: grid; min-width: 0; min-height: calc(8 * var(--space-interface-24)); container-type: inline-size; padding: var(--space-interface-24); background: var(--color-bg); color: var(--color-fg-max); }
 .why-me-proof-box:nth-child(n + 5) { grid-column: span 2; min-height: 0; }
@@ -915,9 +914,13 @@
 .why-me-dots { position: absolute; top: 0; right: 6%; width: 94%; height: 85%; pointer-events: none; mask-image: linear-gradient(to bottom, var(--color-fg-max) 35%, transparent 90%), linear-gradient(to right, transparent, var(--color-fg-max) 95%); mask-composite: intersect; }
 .why-me-proof-box:nth-child(4) .why-me-proof-block { align-self: start; }
 .why-me-proof-box:nth-child(4) .why-me-proof-value { font-size: 52cqw; font-weight: 250; line-height: 1; letter-spacing: -.06em; }
-/* 13 Years: radar rings out of the bottom-right corner, line work only, stronger the farther out (owner,
- * 2026-11-04). 60cqw keeps the outer ring clear of the label. */
-.why-me-radar { position: absolute; right: 0; bottom: 0; width: 60cqw; height: 60cqw; overflow: visible; color: var(--color-fg-max); pointer-events: none; }
+/* 13 Years: radar rings out of the bottom-right corner, line work only (owner, 2026-11-04). In dark mode
+ * they're green and fade toward the 13; light mode keeps black rings, stronger outward. 60cqw keeps the
+ * outer ring clear of the label. */
+.why-me-radar { position: absolute; right: 0; bottom: 0; width: 60cqw; height: 60cqw; overflow: visible; color: var(--why-me-accent); pointer-events: none; }
+.why-me-radar circle { stroke-opacity: var(--fade); }
+[data-theme="light"] .why-me-radar { color: var(--color-fg-max); }
+[data-theme="light"] .why-me-radar circle { stroke-opacity: var(--grow); }
 .why-me-proof-box:nth-child(6) { background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--why-me-accent) 28%, var(--color-bg)), var(--color-bg) 95%); }
 .why-me-proof-box:nth-child(6)::before { content: ""; position: absolute; inset: 0; opacity: .32; filter: grayscale(1); pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23808080' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
 .why-me-proof-box:nth-child(6) .why-me-proof-value { max-width: 20ch; font-size: clamp(var(--type-body-lead-size), 8cqw, var(--type-heading-h2-size)); font-weight: var(--font-weight-emphasize); line-height: var(--type-heading-h3-leading); }
@@ -936,7 +939,7 @@
 .why-me-backers li { position: relative; isolation: isolate; display: flex; align-items: center; min-width: 0; }
 /* The Home logo reel's hover, reused (site.css): additive crossfade from the white logo to its on-dark
  * color artwork in dark mode, the filter lifting off the light artwork in light mode. Logos with no
- * color get no copy, so nothing happens. */
+ * color in a theme get no hover in it. */
 .why-me-backers img { display: block; height: var(--backer-height); width: auto; max-width: 100%; object-fit: contain; object-position: left center; mix-blend-mode: plus-lighter; filter: brightness(0) invert(1); transition: opacity var(--why-me-hover-out) ease-out; }
 .why-me-backers img.why-me-backer-color { position: absolute; inset: 0; filter: none; opacity: 0; }
 .why-me-backers .why-me-backer-on-light { display: none; }
@@ -946,11 +949,11 @@
 @media (hover: hover) and (pointer: fine) {
   .why-me-backers li:hover img:has(+ .why-me-backer-color) { opacity: 0; transition-duration: var(--why-me-hover-in); }
   .why-me-backers li:hover .why-me-backer-color { opacity: 1; transition-duration: var(--why-me-hover-in); }
-  [data-theme="light"] .why-me-backers li:hover img { filter: none; }
+  [data-theme="light"] .why-me-backers li[data-color]:hover img { filter: none; }
   .why-me-proof-box:hover .why-me-proof-photo { filter: grayscale(0); transition-duration: var(--why-me-hover-in); }
 }
 @media (prefers-reduced-motion: reduce) { .why-me-backers img, .why-me-proof-photo { transition: none; } }
-/* Light stays monochrome for either preview accent (owner, 2026-11-04). */
+/* Light stays monochrome (owner, 2026-11-04). */
 [data-theme="light"] .why-me-section { --why-me-accent: var(--color-fg-max); --why-me-rule: var(--color-fg-2); }
 /* On white, glows and tinted fills turn to gray smudges: the sheets keep only their edges. */
 [data-theme="light"] .why-me-proof-box:nth-child(2)::before { content: none; }
@@ -958,10 +961,6 @@
 [data-theme="light"] .why-me-papers path { fill: none; }
 [data-theme="light"] .why-me-proof-box:nth-child(6) { background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--color-fg-max) 7%, var(--color-bg)), var(--color-bg) 80%); }
 [data-theme="light"] .why-me-proof-box:nth-child(6)::before { opacity: .22; }
-.why-me-switcher { position: fixed; right: var(--space-interface-16); bottom: var(--space-interface-16); z-index: 100; display: flex; gap: var(--space-interface-16); padding: var(--space-interface-12); border: var(--shape-border-width) solid var(--color-fg-2); background: var(--color-bg); color: var(--color-fg-max); font: var(--type-body-secondary-size)/var(--type-body-secondary-leading) var(--font-body); }
-.why-me-switcher fieldset { display: flex; gap: var(--space-interface-8); }
-.why-me-switcher label { display: flex; align-items: center; gap: var(--space-interface-4); cursor: pointer; }
-.why-me-switcher input { accent-color: var(--color-fg-max); }
 @media (max-width: 39.999rem) {
   .why-me-proof-box { padding: var(--space-interface-16); }
   .why-me-proof-box:first-child .why-me-proof-block { gap: var(--space-interface-8); padding: var(--space-interface-12); }

@@ -36,16 +36,17 @@ const credibility = [
   { kind: 'figure' as const, figure: '2.6k', label: 'Clients' },
   { kind: 'figure' as const, figure: '13', label: 'Years on Fiverr', dynamicYear: true },
   // Not clients: investors behind the owner's clients (owner, 2026-11-04). Logos from Brandfetch, files in public/clients;
-  // Heights balance the eight wordmarks. `color` marks the on-dark artwork that has color to fade in on hover (2026-11-04).
+  // Heights balance the eight wordmarks. `color` names the themes whose artwork has color to show on hover;
+  // black-and-white logos have none, so nothing happens on them (owner, 2026-11-04).
   { kind: 'logos' as const, label: 'Clients backed by', note: 'and other investors', logos: [
-    { name: 'Citi', light: 'citi.svg', dark: 'citi-on-dark.svg', height: 22, color: true },
-    { name: 'Y Combinator', light: 'y-combinator.svg', dark: 'y-combinator-on-dark.svg', height: 18 },
+    { name: 'Citi', light: 'citi.svg', dark: 'citi-on-dark.svg', height: 22, color: 'both' as const },
+    { name: 'Y Combinator', light: 'y-combinator.svg', dark: 'y-combinator-on-dark.svg', height: 18, color: 'light' as const },
     { name: 'Khosla Ventures', light: 'khosla-ventures.svg', dark: 'khosla-ventures-on-dark.png', height: 13 },
     { name: '500 Global', light: '500-global.svg', dark: '500-global-on-dark.svg', height: 18 },
     { name: 'Accel', light: 'accel.png', dark: 'accel-on-dark.svg', height: 24 },
     { name: 'Benchmark', light: 'benchmark.png', dark: 'benchmark-on-dark.png', height: 18 },
-    { name: 'Bessemer Venture Partners', light: 'bessemer.svg', dark: 'bessemer-on-dark.svg', height: 36 },
-    { name: 'Battery Ventures', light: 'battery.png', dark: 'battery-on-dark.svg', height: 22, color: true },
+    { name: 'Bessemer Venture Partners', light: 'bessemer.svg', dark: 'bessemer-on-dark.svg', height: 36, color: 'light' as const },
+    { name: 'Battery Ventures', light: 'battery.png', dark: 'battery-on-dark.svg', height: 22, color: 'both' as const },
   ] },
   { kind: 'note' as const, text: 'Selected to give feedback to Fiverr leadership in Tel Aviv', label: 'In 2018' },
   { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: cannonBrooke } },

@@ -5,47 +5,24 @@ interface Figure { kind: 'figure'; figure: string; label: string; accent?: boole
 interface Note { kind: 'note'; text: string; label: string; accent?: boolean }
 interface Quote { kind: 'quote'; testimonial: { quote: string; name: string; role: string; company: string; photo?: ImageMetadata } }
 interface Pair { kind: 'pair'; figures: { figure: string; label: string }[]; accent?: boolean }
-interface Logos { kind: 'logos'; label: string; note: string; logos: { name: string; light: string; dark: string; height: number; color?: boolean }[] }
+interface Logos { kind: 'logos'; label: string; note: string; logos: { name: string; light: string; dark: string; height: number; color?: 'both' | 'light' }[] }
 type Item = Figure | Pair | Note | Quote | Logos;
 interface Props { kicker: string; heading: string; credibility: Item[] }
 const { kicker, heading, credibility } = Astro.props;
 ---
-<section class="shell why-me-section" data-accent="green">
+<section class="shell why-me-section">
   <p class="type-meta text-fg-2 uppercase">{kicker}</p>
   <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">{heading}</h2>
   <ul class="why-me-proof">
     {credibility.map((c, i) => <li class="why-me-proof-box">
       {i === 1 && <svg class="why-me-papers" viewBox="0 0 400 360" aria-hidden="true"><defs><linearGradient id="why-me-sheet" x1="1" y1="0" x2="0.3" y2="1"><stop stop-color="var(--color-fg-max)" stop-opacity=".22" /><stop offset="1" stop-color="var(--color-bg)" stop-opacity="0" /></linearGradient><linearGradient id="why-me-edge" x1="1" y1="0" x2=".2" y2=".9"><stop stop-color="var(--color-fg-max)" /><stop offset="1" stop-color="var(--color-fg-max)" stop-opacity="0" /></linearGradient><linearGradient id="why-me-fade" x2="0" y2="1"><stop stop-color="white" /><stop offset="1" stop-color="white" stop-opacity="0" /></linearGradient><mask id="why-me-sheet-mask"><rect width="400" height="360" fill="url(#why-me-fade)" /></mask></defs><g mask="url(#why-me-sheet-mask)">{[0, 1, 2, 3, 4].map(n => <path d={`M ${32 - n * 12} ${100 + n * 22} L ${325 - n * 12} ${8 + n * 18} L ${390 - n * 12} ${270 + n * 18} L ${90 - n * 12} ${350 + n * 18} Z`} fill="url(#why-me-sheet)" stroke={n === 0 ? "var(--why-me-accent)" : "url(#why-me-edge)"} />)}</g></svg>}
       {i === 2 && <svg class="why-me-dots" viewBox="0 0 300 300" aria-hidden="true"><defs><linearGradient id="why-me-dot-ink" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--color-fg-muted)" stop-opacity="0" /><stop offset=".55" stop-color="var(--why-me-accent)" stop-opacity=".35" /><stop offset="1" stop-color="var(--why-me-accent)" /></linearGradient><pattern id="why-me-matrix" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="7.5" cy="7.5" r="1.6" fill="white" /></pattern><mask id="why-me-dot-mask"><rect width="300" height="300" fill="url(#why-me-matrix)" /></mask></defs><rect width="300" height="300" fill="url(#why-me-dot-ink)" mask="url(#why-me-dot-mask)" /></svg>}
-      {i === 3 && <svg class="why-me-radar" viewBox="0 0 100 100" fill="none" aria-hidden="true">{[1, 2, 3, 4, 5, 6, 7].map((n) => <circle cx="100" cy="100" r={(n * 100) / 7} stroke="currentColor" stroke-opacity={(n / 7) ** 1.5 * 0.7} vector-effect="non-scaling-stroke" />)}</svg>}
-      {c.kind === 'pair' ? c.figures.map((f) => <div class="why-me-proof-block"><div class="why-me-credential-copy"><p class="why-me-proof-value">{f.figure}</p><p class="why-me-proof-label type-meta uppercase">{f.label}</p></div></div>) : c.kind === 'logos' ? <div class="why-me-proof-logos"><p class="why-me-proof-value">{c.label}</p><div class="why-me-backers-group"><ul class="why-me-backers">{c.logos.map((logo) => <li style={`--backer-height: ${logo.height}px`}><span class="sr-only">{logo.name}</span><img src={`/clients/${logo.light}`} alt="" class="why-me-backer-on-light" loading="lazy" decoding="async" /><img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark" loading="lazy" decoding="async" />{logo.color && <img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark why-me-backer-color" loading="lazy" decoding="async" />}</li>)}</ul><p class="why-me-proof-label type-meta uppercase">{c.note}</p></div></div> : c.kind === 'quote' ? <figure class="why-me-proof-quote"><blockquote class="why-me-proof-value">“{c.testimonial.quote}”</blockquote><figcaption class="why-me-proof-by">{c.testimonial.photo && <Picture src={c.testimonial.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[64, 128, 192]} sizes="64px" width={64} height={64} alt="" loading="lazy" decoding="async" class="why-me-proof-photo" />}<span class="flex flex-col"><span class="why-me-proof-name">{c.testimonial.name}</span><span>{c.testimonial.role}</span><span>{c.testimonial.company}</span></span></figcaption></figure> : <div class="why-me-proof-block"><p class="why-me-proof-value">{c.kind === 'note' ? c.text : c.dynamicYear ? <span data-years-since="2013">{new Date().getFullYear() - 2013}</span> : c.figure}</p><p class="why-me-proof-label type-meta uppercase">{c.label}</p></div>}
+      {i === 3 && <svg class="why-me-radar" viewBox="0 0 100 100" fill="none" aria-hidden="true">{[1, 2, 3, 4, 5, 6, 7].map((n) => <circle cx="100" cy="100" r={(n * 100) / 7} stroke="currentColor" style={`--fade: ${(0.9 - (n - 1) * 0.12).toFixed(2)}; --grow: ${((n / 7) ** 1.5 * 0.7).toFixed(2)}`} vector-effect="non-scaling-stroke" />)}</svg>}
+      {c.kind === 'pair' ? c.figures.map((f) => <div class="why-me-proof-block"><div class="why-me-credential-copy"><p class="why-me-proof-value">{f.figure}</p><p class="why-me-proof-label type-meta uppercase">{f.label}</p></div></div>) : c.kind === 'logos' ? <div class="why-me-proof-logos"><p class="why-me-proof-value">{c.label}</p><div class="why-me-backers-group"><ul class="why-me-backers">{c.logos.map((logo) => <li style={`--backer-height: ${logo.height}px`} data-color={logo.color}><span class="sr-only">{logo.name}</span><img src={`/clients/${logo.light}`} alt="" class="why-me-backer-on-light" loading="lazy" decoding="async" /><img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark" loading="lazy" decoding="async" />{logo.color === 'both' && <img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark why-me-backer-color" loading="lazy" decoding="async" />}</li>)}</ul><p class="why-me-proof-label type-meta uppercase">{c.note}</p></div></div> : c.kind === 'quote' ? <figure class="why-me-proof-quote"><blockquote class="why-me-proof-value">“{c.testimonial.quote}”</blockquote><figcaption class="why-me-proof-by">{c.testimonial.photo && <Picture src={c.testimonial.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[64, 128, 192]} sizes="64px" width={64} height={64} alt="" loading="lazy" decoding="async" class="why-me-proof-photo" />}<span class="flex flex-col"><span class="why-me-proof-name">{c.testimonial.name}</span><span>{c.testimonial.role}</span><span>{c.testimonial.company}</span></span></figcaption></figure> : <div class="why-me-proof-block"><p class="why-me-proof-value">{c.kind === 'note' ? c.text : c.dynamicYear ? <span data-years-since="2013">{new Date().getFullYear() - 2013}</span> : c.figure}</p><p class="why-me-proof-label type-meta uppercase">{c.label}</p></div>}
     </li>)}
   </ul>
 </section>
-{/* Owner preview controls come out once the accent is picked (2026-11-04). */}
-{import.meta.env.DEV && <aside class="why-me-switcher" aria-label="Why me preview"><fieldset><legend>Accent</legend>{['green', 'yellow'].map(value => <label><input type="radio" name="why-me-accent" value={value} checked={value === 'green'} />{value}</label>)}</fieldset></aside>}
-<script is:inline>
-  // Apply query choices before paint; only the preview exposes these controls.
-  {
-    const section = document.querySelector('.why-me-section');
-    const preview = document.querySelector('.why-me-switcher');
-    if (section && preview) {
-      const query = new URLSearchParams(location.search);
-      const value = query.get('accent');
-      if (['green', 'yellow'].includes(value)) section.dataset.accent = value;
-      const input = preview.querySelector(`input[value="${section.dataset.accent}"]`);
-      if (input) input.checked = true;
-      preview.addEventListener('change', event => {
-        const input = event.target;
-        if (!(input instanceof HTMLInputElement)) return;
-        section.dataset.accent = input.value;
-        const url = new URL(location.href);
-        url.searchParams.delete('icons');
-        url.searchParams.set('accent', input.value);
-        history.replaceState(null, '', url);
-      });
-    }
-    const years = document.querySelector('[data-years-since]');
-    if (years) years.textContent = String(new Date().getFullYear() - Number(years.dataset.yearsSince));
-  }
+<script>
+  const years = document.querySelector<HTMLElement>('[data-years-since]');
+  if (years) years.textContent = String(new Date().getFullYear() - Number(years.dataset.yearsSince));
 </script>
