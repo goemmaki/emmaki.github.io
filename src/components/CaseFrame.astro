@@ -17,7 +17,7 @@ const metrics = [
   <figure class="case-frame-quote">
     <blockquote><p data-case-quote>{person.quote}</p></blockquote>
     <figcaption>
-      <img src={`/testimonials/${person.photo}`} alt="" width="56" height="56" class="case-frame-avatar" />
+      <img src={`/testimonials/${person.photo}`} alt="" width="56" height="56" loading="lazy" decoding="async" class="case-frame-avatar" />
       <span class="case-frame-person"><span class="case-frame-name">{person.name}</span><span class="case-frame-role">{person.role}</span></span>
       <span class="case-frame-logo" role="img" aria-label={clientName}></span>
     </figcaption>
