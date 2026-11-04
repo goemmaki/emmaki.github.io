@@ -1,11 +1,11 @@
 ---
 // Caution tape between the client logos and the statement: the page turns from the hero's swagger to
 // the measured voice of everything below it. Two crossed strips of flat yellow with hazard edges and
-// warning signs between the phrases, crawling in opposite directions. Decorative (the next heading
+// warning signs between the phrases. Decorative (the next heading
 // carries the meaning), so it is hidden from assistive tech.
 const phrase = 'Fun’s over';
-// Each half of the track must outrun the widest screen so the loop never shows a gap. 18 tiles a half
-// is also three whole ripple waves (6 tiles each), so the ripple loops with the crawl.
+// Each half of the track must outrun the widest screen so the crawl loop never shows a gap. 18 tiles a half
+// is also three whole ripple waves (6 tiles each).
 const copies = Array.from({ length: 18 });
 // Motion trial (owner, 2026-11-04): crawl, breeze, ripple or still. The dev-only switcher picks one
 // live; remove it and the losing variants once the owner chooses.
@@ -24,7 +24,7 @@ const dev = import.meta.env.DEV;
   const tape = document.querySelector<HTMLElement>('[data-tape]');
   if (tape) {
     // A steady crawl speed, and tiles a whole number of hazard stripes wide, so the moving edges loop
-    // without a jump and stay continuous from tile to tile when the ripple bends them.
+    // without a jump. Six tiles make one ripple wave, whose slope keeps neighbors joined.
     const STRIPE = 16, WAVE_TILES = 6, RIPPLE_PX = 4;
     const pace = () => {
       const tiles = [...tape.querySelectorAll<HTMLElement>('.tape-tile')];
@@ -68,11 +68,11 @@ const dev = import.meta.env.DEV;
   /* A black warning sign between the phrases; the ! is cut out, so the tape's yellow shows through. */
   .tape-sign { flex: none; width: 1.35em; height: auto; margin-inline-end: 1.1em; font-size: clamp(1rem, 1.45vw, 1.375rem); fill: currentColor; translate: 0 -.05em; }
   @media (prefers-reduced-motion: no-preference) {
-    .tape:not([data-motion="still"]) .tape-track { animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
+    .tape[data-motion="crawl"] .tape-track { animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
     /* Breeze: each strip lifts and settles on its own slow swell, as if the wind caught it. */
     .tape[data-motion="breeze"] .tape-band { animation: tape-sway 3.8s ease-in-out infinite alternate; }
     .tape[data-motion="breeze"] .tape-band--back { animation-duration: 4.6s; animation-delay: -1.7s; }
-    /* Ripple: a wave runs down each strip as it crawls. The strip goes transparent so the bent tiles
+    /* Ripple: a wave travels across each strip without a crawl. The strip goes transparent so the bent tiles
        carry the yellow, and the shadow follows the wavy edge. */
     .tape[data-motion="ripple"] .tape-band { background: none; overflow: visible; }
     .tape[data-motion="ripple"] .tape-tile { animation: tape-ripple 2.6s linear infinite; animation-delay: calc((var(--i) - 6) * 2.6s / 6); }
@@ -81,16 +81,16 @@ const dev = import.meta.env.DEV;
   }
   @keyframes tape-crawl { to { transform: translateX(-50%); } }
   @keyframes tape-sway { from { rotate: var(--tilt); translate: 0 0; } to { rotate: calc(var(--tilt) + 0.7deg); translate: 0 -5px; } }
-  /* One sine period in eighths: the tile rises and falls, tilted to the wave's slope. */
+  /* One sine period in eighths: the tile rises and falls, tilted with the wave's slope. */
   @keyframes tape-ripple {
-    0%, 100% { transform: translateY(0) skewY(calc(var(--tape-k) * -1)); }
-    12.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * -.7071)); }
+    0%, 100% { transform: translateY(0) skewY(var(--tape-k)); }
+    12.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * .7071)); }
     25% { transform: translateY(var(--tape-a)) skewY(0deg); }
-    37.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * .7071)); }
-    50% { transform: translateY(0) skewY(var(--tape-k)); }
-    62.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * .7071)); }
+    37.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * -.7071)); }
+    50% { transform: translateY(0) skewY(calc(var(--tape-k) * -1)); }
+    62.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * -.7071)); }
     75% { transform: translateY(calc(var(--tape-a) * -1)) skewY(0deg); }
-    87.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * -.7071)); }
+    87.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * .7071)); }
   }
   /* Over a narrow screen ±3° barely diverges, so phones get a steeper cross. */
   @media (max-width: 599px) {
