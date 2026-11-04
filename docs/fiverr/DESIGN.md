@@ -2,335 +2,89 @@
 name: "Emmaki Fiverr"
 category: Marketplace art direction
 surface: fiverr
-canvas: "1280x768"
-safe-area: "x 150-1150, y 50-719"
+canvas: "1280x769"
+safe-area: "x 150-1150, y 50-714"
 colors:
   canvas: "#000000"
   raised-surface: "#1a1a1a"
   primary-text: "#ededed"
   secondary-text: "#a0a0a0"
   brand-yellow: "#ffc300"
-  system-green-light: "#1a9f0b"
-  system-green-dark: "#48cd39"
 ---
 
 # Emmaki Fiverr Design
 
-This file is the visual authority for Emmaki Fiverr gig thumbnails and related Fiverr marketplace graphics.
+This file is the visual authority for Emmaki Fiverr gig images. It is not the website design system. The references it describes are in `inspo/Screenshots/`.
 
-It is **not** the website design system.
+## The style in one paragraph
 
-For Fiverr graphics, this file overrides website composition rules. Keep the Emmaki colors and type families, but do not inherit the website's restraint, punctuation grammar, interface spacing, container logic, or assumptions about how rarely solid yellow may appear.
+A single monochrome photograph, lit from one side, falls away into black. The service word is set large and **interlocks with the subject**: it sits behind the figure, is cut by its silhouette, is lit by the same light, or hangs on the same edge. Around it, a quiet system of small, precise type (a caption, an index number, a short line of credit, a hairline) holds everything to a grid. There is at most one note of yellow, and it belongs to the picture. The result is calm, dark, tonal and expensive: an editorial poster, not an advert.
 
-## Goal
+## What makes the references work
 
-Make Emmaki look unmistakably senior, expensive, editorial, and visually literate in a marketplace full of bright, busy, literal gig thumbnails.
+These qualities are shared by the strongest references (hat/lorem stack, Prequel, SARAR, Nocturna, I AM A CREATOR, Arca, the yellow chair, Content without positioning, the Prada "a", the statue strips, Moon). Every image in the set must have all six.
 
-The target is **Vercel-like precision pushed into editorial/poster art**.
-
-Think:
-
-- Swiss and modernist discipline without becoming a museum poster.
-- Contemporary editorial art direction without fashion-brand cosplay.
-- Tech precision without SaaS-dashboard design.
-- Strong typography without motivational-poster energy.
-- Monochrome confidence with one deliberate yellow hit.
-- A composition that looks designed, not merely neat.
-
-High-end does **not** mean "a lot of empty black space plus a tasteful word in the corner." Restraint must still create tension, hierarchy, surprise, or visual intelligence.
+1. **The photograph leads.** Almost every reference is built on one real, well-lit photograph of a single subject, such as a person, a statue, a hand or an object. The photograph gives the image its depth, texture and mood. Type on an empty flat canvas never gets there.
+2. **Tone, not flatness.** The ground is black, but it isn't a flat vector fill. Light from the photograph lifts it into charcoal and grey. Shadows fall off softly. The subject's edge dissolves into the dark instead of sitting in a hard-edged rectangle.
+3. **Type and subject share space.** The big word is layered with the subject, never placed beside it: behind the figure, occluded by it, cut by its silhouette, following its edge, or crossing its structure. Remove the photo and the type should look incomplete.
+4. **A small typographic system.** Every strong reference has fine supporting type: a two-line caption, a number such as "02", a short credit, a tiny paragraph, a single hairline, a label locked to a corner. This small type is what makes the poster feel designed, because it creates scale contrast and shows the grid. It is texture and structure, and it never carries the offer.
+5. **Restraint in colour.** Most of the image is black, grey and off-white. The accent is one object or shape: one yellow chair among grey ones, one panel behind a portrait, one dot. It is placed where the eye should land, usually on or against the subject.
+6. **Space kept on purpose.** Large areas stay dark and quiet. The quiet is shaped by the subject and the light, not left over.
 
 ## Canvas
 
-- Working canvas: **1280 × 768 px**.
-- Fiverr-safe area: **x 150 to 1150, y 50 to 719**.
-- Safe usable area: **1000 × 669 px**.
-- Bleed, crops, textures, oversized type, and nonessential imagery may extend outside the safe area.
-- Service-identifying text and any indispensable visual information must remain legible inside the safe area.
-- Judge every design at small marketplace size, not only at full canvas size.
+- 1280 × 769 px (the `fiverr/gig-thumbnails/_template/` canvas). Safe area: x 150–1150, y 50–714.
+- The photograph, its falloff and the dark ground may run to the edges. The service word and any legible type stay inside the safe area.
+- The references are portrait and Fiverr is landscape. Translate by putting the subject on one side, or placing it off-centre in a full-bleed frame, and letting the word and the small type use the other side. Do not squeeze a portrait poster into the middle.
+- Judge every image at card size (about 280 px wide) as well as full size. At card size it should read as: a lit subject, a word, one point of yellow.
 
-## Color
+## Photography
 
-Keep the existing Emmaki palette.
+The photograph is the most important decision in each image. Choose it before anything else.
 
-### Core
-
-- Black: `#000000`
-- Raised black: `#1A1A1A`
-- Primary light: `#EDEDED`
-- Secondary light: `#A0A0A0`
-- Emmaki yellow: `#FFC300`
-
-### System green
-
-- Light: `#1A9F0B`
-- Dark: `#48CD39`
-
-Green remains part of the wider brand system, but it is **not** a default Fiverr-thumbnail accent. The default thumbnail language is monochrome plus yellow. Use green only when machine/system activity is genuinely part of the concept.
-
-### Yellow on Fiverr
-
-Website rules that treat solid yellow as a rare tiny splash do not apply here.
-
-On Fiverr, solid `#FFC300` may be:
-
-- a large geometric field,
-- a major typographic element,
-- a crop or mask,
-- an image interruption,
-- a block behind or through type,
-- a strong focal area occupying a meaningful part of the composition.
-
-Yellow should still feel intentional. Do not scatter many little yellow decorations around the canvas.
-
-One decisive yellow intervention is usually stronger than five small accents.
+- **One subject**, with a clear silhouette. Useful subjects for a copywriter: hands writing, a hand with a pen or a sheet of paper, a typewriter, printed pages, a person reading, a profile portrait, a classical bust, a single object on a table.
+- **Directional light.** Side light, top light or back light, with the shadow side falling into black. Flat, evenly lit stock images don't work.
+- **Monochrome.** Convert to black and white with deep, clean blacks and soft highlights. Crush the shadows so the photograph merges into the canvas.
+- **No hard photo rectangles**, unless the frame itself is the idea (as in Moon or the statue strips) and is visibly deliberate.
+- Allowed treatments, used lightly and one at a time: soft focus with one sharp region (Prequel), fine photographic grain from the image itself, slicing into bands, a silhouette used as a mask for type.
+- Real photographs only. No AI-generated people, 3D renders, glossy stock cutouts, robots, glowing effects or "future tech".
 
 ## Typography
 
-Keep the existing Emmaki type system.
+Families stay Emmaki's: **Geist** for display, **IBM Plex Sans** for small text, **IBM Plex Mono** for labels and numbers.
 
-- **Display:** Geist.
-- **Body/interface:** IBM Plex Sans.
-- **Mono/technical:** IBM Plex Mono.
-- No additional serif family.
+- **The service word** is large, usually 150–400 px, and has to read at card size. Choose the weight to suit the photograph. Light and regular weights at large sizes feel more expensive than bold, so use bold only when the word must hold its own against a bright subject. Keep tracking close to normal. Don't crush it.
+- **Tall stacks and line breaks** are allowed when they follow the subject (the hat/lorem stack runs down the face's edge). They are not decoration.
+- **Small type** is set at 14–22 px at full canvas size, in `#A0A0A0` or `#EDEDED` at reduced opacity. Use Plex Mono for numbers and labels and Plex Sans for sentences. Use it in two or three placements at most, aligned to the grid and to the big word's edges. Real, sensible content only: the service name, a short line about the offer, an index number for the gig in the series. Nothing invented, such as fake clients, dates or stats.
+- **Hairlines**: 1 px `#EDEDED` at low opacity, used when a line organises the layout (Nocturna's guides, the Prada rule). One or two per image.
 
-### Type is image
+## Colour
 
-For Fiverr graphics, typography is not merely a label placed on top of a design. It may be the dominant visual material.
-
-Allowed and encouraged:
-
-- very large display type,
-- words cropped by the canvas,
-- extreme scale differences,
-- stacked or split words,
-- tight or deliberately unusual line breaks,
-- type running behind or through imagery,
-- masked or interrupted letterforms,
-- partial disappearance,
-- letterforms used as framing devices,
-- asymmetric placement,
-- individual letters becoming graphic shapes,
-- repetition when it creates a deliberate visual rhythm,
-- selective blur, raster, halftone, grain, or distortion when legibility survives.
-
-Do not make typography strange merely to demonstrate an effect. The service must still read instantly at thumbnail size.
-
-### Wording
-
-Prefer one or two huge service-identifying words over explanatory copy.
-
-Useful vocabulary includes:
-
-- COPY
-- WEBSITE
-- SALES
-- EMAIL
-- SEO
-- CONTENT
-- AI CONTENT
-- VSL
-- SCRIPTS
-- LEAD MAGNETS
-- PRESS
-- RELEASES
-- REWRITE
-- FIVERR
-- PROFILE
-
-Long words may be split, cropped, stacked, repeated, or otherwise treated compositionally.
-
-Avoid feature lists, paragraphs, badges, fake metadata, excessive subtitles, and generic marketing filler.
-
-A small secondary line is allowed only when it genuinely adds information that the large service word cannot.
-
-## Composition
-
-Every thumbnail needs **one dominant compositional idea**.
-
-Examples:
-
-- one enormous cropped word,
-- a hard image/type collision,
-- a single sliced photographic subject,
-- a huge letter used as an image mask,
-- an aggressive asymmetrical crop,
-- one blurred field interrupted by a sharp region,
-- one geometric block that materially changes the composition,
-- repeated type used as texture with one sharp focal word,
-- one transformed object breaking through the typography,
-- one controlled field of yellow against black and white.
-
-Do not stack unrelated tricks. One strong gesture beats a collection of effects.
-
-### Tension over tidiness
-
-A premium composition should feel resolved, but not overly polite.
-
-Use:
-
-- extreme scale,
-- deliberate imbalance,
-- hard crops,
-- off-centre focal points,
-- overlap,
-- occlusion,
-- controlled compression,
-- dramatic negative space,
-- edge tension,
-- abrupt changes in scale,
-- strong black/white contrast.
-
-Negative space is useful only when something is exerting pressure against it. Empty space by itself is not sophistication.
-
-Do not default to:
-
-- centred headline + tiny subtitle,
-- word + yellow dot,
-- word + yellow square,
-- neat logo-card layouts,
-- evenly balanced thirds,
-- generic brand-presentation slides,
-- tidy SaaS hero sections,
-- boxed service cards.
-
-## Imagery
-
-Imagery is optional. Faceless concepts are the default starting point.
-
-When imagery is used, treat it as graphic material rather than decoration.
-
-Good source material may include:
-
-- real photography,
-- architecture,
-- sculpture,
-- hands,
-- keyboards or physical tools,
-- documents,
-- objects,
-- landscapes,
-- supplied client/product imagery,
-- portraits when there is a reason for a face.
-
-Possible treatments:
-
-- monochrome conversion,
-- hard crop,
-- silhouette,
-- halftone,
-- coarse raster,
-- blur,
-- grain,
-- threshold,
-- slice,
-- repeat,
-- displacement,
-- partial masking,
-- geometric clipping,
-- sharp-window / blurred-field contrast,
-- type masking,
-- overprint-like overlap.
-
-A clean stock cutout sitting beside a headline is usually wrong.
-
-Do not use generic AI imagery, glossy synthetic people, floating 3D blobs, robots, glowing brains, circuits, neon cyberpunk effects, or decorative "future tech" imagery.
-
-If a person is used, recognisability and photographic credibility matter more than spectacle.
-
-## Reference character
-
-The uploaded reference set is useful for **visual grammar**, not for copying individual posters.
-
-Recurring qualities to preserve:
-
-- oversized typography,
-- black/white or near-monochrome foundations,
-- a single forceful accent,
-- aggressive cropping,
-- image/type interaction,
-- transformed photography,
-- masks and cut-throughs,
-- halftone, grain, blur, and print-like texture,
-- asymmetry,
-- graphic interruption,
-- strong negative space,
-- compositions built around one idea,
-- editorial confidence,
-- very little copy.
-
-The goal is not "make it look like a Swiss poster." The goal is to apply the same level of compositional thought to a commercial Fiverr thumbnail.
+- The foundation is **black through grey to `#EDEDED`**, meaning the photograph's full tonal range.
+- **Yellow `#FFC300` is used at most once**, as one element: an object in the photo, a shape touching the subject, one word or one letter, or a small field. It should look placed, like the yellow chair, and never like a background slab or a stripe laid over type.
+- An image with no yellow is fine. Yellow is what makes a series of images read as Emmaki, but no single image depends on it.
+- No other colours.
 
 ## Series behaviour
 
-The ten gig images belong to one brand, but they should **not** look like ten template variants.
-
-Consistency comes from:
-
-- the same type families,
-- the same black/white/yellow palette,
-- similar confidence and scale,
-- similar image-treatment sensibility,
-- the same preference for one dominant idea.
-
-Variation should come from:
-
-- different crops,
-- different typographic structures,
-- different image treatments,
-- different use of yellow,
-- different spatial tension,
-- different visual anchors.
-
-Do not build one master template and swap `EMAIL` for `SEO` for `VSL`.
-
-Viewed together, the set should feel like a campaign by one art director, not a Canva template pack.
-
-## Marketplace clarity
-
-Fiverr is visually noisy. Emmaki should stand out by **not participating in the noise**, but that does not mean becoming visually passive.
-
-At small size:
-
-1. The service should be identifiable immediately.
-2. The composition should have a recognisable silhouette or visual gesture.
-3. Yellow should create a useful focal hit when present.
-4. Fine detail must be expendable.
-5. Tiny text must never carry the concept.
-
-The thumbnail should first read as a striking graphic, then resolve into the service offer.
+The gig images are one campaign with one language, not ten different experiments. Every image uses the same kind of photograph, the same dark tonal ground, the same relationship between word and subject, and the same small-type system. The differences come from the photograph, the word, and where the subject sits.
 
 ## Avoid
 
-- generic Fiverr thumbnail conventions,
-- lime-green marketplace aesthetics,
-- smiling stock-person cutouts,
-- icon lists,
-- arrows and conversion badges,
-- fake buttons,
-- fake browser chrome,
-- decorative UI panels,
-- generic dashboard imagery,
-- "premium" expressed only as sparse spacing,
-- random geometry with no compositional job,
-- tiny yellow garnish used to make an otherwise empty design feel branded,
-- repetitive punctuation gimmicks,
-- gratuitous terminal styling,
-- endless one-pixel rules,
-- ten thumbnails with the same layout,
-- visual effects that make the service word hard to read,
-- anything that looks like an AI-generated design trend collage.
+- Type-only compositions on flat black. Without a photograph, it isn't this style.
+- Heavy bold type with crushed tracking used as the whole design.
+- Large flat yellow fields, bars, stripes or split backgrounds.
+- A catalogue of effects: colour changing along diagonals, words broken across columns, knockouts, repeated-word ladders. One quiet interaction between word and subject is enough.
+- Hard-edged photo rectangles dropped beside a word.
+- Generic Fiverr conventions: smiling cutouts, icon lists, arrows, badges, fake buttons, browser chrome, feature lists.
+- Glow, gold, metallic or 3D surfaces, neon, glitch, and synthetic "cinematic" lighting added on top. The light has to come from the photograph.
 
 ## Test
 
-Before accepting a thumbnail, ask:
-
-- Does this have one obvious visual idea?
-- Is the service obvious at small size?
-- Is the typography doing compositional work?
-- Does the yellow materially contribute, or is it just garnish?
-- Would this still look intentional among loud Fiverr results?
-- Does it feel more like editorial art direction than a brand-system demo?
-- Could another gig in the set use a genuinely different composition while still feeling Emmaki?
-- Is there anything here only because "premium minimalism" supposedly requires it?
-
-If the result is merely clean, balanced, and tasteful, it is not finished.
+- Is there one real, well-lit photograph, and does it lead?
+- Does the word interlock with the subject, rather than sit next to it?
+- Is there a small, precise typographic system, and is it quiet?
+- Is the ground tonal and dark, rather than flat?
+- Is there at most one yellow element, and does it land where the eye should?
+- At card size, does it read as a lit subject, a word and one point of yellow?
+- Would it sit comfortably next to the Prequel, Nocturna and SARAR references?
