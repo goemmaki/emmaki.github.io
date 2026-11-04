@@ -14,6 +14,8 @@ const RUNS = Number(process.env.RUNS ?? 1);
 
 (async () => {
   const { default: lighthouse } = await import(path.resolve("runtime/a11y-tools/node_modules/lighthouse/core/index.js"));
+  // Desktop settings go in the third argument (a config); a `preset` flag is silently ignored by the Node API.
+  const { default: desktopConfig } = await import(path.resolve("runtime/a11y-tools/node_modules/lighthouse/core/config/desktop-config.js"));
   fs.mkdirSync(`${OUT}/lighthouse`, { recursive: true });
   const ctx = await chromium.launchPersistentContext(`${OUT}/lighthouse-profile`, {
     executablePath: "/usr/bin/google-chrome",
@@ -33,14 +35,18 @@ const RUNS = Number(process.env.RUNS ?? 1);
           try {
             const runs = [];
             for (let i = 0; i < RUNS; i++) {
-              const r = await lighthouse(base + url, {
-                port: 9223,
-                logLevel: "error",
-                onlyCategories: ["accessibility", "best-practices", "performance", "seo"],
-                disableStorageReset: true,
-                output: "json",
-                ...(mode === "desktop" ? { preset: "desktop" } : {}),
-              });
+              const r = await lighthouse(
+                base + url,
+                {
+                  port: 9223,
+                  logLevel: "error",
+                  onlyCategories: ["accessibility", "best-practices", "performance", "seo"],
+                  disableStorageReset: true,
+                  output: "json",
+                },
+                mode === "desktop" ? desktopConfig : undefined,
+              );
+              if (r.lhr.configSettings.formFactor !== mode) throw new Error(`ran as ${r.lhr.configSettings.formFactor}, expected ${mode}`);
               const file = RUNS > 1 ? `${tag}.run${i + 1}.json` : `${tag}.json`;
               fs.writeFileSync(`${OUT}/lighthouse/${file}`, JSON.stringify(r.lhr, null, 2));
               runs.push({ lhr: r.lhr, file });
