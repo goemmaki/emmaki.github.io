@@ -900,7 +900,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  margin-top: 24px;
+  margin-top: 48px;
   border: 1px solid var(--color-line);
   background: var(--color-line);
 }
@@ -1031,11 +1031,6 @@
   .why-me-proof-box[data-accent]:hover .why-me-proof-label { color: inherit; }
   .why-me-proof-box:hover .why-me-proof-photo { filter: none; }
 }
-/* A small inward scale keeps each figure and label together, with no layout shift. */
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .why-me-proof-block { transition: transform 0.2s var(--ease); }
-  .why-me-proof-box:hover .why-me-proof-block { transform: scale(0.97); }
-}
 
 /* Graphics occupy an isolated, clipped layer. The type keeps its contrast through a soft halo of
  * the box's own paper that follows the letter shapes (owner, 2026-10-28: solid backing slabs behind
@@ -1051,8 +1046,6 @@
   color: var(--color-fg-max);
   opacity: 0;
 }
-.why-me-poster svg { display: block; width: 100%; height: 100%; }
-.why-me-poster-1 { color: #000; }
 /* Switch both inks together: interpolating black/white through yellow loses contrast. */
 .why-me-proof-box[data-accent] { transition: none; }
 .why-me-proof-value,
@@ -1068,37 +1061,13 @@
   background: var(--poster-paper);
   box-shadow: 0 0 0 4px var(--poster-paper);
 }
-.why-me-moire-base { transform: rotate(-19deg); transform-origin: center; }
-.why-me-moire-slide { transform: rotate(-26deg); transform-origin: center; }
-.why-me-disc { transform-origin: 254px 22px; }
-.why-me-rings { transform-origin: 318px 318px; }
-.why-me-module { transform-box: fill-box; transform-origin: bottom left; }
 
-/* Timelines exist only during an eligible hover. Removing :hover removes every animation,
- * including the slow interference loop; rest and touch have no animation work. */
+/* The halftone (2.6k clients) is the bento's only motion: it prints in on an eligible hover and its
+ * canvas loop runs only while hovered; rest and touch have no animation work. */
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .why-me-proof-box:hover .why-me-poster { opacity: 1; animation: why-me-print-in 180ms ease-out; }
-  .why-me-proof-box:hover .why-me-disc { animation: why-me-disc-in 1100ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-slash { animation: why-me-slash-in 800ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-moire-slide { animation: why-me-interference 7s ease-in-out infinite alternate; }
-  .why-me-proof-box:hover .why-me-rings { animation: why-me-rings-in 1400ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-module { animation: why-me-module-in 480ms var(--ease) both; }
-  .why-me-proof-box:hover .why-me-module-1 { animation-delay: 55ms; }
-  .why-me-proof-box:hover .why-me-module-2 { animation-delay: 110ms; }
-  .why-me-proof-box:hover .why-me-module-3 { animation-delay: 165ms; }
-  .why-me-proof-box:hover .why-me-module-4 { animation-delay: 220ms; }
-  .why-me-proof-box:hover .why-me-module-5 { animation-delay: 275ms; }
-  .why-me-proof-box:hover .why-me-module-6 { animation-delay: 330ms; }
-  .why-me-proof-box:hover .why-me-module-7 { animation-delay: 385ms; }
-  .why-me-proof-box:hover .why-me-quote-stroke { stroke-dasharray: 1; animation: why-me-quote-in 1100ms var(--ease) both; }
 }
 @keyframes why-me-print-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes why-me-disc-in { from { transform: rotate(-42deg) scale(.82); } to { transform: rotate(0) scale(1); } }
-@keyframes why-me-slash-in { from { transform: translate(60px, -90px); } to { transform: translate(0, 0); } }
-@keyframes why-me-interference { from { transform: rotate(-26deg) translateY(-5px); } to { transform: rotate(-19.8deg) translateY(16px); } }
-@keyframes why-me-rings-in { from { transform: scale(.72); } to { transform: scale(1); } }
-@keyframes why-me-module-in { from { opacity: 0; transform: scaleY(.05); } to { opacity: 1; transform: scaleY(1); } }
-@keyframes why-me-quote-in { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
   /* The global minimum duration otherwise delays inherited ink by one frame. */
