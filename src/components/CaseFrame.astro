@@ -1,4 +1,5 @@
 ---
+import { Picture } from 'astro:assets';
 import { TESTIMONIALS } from '@/lib/content';
 // facts: the client at a glance, label and value, in a row across the frame's foot.
 interface Props { brandColor: string; clientName: string; facts: [string, string][] }
@@ -17,7 +18,7 @@ const metrics = [
   <figure class="case-frame-quote">
     <blockquote><p data-case-quote>{person.quote}</p></blockquote>
     <figcaption>
-      <img src={`/testimonials/${person.photo}`} alt="" width="56" height="56" loading="lazy" decoding="async" class="case-frame-avatar" />
+      {person.photo && <Picture src={person.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[56, 112, 168]} sizes="56px" width={56} height={56} alt="" loading="lazy" decoding="async" class="case-frame-avatar" />}
       <span class="case-frame-person"><span class="case-frame-name">{person.name}</span><span class="case-frame-role">{person.role}</span></span>
       <span class="case-frame-logo" role="img" aria-label={clientName}></span>
     </figcaption>

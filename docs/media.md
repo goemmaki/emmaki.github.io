@@ -6,7 +6,7 @@ How images, SVGs, screenshots and video go into the site. Astro's built-in image
 
 - **Post or project media:** next to its entry, in `src/content/blog/<slug>/` or `src/content/work/<slug>/`, referenced with a relative path (`./chart.png`). Astro processes these and writes `width` and `height`.
 - **Shared site images** (portraits, textures used by components): `src/assets/<area>/`, imported in the component.
-- **`public/`** only for files that must keep a fixed URL or are served untouched: the favicon, social cards, and existing files already referenced by URL (blog covers, client logos, testimonial photos). Nothing in `public/` is optimized, so don't add new photos there.
+- **`public/`** only for files that must keep a fixed URL or are served untouched: the favicon, social cards, and existing files already referenced by URL (blog covers, client logos). Nothing in `public/` is optimized, so don't add new photos there.
 - Commit the largest clean source you have (at least 2× the largest display width, ideally a lossless PNG or a high-quality JPEG). Astro makes the smaller sizes; never commit pre-shrunk copies.
 - File names: lowercase, hyphenated, descriptive (`harvard-email-before.png`, not `Screenshot 2026-11-01 at 10.14.png`).
 

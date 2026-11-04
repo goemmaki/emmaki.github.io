@@ -12,6 +12,7 @@ import ApproachAccordion from '../components/ApproachAccordion.astro';
 import gigAvatar from '@/assets/gig/emma.png';
 import salesCopyThumb from '@/assets/gig/sales-copy.png';
 import fiverrOptimisationThumb from '@/assets/gig/fiverr-optimisation.png';
+import cannonBrooke from '@/assets/testimonials/cannon-brooke.webp';
 import { heroPortrait } from '@/lib/hero-portrait';
 import { TESTIMONIALS } from '@/lib/content';
 const portrait = await heroPortrait();
@@ -37,7 +38,7 @@ const credibility = [
     { name: '500 Global', light: '500-global.svg', dark: '500-global-on-dark.svg', height: 18 },
   ] },
   { kind: 'note' as const, text: 'Selected to give feedback to Fiverr leadership in Tel Aviv', label: 'In 2018' },
-  { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: 'cannon-brooke.webp' } },
+  { kind: 'quote' as const, testimonial: { quote: 'She gets it. You won’t get a pile of AI slop masquerading as copy.', name: 'Cannon Brooke', role: 'Founder', company: 'Brooke Solutions', photo: cannonBrooke } },
 ];
 // The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
 // are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.

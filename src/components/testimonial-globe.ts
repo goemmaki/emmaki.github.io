@@ -1,10 +1,13 @@
 import { createDots, FAR_HEMISPHERE } from './about/globedots';
-import { clamp01, css, hasGpu, hasWebGL, land, landReady, project, rgbOf, smooth, toRad, unit, type LatLon, type Rgb, type View } from './about/sphere';
+import { clamp, clamp01, css, hasGpu, hasWebGL, land, landReady, project, R, rgbOf, smooth, toRad, unit, type LatLon, type Rgb, type View } from './about/sphere';
 
 const PIXEL_BUDGET = 8e6;
 const SPIN = (2 * Math.PI) / 100;
 const AUTOPLAY_MS = 7000;
 const TURN_MS = 1200;
+const TAU = 2 * Math.PI;
+const SETTLE_S = 0.8; // After a flick, the spin eases back to SPIN over about this long.
+const DRAG_SLOP = 4; // Pixels a press can move before it counts as a drag, not a pin click.
 const phiFacing = (lon: number) => -Math.PI / 2 - toRad(lon);
 const angleDelta = (to: number, from: number) => ((to - from + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
 
@@ -29,8 +32,10 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   let width = 0, height = 0, dpr = 1, globe: ReturnType<typeof createDots> | null = null;
   let colors: { line: Rgb; dark: boolean } = { line: [1, 1, 1], dark: true };
   let current = 0, phi = phiFacing(pins[0].lng), theta = toRad(pins[0].lat);
+  // dir: +1 spins east to west (phi rising), -1 west to east; the last drag sets it and autoplay follows it.
+  let dir = 1, velocity = SPIN;
+  let drag: { id: number; x: number; y: number; t: number; moved: boolean; turned: number } | null = null, dragged = false;
   let transition: { startPhi: number; deltaPhi: number; startTheta: number; targetTheta: number; startTime: number } | null = null;
-  const autoOrder = [...pins].sort((a, b) => b.lng - a.lng).map(pin => pin.index);
 
   if (!webgl)
     root.dataset.noWebgl = '';
@@ -114,8 +119,11 @@ export function mountTestimonialGlobe(root: HTMLElement) {
       if (progress >= 1)
         transition = null;
     }
-    else if (canMove && last)
-      phi += SPIN * Math.min(0.05, (now - last) / 1000);
+    else if (canMove && last && !drag?.moved) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      velocity += (dir * SPIN - velocity) * (1 - Math.exp(-dt / SETTLE_S));
+      phi += velocity * dt;
+    }
   }
 
   function tick(now: number) {
@@ -141,10 +149,19 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     if (!autoplay || held || !visible || document.hidden)
       return;
     timer = window.setTimeout(() => {
-      const position = autoOrder.indexOf(current);
-      select(autoOrder[(position + 1) % autoOrder.length], false);
+      if (drag?.moved) return scheduleAutoplay();
+      select(nextInSpin(), false);
       scheduleAutoplay();
     }, AUTOPLAY_MS);
+  }
+
+  // How far the globe must still turn, in its spin direction, to face a longitude.
+  const ahead = (lng: number) => ((dir * (phiFacing(lng) - phi)) % TAU + TAU) % TAU;
+
+  // The next city the spin will bring round, whichever way the globe is turning.
+  function nextInSpin() {
+    const others = pins.filter(pin => pin.index !== current);
+    return others.reduce((best, pin) => ahead(pin.lng) < ahead(best.lng) ? pin : best).index;
   }
 
   function select(index: number, manual: boolean) {
@@ -162,11 +179,12 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     const targetPhi = phiFacing(pin.lng);
     transition = canMove ? {
       startPhi: phi,
-      deltaPhi: angleDelta(targetPhi, phi),
+      deltaPhi: manual ? angleDelta(targetPhi, phi) : dir * ahead(pin.lng),
       startTheta: theta,
       targetTheta: toRad(pin.lat),
       startTime: performance.now(),
     } : null;
+    velocity = 0;
     if (!canMove) {
       phi = targetPhi;
       theta = toRad(pin.lat);
@@ -175,6 +193,48 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     wake();
     if (manual) scheduleAutoplay();
   }
+
+  // Grab and turn the globe. Horizontal drags spin it, vertical ones tilt it (mouse and pen; touch keeps vertical scrolling).
+  sphere.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    dragged = false;
+    drag = { id: event.pointerId, x: event.clientX, y: event.clientY, t: event.timeStamp, moved: false, turned: 0 };
+  });
+  sphere.addEventListener('pointermove', event => {
+    if (!drag || event.pointerId !== drag.id) return;
+    const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+    if (!drag.moved) {
+      if (Math.hypot(dx, dy) < DRAG_SLOP) return;
+      drag.moved = true;
+      transition = null;
+      sphere.setPointerCapture(event.pointerId);
+      sphere.dataset.dragging = '';
+    }
+    const radius = R * height / 2, dt = Math.max(1, event.timeStamp - drag.t) / 1000;
+    const turn = dx / radius;
+    phi += turn;
+    theta = clamp(theta + dy / radius, -1.2, 1.2);
+    velocity = velocity * 0.6 + (turn / dt) * 0.4;
+    drag = { ...drag, x: event.clientX, y: event.clientY, t: event.timeStamp, turned: drag.turned + turn };
+    render();
+  });
+  const endDrag = (event: PointerEvent) => {
+    if (!drag || event.pointerId !== drag.id) return;
+    if (drag.moved) {
+      dragged = true;
+      delete sphere.dataset.dragging;
+      // The globe keeps turning the way it was dragged; a flick (released while moving) carries momentum.
+      if (Math.abs(drag.turned) > 0.02) dir = Math.sign(drag.turned);
+      velocity = canMove && event.timeStamp - drag.t < 120 ? clamp(velocity, -3, 3) : 0;
+    }
+    drag = null;
+    wake();
+    scheduleAutoplay();
+  };
+  sphere.addEventListener('pointerup', endDrag);
+  sphere.addEventListener('pointercancel', endDrag);
+  // A drag that ends on a pin is not a click on it.
+  sphere.addEventListener('click', event => { if (dragged) { event.stopPropagation(); dragged = false; } }, true);
 
   root.querySelector('[data-prev]')?.addEventListener('click', () => select((current + reviews.length - 1) % reviews.length, true));
   root.querySelector('[data-next]')?.addEventListener('click', () => select((current + 1) % reviews.length, true));

@@ -1,3 +1,9 @@
+import type { ImageMetadata } from "astro";
+import brettSmith from "@/assets/testimonials/brett-smith.webp";
+import reneSamson from "@/assets/testimonials/rene-samson.png";
+import shiloAbramovicz from "@/assets/testimonials/shilo-abramovicz.jpg";
+import ronnaLichtenberg from "@/assets/testimonials/ronna-lichtenberg.jpg";
+
 export const FIVERR_INBOX_URL = "https://www.fiverr.com/inbox/emmaki";
 export const FIVERR_PROFILE_URL = "https://www.fiverr.com/emmaki";
 
@@ -83,14 +89,14 @@ export const SERVICES = [
   "Fiverr Optimization",
 ];
 
-// photo: a square headshot in public/testimonials, at least 3x its 56px display size. about: who the
+// photo: a headshot in src/assets/testimonials, at least 3x its 56px display size; renders through <Picture>. about: who the
 // client is, one line shown in mono under the name (after bymonolog.com).
 export type Testimonial = {
   quote: string;
   name: string;
   role: string;
   company: string;
-  photo?: string;
+  photo?: ImageMetadata;
   about?: string;
   city?: string;
   country?: string;
@@ -106,7 +112,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Brett Smith",
     role: "Founder & Principal Consultant",
     company: "Cumulus Vision",
-    photo: "brett-smith.webp",
+    photo: brettSmith,
     about: "A San Francisco Salesforce partner with 100+ clients since 2012.",
     city: "San Francisco",
     country: "us",
@@ -118,7 +124,8 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "René Samson",
     role: "Founder & CEO",
     company: "Samson Digital",
-    city: "Isle Madame, Nova Scotia",
+    photo: reneSamson,
+    city: "Nova Scotia",
     country: "ca",
     lat: 45.51,
     lng: -60.99,
@@ -128,6 +135,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Shilo Abramovicz",
     role: "AI Engineer Lead",
     company: "Fiverr",
+    photo: shiloAbramovicz,
     city: "Tel Aviv",
     country: "il",
     lat: 32.08,
@@ -138,6 +146,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Ronna Lichtenberg",
     role: "Former SVP",
     company: "Prudential Securities",
+    photo: ronnaLichtenberg,
     city: "New York",
     country: "us",
     lat: 40.71,
