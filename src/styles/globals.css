@@ -894,8 +894,27 @@
 /*
  * Why me (WhyMe.astro): four squares, then three wider boxes on one-pixel rules.
  * Each figure and its label form one block. Variety comes from scale, weight and the placement of
- * that block, never from separating its parts. Hover adds a cropped Swiss poster behind it in every box but Clients backed by.
+ * that block, never from separating its parts. Tonal surfaces and static print details add depth; only the Clients halftone moves (owner, 2026-11-04).
  */
+/* Local palette: muted credentials and mineral paper keep the proof separate from the yellow brand accent. */
+.why-me-proof {
+  --why-me-sage: #34463c;
+  --why-me-sage-ink: #e3ebe2;
+  --why-me-metal: #9fa7a3;
+  --why-me-metal-shine: #c3c9c5;
+  --why-me-mineral: #d4d8d3;
+  --why-me-mineral-ink: #202823;
+  --why-me-mineral-label: #414a43;
+}
+[data-theme="light"] .why-me-proof {
+  --why-me-sage: #d5e0d3;
+  --why-me-sage-ink: #263b2e;
+  --why-me-metal: #cbd0cc;
+  --why-me-metal-shine: #e5e8e3;
+  --why-me-mineral: #e4e7e1;
+  --why-me-mineral-ink: #202823;
+  --why-me-mineral-label: #414a43;
+}
 .why-me-proof {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -905,7 +924,6 @@
   background: var(--color-line);
 }
 .why-me-proof-box {
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --poster-paper: var(--color-bg);
   position: relative;
   isolation: isolate;
@@ -917,7 +935,6 @@
   padding: 16px;
   background: var(--color-bg);
   color: var(--color-fg-max);
-  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
 }
 .why-me-proof-box:nth-child(n + 5) { grid-column: span 2; aspect-ratio: auto; min-height: 16rem; padding: 24px; }
 .why-me-proof-block {
@@ -935,11 +952,14 @@
 .why-me-proof-label { color: var(--color-fg-2); }
 
 /* 1 Top Rated Seller over Pro Verified: the square split in two by a rule across its middle, each
- * credential anchored at the bottom of its half. The row gap is twice the padding, so each half
- * keeps the box's padding against the rule. */
-.why-me-proof-box:nth-child(1) { grid-template-rows: 1fr 1fr; row-gap: 32px; }
+ * credential anchored at the bottom of its own tonal surface (owner, 2026-11-04). */
+.why-me-proof-box:nth-child(1) { grid-template-rows: 1fr 1fr; padding: 0; }
 .why-me-proof-box:nth-child(1)::after { content: ""; position: absolute; inset-inline: 0; top: 50%; z-index: 1; height: 1px; background: var(--color-line); }
-.why-me-proof-box:nth-child(1) .why-me-proof-block { gap: 8px; }
+.why-me-proof-box:nth-child(1) .why-me-proof-block { align-self: stretch; justify-content: end; gap: 8px; padding: 16px; }
+.why-me-proof-box:nth-child(1) .why-me-proof-block:first-child { --poster-paper: var(--why-me-sage); background: var(--why-me-sage); color: var(--why-me-sage-ink); }
+.why-me-proof-box:nth-child(1) .why-me-proof-block:last-child { --poster-paper: var(--why-me-metal); background: linear-gradient(125deg, var(--why-me-metal), var(--why-me-metal-shine) 48%, var(--why-me-metal)); color: var(--why-me-mineral-ink); }
+.why-me-proof-box:nth-child(1) .why-me-proof-label { color: inherit; background: none; box-shadow: none; }
+.why-me-proof-box:nth-child(1) .why-me-proof-value { text-shadow: none; }
 /* Below desktop the split square outgrows its width, so the first row sizes to it instead of to squares. */
 @media (max-width: 63.999rem) { .why-me-proof-box:nth-child(-n + 4) { aspect-ratio: auto; min-height: 11rem; } }
 .why-me-proof-box:nth-child(1) .why-me-proof-value {
@@ -955,6 +975,14 @@
   line-height: 1;
   letter-spacing: -0.06em;
 }
+/* Offset sheets stay above the Orders figure, so depth never competes with the number (owner, 2026-11-04). */
+.why-me-papers { position: absolute; top: 6%; right: 12%; width: 40%; height: 20%; pointer-events: none; transform: perspective(500px) rotateX(28deg) rotateZ(-18deg); }
+.why-me-papers span { position: absolute; inset: 0; border: 1px solid var(--color-line-strong); background: var(--color-raised); box-shadow: 0 var(--space-interface-8) var(--space-interface-16) var(--color-line-faint); }
+.why-me-papers span:nth-child(1) { transform: translate(calc(-1 * var(--space-interface-16)), var(--space-interface-16)); }
+.why-me-papers span:nth-child(2) { transform: translate(calc(-1 * var(--space-interface-8)), var(--space-interface-8)); }
+.why-me-papers span:nth-child(3) { background: repeating-linear-gradient(0deg, transparent 0 calc(var(--space-interface-12) - 1px), var(--color-line) calc(var(--space-interface-12) - 1px) var(--space-interface-12)) center / 65% 60% no-repeat, var(--color-surface); }
+/* The resting matrix occupies only the top corner; the existing hover canvas stays untouched. */
+.why-me-proof-box:nth-child(3)::before { content: ""; position: absolute; top: 8%; right: 8%; width: 40%; height: 28%; background: radial-gradient(circle, var(--color-line-solid) 1px, transparent 1px) 0 0 / 8px 8px; mask-image: linear-gradient(135deg, transparent, var(--color-fg-max)); }
 /* 3 Clients: a lighter, smaller figure, with its own label directly below. */
 .why-me-proof-box:nth-child(3) .why-me-proof-value {
   font-size: 30cqw;
@@ -970,8 +998,12 @@
   line-height: 1.15;
   letter-spacing: -0.06em;
 }
-/* 6 Tel Aviv: a compact sentence and date, read together in the middle. */
-.why-me-proof-box:nth-child(6) .why-me-proof-block { align-self: center; transform-origin: left center; }
+/* A quiet registration strip suggests elapsed time without inventing milestone claims. */
+.why-me-proof-box:nth-child(4)::after { content: ""; position: absolute; inset-inline: 24px; bottom: 24px; height: 24px; border-bottom: 1px solid var(--color-line-strong); background: repeating-linear-gradient(90deg, var(--color-line-solid) 0 1px, transparent 1px calc(100% / 12)); }
+.why-me-proof-box:nth-child(4) { padding-bottom: calc(3 * var(--space-interface-24)); }
+.why-me-city { position: relative; align-self: start; justify-self: end; font: 600 clamp(3rem, 27cqw, 6rem)/1 var(--font-display); letter-spacing: -0.06em; color: var(--color-line-solid); pointer-events: none; }
+/* 6 Tel Aviv: the city sits above the sentence; the sentence and date stay together. */
+.why-me-proof-box:nth-child(6) .why-me-proof-block { align-self: end; transform-origin: left center; }
 .why-me-proof-box:nth-child(6) .why-me-proof-value {
   max-width: 20ch;
   font-size: clamp(1.5rem, 7.5cqw, 2rem);
@@ -979,6 +1011,8 @@
   line-height: 1.15;
   letter-spacing: -0.015em;
 }
+.why-me-proof-box:nth-child(7) { --poster-paper: var(--color-bg-2); background: var(--poster-paper); }
+.why-me-proof-quote::before { content: ""; width: 32px; border-top: 2px solid var(--color-fg-2); }
 /* 7 Quote: quote, then a vertical attribution with the client's square portrait. */
 .why-me-proof-quote { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
 .why-me-proof-box:nth-child(7) .why-me-proof-value {
@@ -1004,33 +1038,26 @@
   border-radius: var(--shape-control-radius);
   object-fit: cover;
   filter: grayscale(1);
-  transition: filter 0.2s var(--ease);
 }
 
-/* 5 Clients backed by: one flush-left group anchored bottom-left (owner, 2026-11-04), so the row
- * steps bottom, middle, top across Clients, Tel Aviv and the quote: a heading at the quote's size,
- * then the investor logos and their note 24px below. The logos are smaller than the client strip's
- * and grayscale, like the testimonial portrait, with no hover change (owner, 2026-11-04). */
-.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; align-self: end; gap: 24px; min-width: 0; }
+/* 5 Clients backed by: the wider mineral tile reserves two rows for eight logos. The heading stays
+ * above the growing logo group; grayscale wordmarks keep the proof quiet (owner, 2026-11-04). */
+.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; align-self: stretch; justify-content: space-between; width: 100%; gap: 24px; min-width: 0; }
 .why-me-proof-box:nth-child(5) .why-me-proof-value {
   font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
-.why-me-backers-group { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: start; gap: 20px 40px; }
+.why-me-backers-group { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.why-me-backers { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: 32px; }
 .why-me-backers li { display: flex; align-items: center; }
-.why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: grayscale(1); }
-.why-me-backers .why-me-backer-on-light { display: none; }
-[data-theme="light"] .why-me-backers .why-me-backer-on-light { display: block; }
-[data-theme="light"] .why-me-backers .why-me-backer-on-dark { display: none; }
-
-@media (hover: hover) and (pointer: fine) {
-  .why-me-proof-box[data-accent]:hover { --poster-paper: var(--color-yellow-splash); background: var(--color-yellow-splash); color: #000; }
-  .why-me-proof-box[data-accent]:hover .why-me-proof-label { color: inherit; }
-  .why-me-proof-box:hover .why-me-proof-photo { filter: none; }
-}
+.why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: grayscale(1) brightness(0.55); }
+/* Mineral paper always uses the dark wordmarks, including in the dark theme (owner, 2026-11-04). */
+.why-me-proof-box:nth-child(5) { --poster-paper: var(--why-me-mineral); background: var(--poster-paper); color: var(--why-me-mineral-ink); }
+.why-me-proof-box:nth-child(5) .why-me-proof-label { color: var(--why-me-mineral-label); }
+.why-me-backers .why-me-backer-on-light { display: block; }
+.why-me-backers .why-me-backer-on-dark { display: none; }
 
 /* Graphics occupy an isolated, clipped layer. The type keeps its contrast through a soft halo of
  * the box's own paper that follows the letter shapes (owner, 2026-10-28: solid backing slabs behind
@@ -1046,8 +1073,6 @@
   color: var(--color-fg-max);
   opacity: 0;
 }
-/* Switch both inks together: interpolating black/white through yellow loses contrast. */
-.why-me-proof-box[data-accent] { transition: none; }
 .why-me-proof-value,
 .why-me-proof-label,
 .why-me-proof-by > span { position: relative; }
@@ -1079,7 +1104,12 @@
   .why-me-proof { grid-template-columns: repeat(12, minmax(0, 1fr)); }
   .why-me-proof-box { grid-column: span 3; padding: 24px; }
   .why-me-proof-box:nth-child(n + 5) { grid-column: span 4; min-height: 22rem; padding: 32px; }
-  .why-me-proof-box:nth-child(1) { row-gap: 48px; }
+  .why-me-proof-box:nth-child(1) { padding: 0; }
+  .why-me-proof-box:nth-child(1) .why-me-proof-block { padding: 24px; }
+  .why-me-proof-box:nth-child(5) { grid-column: span 6; }
+  .why-me-proof-box:nth-child(6), .why-me-proof-box:nth-child(7) { grid-column: span 3; padding: 24px; }
+  .why-me-backers { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .why-me-proof-box:nth-child(6) .why-me-proof-value { font-size: clamp(1.25rem, 7.5cqw, 2rem); }
 }
 
 /*
