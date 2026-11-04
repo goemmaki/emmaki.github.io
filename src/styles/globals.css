@@ -1007,19 +1007,19 @@
   transition: filter 0.2s var(--ease);
 }
 
-/* 5 Clients backed by: built like the quote beside it, a heading at the quote's size on the top-left
- * edge, then the investor logos and their note as one group 24px below, leaving the bottom open. The logos are
+/* 5 Clients backed by: one flush-right group anchored in the bottom-right corner (owner, 2026-11-04):
+ * a heading at the quote's size, then the investor logos and their note 24px below. The logos are
  * smaller than the client strip's: monochrome at rest, their own colors while the box is hovered. */
-.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; min-width: 0; }
+.why-me-proof-logos { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; align-self: end; justify-self: end; gap: 24px; min-width: 0; text-align: end; }
 .why-me-proof-box:nth-child(5) .why-me-proof-value {
   font-size: clamp(1.25rem, 6.8cqw, 1.625rem);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
-.why-me-backers-group { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
-.why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: start; gap: 20px 40px; }
-.why-me-backers li { display: flex; align-items: center; }
+.why-me-backers-group { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+.why-me-backers { display: grid; grid-template-columns: repeat(2, auto); align-items: center; justify-content: end; gap: 20px 40px; }
+.why-me-backers li { display: flex; align-items: center; justify-content: flex-end; }
 .why-me-backers img { height: var(--backer-height); width: auto; max-width: 100%; filter: brightness(0) invert(1); transition: filter 0.2s var(--ease); }
 .why-me-backers .why-me-backer-on-light { display: none; }
 [data-theme="light"] .why-me-backers img { filter: brightness(0); }
