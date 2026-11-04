@@ -39,15 +39,10 @@ const { gigs, ...card } = Astro.props;
     /* Exact widths, not flex shares: the opening and closing books trade the same width every frame, so the rest stay still. */
     .gig-book { position: relative; z-index: 1; flex: 0 0 var(--spine); min-width: 0; border-radius: 12px; outline-offset: 4px; transition: flex var(--book-ease); }
     .gig-book[data-open] { flex: 0 0 var(--book-open); }
-    .gig-book :global(.gig) { background: var(--book-fill); }
-    /* The open card's outline carries a short green line that runs round it (owner, 2026-11-03). */
-    .gig-book::after {
-      content: ''; position: absolute; inset: 0; padding: 1px; border-radius: inherit; pointer-events: none;
-      background: conic-gradient(from var(--beam), transparent 0 70%, var(--color-green-crisp) 90%, transparent);
-      mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); opacity: 0;
-      transition: opacity calc(0.3s * var(--pace)) ease;
-    }
-    .gig-book[data-open]::after { opacity: 1; transition-delay: calc(0.3s * var(--pace)); animation: gig-beam 4s linear infinite; }
+    /* A flex column, so the seller row's top margin never collapses into the thumbnail's: a collapsed margin made
+       the open book 10px taller than the closed ones, and the whole shelf dipped as books swapped. */
+    .gig-book :global(.gig) { display: flex; flex-direction: column; background: var(--book-fill); }
+    .gig-book :global(.gig > *) { flex: none; }
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
@@ -64,10 +59,7 @@ const { gigs, ...card } = Astro.props;
     }
     .gig-book[data-open] .gig-spine { opacity: 0; scale: 0.5; transition: opacity calc(0.2s * var(--pace)) ease, scale calc(0.3s * var(--pace)) ease; }
   }
-  @property --beam { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-  @keyframes gig-beam { to { --beam: 360deg; } }
   @media (prefers-reduced-motion: reduce) {
     .gig-book, .gig-book :global(*) { transition: none !important; }
-    .gig-book::after, .gig-book[data-open]::after { transition: none; animation: none; }
   }
 </style>
