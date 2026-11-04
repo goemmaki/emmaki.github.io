@@ -2,14 +2,14 @@
 // A replica of the owner's Fiverr gig card (reference: runtime/gig-card/reference.png, 2026-11-03), measured at
 // 1x: Fiverr's sizes, spacing, heart and light-mode colors, with a dark mode of its own; outlined, with the
 // image flush at the top and a link arrow in the corner (owner, 2026-11-03). The thumbnail is a placeholder until
-// the owner supplies one. No links yet.
+// the owner supplies one; a gig with its Fiverr image shows that instead. No links yet.
 import { Image } from 'astro:assets';
-interface Props { avatar: ImageMetadata; category: string; seller: string; badge: string; title: string; rating: string; reviews: string; price: string; extra?: string }
-const { avatar, category, seller, badge, title, rating, reviews, price, extra } = Astro.props;
+interface Props { avatar: ImageMetadata; image?: ImageMetadata; category: string; seller: string; badge: string; title: string; rating: string; reviews: string; price: string; extra?: string }
+const { avatar, image, category, seller, badge, title, rating, reviews, price, extra } = Astro.props;
 ---
 <article class="gig">
   <div class="gig-thumb">
-    <span class="gig-thumb-label" aria-hidden="true">{category}</span>
+    {image ? <Image class="gig-thumb-image" src={image} alt="" widths={[400, 800]} sizes="(min-width: 64rem) 300px, 100vw" /> : <span class="gig-thumb-label" aria-hidden="true">{category}</span>}
     <svg class="gig-heart" viewBox="0 0 24 22" aria-hidden="true"><path d="M12 20.3 3.6 12.2A5.3 5.3 0 0 1 12 5.1a5.3 5.3 0 0 1 8.4 7.1Z" /></svg>
     <span class="gig-dots" aria-hidden="true"><i data-on></i><i></i><i></i></span>
   </div>
@@ -51,6 +51,7 @@ const { avatar, category, seller, badge, title, rating, reviews, price, extra } 
   .gig-heart { position: absolute; top: 20px; right: 20px; width: 24px; height: 22px; fill: #f85d5d; stroke: #fff; stroke-width: 2; stroke-linejoin: round; }
   .gig-body { position: relative; padding: 0 12px 14px; }
   .gig-arrow { position: absolute; right: 12px; bottom: 16px; width: 18px; height: 18px; color: var(--gig-muted); }
+  .gig-thumb-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .gig-thumb-label { font-family: var(--font-body); font-size: var(--type-meta-default-size); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gig-thumb-ink); }
   .gig-dots { position: absolute; bottom: 20px; left: 50%; translate: -50% 0; display: flex; gap: 5px; }
   .gig-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgb(255 255 255 / 0.6); box-shadow: 0 0 2px rgb(0 0 0 / 0.35); }

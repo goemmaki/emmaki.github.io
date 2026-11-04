@@ -5,7 +5,7 @@
 // away and the card's text, at a fixed width so it never reflows, rises into place. Touch screens
 // and narrower windows get the plain card grid; reduced motion opens books without the animation.
 import GigCard from './GigCard.astro';
-interface Gig { category: string; title: string; reviews: string; price: string }
+interface Gig { category: string; title: string; reviews: string; price: string; image?: ImageMetadata }
 interface Props { gigs: Gig[]; avatar: ImageMetadata; seller: string; badge: string; rating: string; extra?: string }
 const { gigs, ...card } = Astro.props;
 ---
@@ -50,8 +50,8 @@ const { gigs, ...card } = Astro.props;
     /* The band grows into the thumbnail while its margin gives the same height back, so the shelf never changes height. */
     .gig-book :global(.gig-thumb) { aspect-ratio: auto; height: 96px; margin-bottom: calc(var(--thumb-open) - 96px); transition: height var(--book-ease), margin-bottom var(--book-ease); }
     .gig-book[data-open] :global(.gig-thumb) { height: var(--thumb-open); margin-bottom: 0; }
-    .gig-book :global(.gig-thumb > *) { opacity: 0; transition: opacity calc(0.2s * var(--pace)) ease; }
-    .gig-book[data-open] :global(.gig-thumb > *) { opacity: 1; transition: opacity calc(0.4s * var(--pace)) ease calc(0.3s * var(--pace)); }
+    .gig-book :global(.gig-thumb > :not(.gig-thumb-image)) { opacity: 0; transition: opacity calc(0.2s * var(--pace)) ease; }
+    .gig-book[data-open] :global(.gig-thumb > :not(.gig-thumb-image)) { opacity: 1; transition: opacity calc(0.4s * var(--pace)) ease calc(0.3s * var(--pace)); }
     .gig-book :global(.gig-body) { width: var(--book-open); opacity: 0; translate: 0 32px; transition: opacity calc(0.2s * var(--pace)) ease, translate calc(0.2s * var(--pace)) ease; }
     .gig-book[data-open] :global(.gig-body) { opacity: 1; translate: 0 0; transition: opacity calc(0.5s * var(--pace)) ease calc(0.15s * var(--pace)), translate var(--book-ease) calc(0.1s * var(--pace)); }
     /* The spine's name sits under the image band, bold and tracked, reading down from the foot. */

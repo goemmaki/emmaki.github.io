@@ -10,6 +10,8 @@ import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
 import ApproachAccordion from '../components/ApproachAccordion.astro';
 import gigAvatar from '@/assets/gig/emma.png';
+import salesCopyThumb from '@/assets/gig/sales-copy.png';
+import fiverrOptimisationThumb from '@/assets/gig/fiverr-optimisation.png';
 import { heroPortrait } from '@/lib/hero-portrait';
 import { getEntry } from 'astro:content';
 import { BRANDS } from '@/lib/content';
@@ -43,17 +45,18 @@ const approach = [
 const example = await getEntry('work', 'placeholder');
 const caseClient = BRANDS.find((brand) => brand.name === example?.data.client);
 if (!caseClient?.color) throw new Error("Home case frame needs the example case study's client and its brand color");
+// Titles, categories and prices as listed on Fiverr (Second Brain business/emmaki/fiverr/gigs/); images where a gig has one.
 const gigs = [
-  { category: 'Sales Copy', title: 'I will write sales copy for landing pages, sales pages, and funnels', reviews: '435', price: 'From $150' },
+  { category: 'Sales Copy', title: 'I will write sales copy for landing pages, sales pages, and sales funnels', reviews: '435', price: 'From $150', image: salesCopyThumb },
   { category: 'Review & Rewrite', title: 'I will rewrite and improve articles, blogs, and website content', reviews: '∞', price: 'From $100' },
   { category: 'Press Releases', title: 'I will be your press release writing expert for PR and press release content creation', reviews: '∞', price: 'From $150' },
-  { category: 'Articles & Blog Posts', title: 'I will write engaging SEO articles, do blog writing for targeted b2b and b2c marketing', reviews: '∞', price: 'From $150' },
-  { category: 'Video Scripts', title: 'I will write a high converting video sales letters, vsl, and sales page video content', reviews: '∞', price: 'From $150' },
+  { category: 'Blog Writing', title: 'I will write engaging SEO articles, do blog writing for targeted b2b and b2c marketing', reviews: '∞', price: 'From $150' },
+  { category: 'Video Scripts', title: 'I will write a high converting video sales letters, VSL, and sales page video content', reviews: '∞', price: 'From $150' },
   { category: 'Website Content', title: 'I will be your seo website content writer for website copy and website copywriting', reviews: '∞', price: 'From $250' },
   { category: 'Email Copy', title: 'I will write your email marketing campaign, sales email copywriting, newsletter writing', reviews: '∞', price: 'From $125' },
-  { category: 'AI Content Editing', title: 'I will turn ai slop into authentic thought leadership that converts', reviews: '∞', price: 'From $500' },
+  { category: 'AI Content Editing', title: 'I will turn AI slop into authentic thought leadership that converts', reviews: '∞', price: 'From $500' },
   { category: 'Ghostwriting', title: 'I will be your lead magnet writer, business ebook writer, non fiction ebook ghostwriter', reviews: '∞', price: 'From $125' },
-  { category: 'Product Descriptions', title: 'I will optimize your fiverr gig SEO and gig description for mira', reviews: '∞', price: 'From $150' },
+  { category: 'Product Descriptions', title: 'I will optimize your fiverr gig SEO and gig description for mira', reviews: '∞', price: 'From $150', image: fiverrOptimisationThumb },
 ];
 ---
 <Base>
