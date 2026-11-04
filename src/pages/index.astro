@@ -8,7 +8,7 @@ import PageClosing from '../components/PageClosing.astro';
 import HeroPoster from '../components/HeroPoster.astro';
 import CautionTape from '../components/CautionTape.astro';
 import GigShelf from '../components/GigShelf.astro';
-import ApproachAccordion from '../components/ApproachAccordion.astro';
+import ApproachStory from '../components/ApproachStory.astro';
 import gigAvatar from '@/assets/gig/emma.png';
 import salesCopyThumb from '@/assets/gig/sales-copy.png';
 import fiverrOptimisationThumb from '@/assets/gig/fiverr-optimisation.png';
@@ -53,7 +53,7 @@ const credibility = [
 ];
 // The owner's Fiverr gigs (2026-11-03), titles as on Fiverr, in the "See my services" order. Review counts
 // are ∞ until the owner has the numbers; 435 is from the Sales Copy card's screenshot.
-// My approach: the owner's copy (2026-11-04); the Luddite row's last three sentences are Claude's draft from the owner's notes.
+// My approach: the owner's copy (2026-11-04).
 const approach = [
   { title: 'I like the complicated stuff', content: "I mostly write for B2B tech and products that need explaining. People aren’t buying your innovation but something that makes the pain go away, and I connect those dots." },
   { title: 'I build things, too', content: "I build AI workflows that automate boring, repeatable processes and run my own infrastructure. I understand both the marketing and the tech, which saves everyone some time." },
@@ -62,7 +62,7 @@ const approach = [
   { title: 'You don’t have to chase me', content: "I send daily progress updates through the Fiverr inbox. I deliver on or ahead of schedule. If something goes wrong, I’ll tell you when there’s still time to fix it." },
   { title: 'I know what I don’t know', content: "Your team knows things about your business that I don’t. As an outsider, I want to hear from the builders as much as I do the marketers before I try to sell it." },
   { title: 'I judge success by outcomes', content: "Before we start work, we’ll agree on what success looks like. Once the project is live, I use those outcomes and any performance data to judge whether it worked." },
-  { title: 'I’m an unapologetic Luddite', content: "I use AI every day, but I don’t outsource creativity or judgment. I divide the labor by what humans and machines do best to save time without cutting corners that lead to slop. The AI works behind the writing, on research, admin and the workflows around a project. If you want it nowhere near your project at all, just ask. That means switching off the workflows I’ve built, so the job will take longer and cost more." },
+  { title: 'I’m an unapologetic Luddite', content: "I use AI every day, but I don’t outsource creativity or judgment. I divide the labor by what humans and machines do best to save time without cutting corners that lead to slop." },
 ];
 // Titles, categories and prices as listed on Fiverr (Second Brain business/emmaki/fiverr/gigs/); images where a gig has one.
 const gigs = [
@@ -102,10 +102,8 @@ const gigs = [
   </section>
   <TestimonialGlobe reviews={globeReviews} />
   <div class="mt-32"><WhyMe kicker="Why me" heading="A convincing pitch takes minutes. A track record takes years." {credibility} /></div>
-  <section class="shell pt-32">
-    <p class="type-meta text-fg-2 uppercase">My approach</p>
-    <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">Copywriting is only part of my job.</h2>
-    <div class="mt-12"><ApproachAccordion items={approach} /></div>
+  <section class="pt-32" aria-labelledby="approach-heading">
+    <ApproachStory items={approach} />
   </section>
   <section class="pt-32">
     <ClientSlots class="shell" />
