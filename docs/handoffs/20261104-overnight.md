@@ -15,7 +15,13 @@ Current handoff. It replaces [20261103-home-sections.md](20261103-home-sections.
 - The client logo strip is one global component; About uses Home's.
 - WebKit-only issues are ignored for now. The Lighthouse desktop-settings bug is left as is.
 
-## Later today (owner)
+## Done since (2026-11-04 afternoon)
+
+All five items below were fixed (step numbers at 4.5:1, tape `in2`, globe live reduced motion, smaller logos, lazy photos and near-loading logos), plus the Lighthouse desktop fix, unused Starwind/cobe removal, gig cards on the site's grays with real images for Sales Copy and Fiverr optimization. `design/foundation` includes it all locally; **pushing needs the owner** (this host's SSH key is refused by GitHub).
+
+Open: the AI Content Editing gig's "From $500" has no price in its Second Brain file to check against. `docs/design-system/.design-sync/` (untracked, Next-era design-sync config) is still in the primary checkout.
+
+## Later today (owner) — done, kept for the record
 
 These change how something looks; the owner will go through them:
 

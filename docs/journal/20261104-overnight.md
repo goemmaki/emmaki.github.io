@@ -35,3 +35,10 @@ First run of the rewritten `docs/checks/end-of-day.md` in full mode, through `ov
 ## Not tested
 
 Real screen readers, GPU rendering, correct desktop Lighthouse (script bug above), WebKit axe (crashed on real pages), field Web Vitals, deployed headers.
+
+## Afternoon: audit follow-ups and repo tidy (2026-11-04)
+
+- Codex (`gpt-6-luna` medium) made the remaining audit fixes; its sandbox blocked three of its commits, which Claude committed after review. Two corrections: step numbers went to full brightness (outshining the titles), so Claude set the smallest passing mix, 55% (4.74:1 light, 6.25:1 dark); and the logo-preload trigger had a scroll-listener workaround, removed.
+- Measured after: axe clean on all 8 pages, both themes, 1440 and 390, Chromium and Firefox, after the gig cards moved from Fiverr's grays to the site's (their thumbnail labels had been 3.59:1 in light). Lighthouse with real desktop settings: performance 1.00 everywhere; mobile About 0.97. Client logos 365 KB → 109 KB. On Home and About the strip sits just below the first screen, so near-loading still fetches logos at load there.
+- Sales Copy and Fiverr optimization cards show their real Fiverr images; card text now matches the listings in Second Brain.
+- The repo now holds only the site: Fiverr art and its direction moved to studio, reference screenshots deleted, stray skills rehoused (studio, Second Brain, eng-ops) after a Codex audit.
