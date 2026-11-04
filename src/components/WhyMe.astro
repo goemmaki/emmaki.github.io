@@ -10,33 +10,44 @@ type Item = Figure | Pair | Note | Quote | Logos;
 interface Props { kicker: string; heading: string; credibility: Item[] }
 const { kicker, heading, credibility } = Astro.props;
 ---
-<section class="shell">
+<section class="shell why-me-section" data-accent="green" data-icons="on">
   <p class="type-meta text-fg-2 uppercase">{kicker}</p>
   <h2 class="mt-6 max-w-[36ch] type-h2 text-fg-max">{heading}</h2>
   <ul class="why-me-proof">
     {credibility.map((c, i) => <li class="why-me-proof-box">
-      {i === 1 && <span class="why-me-papers" aria-hidden="true"><span></span><span></span><span></span></span>}
-      {i === 5 && <span class="why-me-city" aria-hidden="true">TLV</span>}
-      {i === 2 && <canvas data-halftone class="why-me-poster why-me-poster-3" aria-hidden="true"></canvas>}
-      {c.kind === 'pair' ? c.figures.map((f) => <div class="why-me-proof-block"><p class="why-me-proof-value">{f.figure}</p><p class="why-me-proof-label type-meta uppercase">{f.label}</p></div>) : c.kind === 'logos' ? <div class="why-me-proof-logos"><p class="why-me-proof-value">{c.label}</p><div class="why-me-backers-group"><ul class="why-me-backers">{c.logos.map((logo) => <li style={`--backer-height: ${logo.height}px`}><span class="sr-only">{logo.name}</span><img src={`/clients/${logo.light}`} alt="" class="why-me-backer-on-light" loading="lazy" decoding="async" /><img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark" loading="lazy" decoding="async" /></li>)}</ul><p class="why-me-proof-label type-meta uppercase">{c.note}</p></div></div> : c.kind === 'quote' ? <figure class="why-me-proof-quote"><blockquote class="why-me-proof-value">“{c.testimonial.quote}”</blockquote><figcaption class="why-me-proof-by">{c.testimonial.photo && <Picture src={c.testimonial.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[56, 112, 168]} sizes="56px" width={56} height={56} alt="" loading="lazy" decoding="async" class="why-me-proof-photo" />}<span class="flex flex-col"><span class="why-me-proof-name">{c.testimonial.name}</span><span>{c.testimonial.role}</span><span>{c.testimonial.company}</span></span></figcaption></figure> : <div class="why-me-proof-block"><p class="why-me-proof-value">{c.kind === 'note' ? c.text : c.dynamicYear ? <span data-years-since="2013">{new Date().getFullYear() - 2013}</span> : c.figure}</p><p class="why-me-proof-label type-meta uppercase">{c.label}</p></div>}
+      {i === 1 && <svg class="why-me-papers" viewBox="0 0 400 360" aria-hidden="true"><defs><linearGradient id="why-me-sheet" x1="1" y1="0" x2="0.3" y2="1"><stop stop-color="var(--color-fg-max)" stop-opacity=".22" /><stop offset="1" stop-color="var(--color-bg)" stop-opacity="0" /></linearGradient><linearGradient id="why-me-edge" x1="1" y1="0" x2=".2" y2=".9"><stop stop-color="var(--color-fg-max)" /><stop offset="1" stop-color="var(--color-fg-max)" stop-opacity="0" /></linearGradient><linearGradient id="why-me-fade" x2="0" y2="1"><stop stop-color="white" /><stop offset="1" stop-color="white" stop-opacity="0" /></linearGradient><mask id="why-me-sheet-mask"><rect width="400" height="360" fill="url(#why-me-fade)" /></mask></defs><g mask="url(#why-me-sheet-mask)">{[0, 1, 2, 3, 4].map(n => <path d={`M ${32 - n * 12} ${100 + n * 22} L ${325 - n * 12} ${8 + n * 18} L ${390 - n * 12} ${270 + n * 18} L ${90 - n * 12} ${350 + n * 18} Z`} fill="url(#why-me-sheet)" stroke={n === 0 ? "var(--why-me-accent)" : "url(#why-me-edge)"} />)}</g></svg>}
+      {i === 2 && <svg class="why-me-dots" viewBox="0 0 300 300" aria-hidden="true"><defs><linearGradient id="why-me-dot-ink" x1="0" y1="1" x2="1" y2="0"><stop stop-color="var(--color-fg-muted)" stop-opacity="0" /><stop offset=".55" stop-color="var(--why-me-accent)" stop-opacity=".35" /><stop offset="1" stop-color="var(--why-me-accent)" /></linearGradient><pattern id="why-me-matrix" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="7.5" cy="7.5" r="1.6" fill="white" /></pattern><mask id="why-me-dot-mask"><rect width="300" height="300" fill="url(#why-me-matrix)" /></mask></defs><rect width="300" height="300" fill="url(#why-me-dot-ink)" mask="url(#why-me-dot-mask)" /></svg>}
+      {i === 3 && <span class="why-me-timeline" aria-hidden="true">{Array.from({ length: 11 }, () => <span></span>)}</span>}
+      {c.kind === 'pair' ? c.figures.map((f, j) => <div class="why-me-proof-block"><svg class="why-me-credential-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">{j === 0 ? <path d="m20 2 5 4 6 1 2 6 4 5-3 6-1 6-6 2-5 4-6-3-6-1-2-6-4-5 3-6 1-6 6-2Zm-8 17 6 6 10-11" /> : <path d="M20 3 36 9c0 14-5 23-16 29C9 32 4 23 4 9L20 3Zm-8 16 6 6 10-11" />}</svg><div class="why-me-credential-copy"><p class="why-me-proof-value">{f.figure}</p><p class="why-me-proof-label type-meta uppercase">{f.label}</p></div></div>) : c.kind === 'logos' ? <div class="why-me-proof-logos"><p class="why-me-proof-value">{c.label}</p><div class="why-me-backers-group"><ul class="why-me-backers">{c.logos.map((logo) => <li style={`--backer-height: ${logo.height}px`}><span class="sr-only">{logo.name}</span><img src={`/clients/${logo.light}`} alt="" class="why-me-backer-on-light" loading="lazy" decoding="async" /><img src={`/clients/${logo.dark}`} alt="" aria-hidden="true" class="why-me-backer-on-dark" loading="lazy" decoding="async" /></li>)}</ul><p class="why-me-proof-label type-meta uppercase">{c.note}</p></div></div> : c.kind === 'quote' ? <figure class="why-me-proof-quote"><blockquote class="why-me-proof-value">“{c.testimonial.quote}”</blockquote><figcaption class="why-me-proof-by">{c.testimonial.photo && <Picture src={c.testimonial.photo} formats={['avif', 'webp']} fallbackFormat="webp" widths={[64, 128, 192]} sizes="64px" width={64} height={64} alt="" loading="lazy" decoding="async" class="why-me-proof-photo" />}<span class="flex flex-col"><span class="why-me-proof-name">{c.testimonial.name}</span><span>{c.testimonial.role}</span><span>{c.testimonial.company}</span></span></figcaption></figure> : <div class="why-me-proof-block"><p class="why-me-proof-value">{c.kind === 'note' ? c.text : c.dynamicYear ? <span data-years-since="2013">{new Date().getFullYear() - 2013}</span> : c.figure}</p><p class="why-me-proof-label type-meta uppercase">{c.label}</p></div>}
     </li>)}
   </ul>
 </section>
-<script>
-const canvas = document.querySelector<HTMLCanvasElement>('[data-halftone]');
-const box = canvas?.closest<HTMLElement>('.why-me-proof-box'); const context = canvas?.getContext('2d');
-if (canvas && box && context) {
-  const enabled = matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-  let frame = 0, active = false, entered = 0, bounds = box.getBoundingClientRect(), targetX=160, targetY=100, x=160, y=100, previous=0;
-  const stop = () => { active=false; cancelAnimationFrame(frame); frame=0; context.clearRect(0,0,320,320); };
-  const draw = (now:number) => { if(!active)return; const follow=1-Math.exp(-Math.min(now-previous,64)/85); previous=now; x+=(targetX-x)*follow; y+=(targetY-y)*follow; const elapsed=now-entered, reach=Math.min(440,24+elapsed*.55); context.clearRect(0,0,320,320); context.fillStyle=getComputedStyle(canvas).color; context.beginPath(); for(let row=0;row<23;row++)for(let column=0;column<23;column++){const px=column*15,py=row*15,distance=Math.hypot(px-x,py-y),density=Math.max(0,1-distance/reach),wave=.5+.5*Math.cos(distance/34-elapsed/1100),radius=.65+density*(2.5+wave*3.1);context.moveTo(px+radius,py);context.arc(px,py,radius,0,Math.PI*2);} context.fill(); frame=requestAnimationFrame(draw); };
-  const move=(event:PointerEvent)=>{bounds=box.getBoundingClientRect();targetX=(event.clientX-bounds.left)/bounds.width*320;targetY=(event.clientY-bounds.top)/bounds.height*320;};
-  const start=(event?:PointerEvent)=>{if(!enabled.matches||document.hidden||active)return;bounds=box.getBoundingClientRect();const ratio=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(bounds.width*ratio);canvas.height=Math.round(bounds.height*ratio);context.setTransform(canvas.width/320,0,0,canvas.height/320,0,0);if(event)move(event);x=targetX;y=targetY;active=true;previous=entered=performance.now();frame=requestAnimationFrame(draw);};
-  const refresh=()=>{stop();if(box.matches(':hover'))start();};
-  box.addEventListener('pointerenter',start);box.addEventListener('pointermove',move,{passive:true});box.addEventListener('pointerleave',stop);box.addEventListener('pointercancel',stop);enabled.addEventListener('change',refresh);document.addEventListener('visibilitychange',refresh);window.addEventListener('resize',refresh);
-}
-</script>
-<script>
-const years = document.querySelector<HTMLElement>('[data-years-since]');
-if (years) years.textContent = String(new Date().getFullYear() - Number(years.dataset.yearsSince));
+{/* Owner preview controls come out once the accent and icons are picked (2026-11-04). */}
+{import.meta.env.DEV && <aside class="why-me-switcher" aria-label="Why me preview"><fieldset><legend>Accent</legend>{['green', 'yellow'].map(value => <label><input type="radio" name="why-me-accent" value={value} checked={value === 'green'} />{value}</label>)}</fieldset><fieldset><legend>Icons</legend>{['on', 'off'].map(value => <label><input type="radio" name="why-me-icons" value={value} checked={value === 'on'} />{value}</label>)}</fieldset></aside>}
+<script is:inline>
+  // Apply query choices before paint; only the preview exposes these controls.
+  {
+    const section = document.querySelector('.why-me-section');
+    const preview = document.querySelector('.why-me-switcher');
+    if (section && preview) {
+      const query = new URLSearchParams(location.search);
+      for (const [key, values] of [['accent', ['green', 'yellow']], ['icons', ['on', 'off']]]) {
+        const value = query.get(key);
+        if (values.includes(value)) section.dataset[key] = value;
+        const input = preview.querySelector(`input[name="why-me-${key}"][value="${section.dataset[key]}"]`);
+        if (input) input.checked = true;
+      }
+      preview.addEventListener('change', event => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        const key = input.name === 'why-me-accent' ? 'accent' : 'icons';
+        section.dataset[key] = input.value;
+        const url = new URL(location.href);
+        url.searchParams.set(key, input.value);
+        history.replaceState(null, '', url);
+      });
+    }
+    const years = document.querySelector('[data-years-since]');
+    if (years) years.textContent = String(new Date().getFullYear() - Number(years.dataset.yearsSince));
+  }
 </script>
