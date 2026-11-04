@@ -97,7 +97,7 @@ const initials = (name: string) => name.split(/\s+/).map(part => part[0]).slice(
   .testimonial-name { color: var(--color-fg-max); font-weight: 500; }
   .testimonial-role { color: var(--color-fg-2); }
   .testimonial-review :global(picture) { flex: none; display: block; }
-  .testimonial-review :global(.testimonial-avatar) { flex: none; width: 56px; height: 56px; border-radius: var(--shape-control-radius); object-fit: cover; }
+  .testimonial-review :global(.testimonial-avatar) { flex: none; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
   .testimonial-initials { display: grid; place-items: center; background: var(--color-raised); color: var(--color-fg-max); font-family: var(--font-heading); font-weight: 500; }
   .testimonial-location { margin-left: auto; display: flex; align-items: center; justify-content: flex-end; gap: .5rem; color: var(--color-fg-2); text-align: right; }
   .testimonial-location img { flex: none; width: 20px; height: 15px; border: 1px solid var(--color-line); border-radius: 2px; }
