@@ -1,5 +1,7 @@
 # Session handoff: home sections (2026-11-03 evening)
 
+Superseded on 2026-11-04 by [the overnight handoff](20261104-overnight.md) for what's next; its open items still stand.
+
 Current handoff. It replaces [20261103-owner-round.md](20261103-owner-round.md) for what's next; that file keeps the round's detail.
 
 ## Owner goals and decisions
