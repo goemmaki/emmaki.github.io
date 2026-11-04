@@ -1271,7 +1271,7 @@
   letter-spacing: -0.05em;
 }
 .case-frame-quote { display: flex; flex-direction: column; justify-content: center; gap: 32px; min-width: 0; min-height: 16rem; padding: 40px; }
-.case-frame-quote blockquote { max-width: 44ch; font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.03em; }
+.case-frame-quote blockquote { max-width: 64ch; font-size: 1.25rem; line-height: 1.4; letter-spacing: -0.03em; }
 /* Avatar, person and logo share the two lines' height: 1rem and 0.875rem at 1.5 leading. */
 .case-frame-quote figcaption {
   --case-caption: calc(1.5rem + 1.3125rem);
