@@ -105,8 +105,9 @@ const portrait = await heroPortrait();
   /* The background words bleed to the window edges; everything else keeps to the gutters and the header. */
   .poster-art { position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); }
   /* The figure's box: the content width, from just under the header to the logos. Sizes inside it are
-     in container units, so the disk and portrait scale with the room they have, not with the window. */
-  .poster-figure { position: absolute; z-index: -1; left: var(--gutter); right: var(--gutter); top: calc(2 * var(--space-interface-32) + var(--space-interface-16)); bottom: 0; container-type: size; }
+     in container units, so the disk and portrait scale with the room they have, not with the window.
+     Clipped at the logos' top line: on tablets (600-959px) the disk would otherwise hang into the strip. */
+  .poster-figure { position: absolute; z-index: -1; left: var(--gutter); right: var(--gutter); top: calc(2 * var(--space-interface-32) + var(--space-interface-16)); bottom: 0; container-type: size; overflow: clip; }
   /* --d is the disk's diameter; the portrait is sized from it so the two keep one proportion at every
      size. The shoulders run off the bottom and the head stays inside the box (1.35d fits its height). */
   .poster-disk, .poster-person { --d: min(52cqw, 74cqh); }
