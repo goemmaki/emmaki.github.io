@@ -907,8 +907,6 @@
 .why-me-credential-copy p, .why-me-proof-box:nth-child(4) .why-me-proof-block p { background: var(--color-bg); box-shadow: 0 0 0 var(--space-interface-4) var(--color-bg); }
 .why-me-proof-box:first-child .why-me-proof-value { max-width: 9ch; font-size: clamp(var(--type-body-default-size), 10cqw, var(--type-heading-h2-size)); line-height: var(--type-heading-h2-leading); }
 .why-me-proof-box:first-child .why-me-proof-label { font-size: var(--type-meta-default-size); letter-spacing: 0; }
-.why-me-credential-icon { position: absolute; width: 80%; height: auto; right: -32%; top: 50%; translate: 0 -50%; color: var(--color-fg-max); opacity: .12; pointer-events: none; transition: color var(--why-me-hover-out), opacity var(--why-me-hover-out); }
-.why-me-proof-block + .why-me-proof-block .why-me-credential-icon { right: -46%; }
 .why-me-proof-box:nth-child(2) .why-me-proof-value { font-size: 36cqw; line-height: 1; letter-spacing: -.06em; }
 .why-me-proof-box:nth-child(2)::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 8%, color-mix(in srgb, var(--why-me-accent) 40%, transparent), transparent 38%); }
 .why-me-papers { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 calc(-1 * var(--space-interface-4)) var(--space-interface-8) color-mix(in srgb, var(--why-me-accent) 35%, transparent)); }
@@ -917,14 +915,14 @@
 .why-me-dots { position: absolute; top: 0; right: 6%; width: 94%; height: 85%; pointer-events: none; mask-image: linear-gradient(to bottom, var(--color-fg-max) 35%, transparent 90%), linear-gradient(to right, transparent, var(--color-fg-max) 95%); mask-composite: intersect; }
 .why-me-proof-box:nth-child(4) .why-me-proof-block { align-self: start; }
 .why-me-proof-box:nth-child(4) .why-me-proof-value { font-size: 52cqw; font-weight: 250; line-height: 1; letter-spacing: -.06em; }
-/* Keep the radar below the copy, including the wrapped mobile label (2026-11-04). */
-.why-me-radar { position: absolute; width: 100%; height: 100%; bottom: 0; right: 0; mask-image: linear-gradient(to bottom, transparent 62%, var(--color-fg-max) 82%); pointer-events: none; }
+/* 13 Years: radar rings out of the bottom-right corner, line work only, stronger the farther out (owner,
+ * 2026-11-04). 60cqw keeps the outer ring clear of the label. */
+.why-me-radar { position: absolute; right: 0; bottom: 0; width: 60cqw; height: 60cqw; overflow: visible; color: var(--color-fg-max); pointer-events: none; }
 .why-me-proof-box:nth-child(6) { background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--why-me-accent) 28%, var(--color-bg)), var(--color-bg) 95%); }
 .why-me-proof-box:nth-child(6)::before { content: ""; position: absolute; inset: 0; opacity: .32; filter: grayscale(1); pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23808080' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E"); }
 .why-me-proof-box:nth-child(6) .why-me-proof-value { max-width: 20ch; font-size: clamp(var(--type-body-lead-size), 8cqw, var(--type-heading-h2-size)); font-weight: var(--font-weight-emphasize); line-height: var(--type-heading-h3-leading); }
 .why-me-proof-quote { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: var(--space-interface-16); }
-/* Shared top rule replaces the bottom row’s empty band (owner, 2026-11-04). */
-.why-me-proof-box:nth-child(n + 5) > div, .why-me-proof-quote { align-self: stretch; border-top: var(--shape-border-width) solid var(--why-me-rule); padding-top: var(--space-interface-16); }
+.why-me-proof-box:nth-child(n + 5) > div, .why-me-proof-quote { align-self: stretch; }
 .why-me-proof-box:nth-child(6) .why-me-proof-block { justify-content: space-between; }
 .why-me-proof-box:nth-child(6) .why-me-proof-label { color: var(--color-fg-max); }
 .why-me-proof-box:nth-child(7) .why-me-proof-value { max-width: 26ch; font-size: clamp(var(--type-body-lead-size), 7.4cqw, var(--type-heading-h3-size)); font-weight: var(--font-weight-emphasize); line-height: var(--type-heading-h3-leading); }
@@ -935,26 +933,31 @@
 .why-me-proof-box:nth-child(5) .why-me-proof-value { font-size: var(--type-heading-h3-size); line-height: var(--type-heading-h3-leading); font-weight: var(--font-weight-emphasize); }
 .why-me-backers-group { display: flex; flex-direction: column; gap: var(--space-interface-24); width: 100%; }
 .why-me-backers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: var(--space-interface-24) var(--space-interface-16); }
-.why-me-backers li { position: relative; display: grid; align-items: center; justify-items: start; min-width: 0; }
-.why-me-backers img { grid-area: 1 / 1; height: var(--backer-height); width: auto; max-width: 100%; object-fit: contain; object-position: left center; filter: brightness(0) invert(1); }
+.why-me-backers li { position: relative; isolation: isolate; display: flex; align-items: center; min-width: 0; }
+/* The Home logo reel's hover, reused (site.css): additive crossfade from the white logo to its on-dark
+ * color artwork in dark mode, the filter lifting off the light artwork in light mode. Logos with no
+ * color get no copy, so nothing happens. */
+.why-me-backers img { display: block; height: var(--backer-height); width: auto; max-width: 100%; object-fit: contain; object-position: left center; mix-blend-mode: plus-lighter; filter: brightness(0) invert(1); transition: opacity var(--why-me-hover-out) ease-out; }
+.why-me-backers img.why-me-backer-color { position: absolute; inset: 0; filter: none; opacity: 0; }
 .why-me-backers .why-me-backer-on-light { display: none; }
-.why-me-backers .why-me-backer-color { opacity: 0; filter: none; transition: opacity var(--why-me-hover-out) ease-out; }
-/* The blue-only Bessemer source needs a fixed lift on black; never interpolate a logo filter. */
-.why-me-backers li:nth-child(7) .why-me-backer-color { filter: brightness(2); }
-[data-theme="light"] .why-me-backers img { filter: brightness(0); }
+[data-theme="light"] .why-me-backers img { mix-blend-mode: normal; filter: brightness(0); transition: filter .2s ease-out; }
 [data-theme="light"] .why-me-backers .why-me-backer-on-light { display: block; }
 [data-theme="light"] .why-me-backers .why-me-backer-on-dark { display: none; }
-[data-theme="light"] .why-me-backers .why-me-backer-color { filter: none; }
 @media (hover: hover) and (pointer: fine) {
+  .why-me-backers li:hover img:has(+ .why-me-backer-color) { opacity: 0; transition-duration: var(--why-me-hover-in); }
   .why-me-backers li:hover .why-me-backer-color { opacity: 1; transition-duration: var(--why-me-hover-in); }
-  .why-me-proof-box:first-child .why-me-proof-block:hover .why-me-credential-icon { color: var(--why-me-accent); opacity: 1; transition-duration: var(--why-me-hover-in); }
+  [data-theme="light"] .why-me-backers li:hover img { filter: none; }
   .why-me-proof-box:hover .why-me-proof-photo { filter: grayscale(0); transition-duration: var(--why-me-hover-in); }
 }
-@media (prefers-reduced-motion: reduce) { .why-me-backers .why-me-backer-color, .why-me-credential-icon, .why-me-proof-photo { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .why-me-backers img, .why-me-proof-photo { transition: none; } }
 /* Light stays monochrome for either preview accent (owner, 2026-11-04). */
 [data-theme="light"] .why-me-section { --why-me-accent: var(--color-fg-max); --why-me-rule: var(--color-fg-2); }
-[data-theme="light"] .why-me-papers { opacity: .65; }
-[data-theme="light"] .why-me-proof-box:nth-child(6) { background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--color-fg-max) 12%, var(--color-bg)), var(--color-bg) 95%); }
+/* On white, glows and tinted fills turn to gray smudges: the sheets keep only their edges. */
+[data-theme="light"] .why-me-proof-box:nth-child(2)::before { content: none; }
+[data-theme="light"] .why-me-papers { filter: none; }
+[data-theme="light"] .why-me-papers path { fill: none; }
+[data-theme="light"] .why-me-proof-box:nth-child(6) { background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--color-fg-max) 7%, var(--color-bg)), var(--color-bg) 80%); }
+[data-theme="light"] .why-me-proof-box:nth-child(6)::before { opacity: .22; }
 .why-me-switcher { position: fixed; right: var(--space-interface-16); bottom: var(--space-interface-16); z-index: 100; display: flex; gap: var(--space-interface-16); padding: var(--space-interface-12); border: var(--shape-border-width) solid var(--color-fg-2); background: var(--color-bg); color: var(--color-fg-max); font: var(--type-body-secondary-size)/var(--type-body-secondary-leading) var(--font-body); }
 .why-me-switcher fieldset { display: flex; gap: var(--space-interface-8); }
 .why-me-switcher label { display: flex; align-items: center; gap: var(--space-interface-4); cursor: pointer; }
