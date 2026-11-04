@@ -1,8 +1,8 @@
 ---
 // Caution tape between the client logos and the statement: the page turns from the hero's swagger to
-// the measured voice of everything below it. Two crossed strips with hazard edges, crawling in
-// opposite directions. Decorative (the next heading carries the meaning), so it is hidden from
-// assistive tech.
+// the measured voice of everything below it. Two crossed strips of flat yellow with hazard edges and
+// warning signs between the phrases, crawling in opposite directions. Decorative (the next heading
+// carries the meaning), so it is hidden from assistive tech.
 const phrase = 'Fun’s over';
 // Each half of the track must outrun the widest screen so the loop never shows a gap.
 const copies = Array.from({ length: 18 });
@@ -10,11 +10,9 @@ const copies = Array.from({ length: 18 });
 <div class="tape" data-tape aria-hidden="true">
   {[true, false].map(back => (
     <div class:list={['tape-band', back && 'tape-band--back']}>
-      <div class="tape-track">{[0, 1].map(() => <div class="tape-half">{copies.map(() => <span class="tape-item">{phrase}</span>)}</div>)}</div>
+      <div class="tape-track">{[0, 1].map(() => <div class="tape-half">{copies.map(() => <><span class="tape-item">{phrase}</span><svg class="tape-sign" viewBox="0 0 24 22"><path fill-rule="evenodd" d="M12 .5 23.5 21.5H.5ZM10.7 7.5h2.6l-.45 7.6h-1.7ZM12 16.4a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 1 0 0-2.9Z" /></svg></>)}</div>)}</div>
     </div>
   ))}
-  <!-- Ink wobble for the printed letters: a faint displacement, so the type isn't vector-perfect. -->
-  <svg class="tape-defs" width="0" height="0"><filter id="tape-ink"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="7" result="inkNoise" /><feDisplacementMap in="SourceGraphic" in2="inkNoise" scale="1.8" /></filter></svg>
 </div>
 <script>
   const tape = document.querySelector<HTMLElement>('[data-tape]');
@@ -41,19 +39,19 @@ const copies = Array.from({ length: 18 });
   .tape {
     --tape-yellow: var(--color-brand-yellow-splash); --tape-black: #000; --tape-edge: 6px;
     --tape-stripes: repeating-linear-gradient(-45deg, var(--tape-black) 0 5.657px, var(--tape-yellow) 5.657px 11.314px);
-    --tape-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     position: relative; display: grid; margin-top: calc(3 * var(--space-interface-32)); padding-block: var(--space-interface-32); overflow-x: clip;
   }
-  .tape-defs { position: absolute; }
   .tape-band { position: relative; grid-area: 1 / 1; width: 110vw; margin-left: -5vw; display: flex; height: clamp(2.75rem, 3.6vw, 3.5rem); background: var(--tape-yellow); color: var(--tape-black); overflow: hidden; rotate: -3deg; }
   /* The strip underneath is a shade darker and runs the other way. */
   .tape-band--back { rotate: 3deg; }
   .tape-band--back .tape-track { animation-direction: reverse; }
-  .tape-track { display: flex; width: max-content; background-image: var(--tape-stripes), var(--tape-stripes), var(--tape-noise); background-position: top left, bottom left, 0 0; background-size: 16px var(--tape-edge), 16px var(--tape-edge), 180px 180px; background-repeat: repeat-x, repeat-x, repeat; animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
+  .tape-track { display: flex; width: max-content; background-image: var(--tape-stripes), var(--tape-stripes); background-position: top left, bottom left; background-size: 16px var(--tape-edge), 16px var(--tape-edge); background-repeat: repeat-x, repeat-x; animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
   .tape-band:not(.tape-band--back) { filter: drop-shadow(0 3px 2px rgb(0 0 0 / 0.45)) drop-shadow(0 10px 14px rgb(0 0 0 / 0.3)); }
   .tape-band--back { filter: brightness(0.72) saturate(0.9); }
-  .tape-half { display: flex; align-items: center; filter: url(#tape-ink); }
-  .tape-item { padding-inline-end: 2.5em; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1rem, 1.45vw, 1.375rem); letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
+  .tape-half { display: flex; align-items: center; }
+  .tape-item { padding-inline-end: 1.1em; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1rem, 1.45vw, 1.375rem); letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
+  /* A black warning sign between the phrases; the ! is cut out, so the tape's yellow shows through. */
+  .tape-sign { flex: none; width: 1.35em; height: auto; margin-inline-end: 1.1em; font-size: clamp(1rem, 1.45vw, 1.375rem); fill: currentColor; translate: 0 -.05em; }
   @keyframes tape-crawl { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .tape-track { animation: none; } }
   /* Over a narrow screen ±3° barely diverges, so phones get a steeper cross. */
