@@ -3,7 +3,6 @@ import { clamp, clamp01, css, hasGpu, hasWebGL, land, landReady, project, R, rgb
 
 const PIXEL_BUDGET = 8e6;
 const SPIN = (2 * Math.PI) / 100;
-const AUTOPLAY_MS = 7000;
 const TURN_MS = 1200;
 const TAU = 2 * Math.PI;
 const SETTLE_S = 0.8; // After a flick, the spin eases back to SPIN over about this long.
@@ -21,6 +20,8 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   const reviews = [...root.querySelectorAll<HTMLElement>('[data-review]')];
   const count = root.querySelector<HTMLElement>('[data-count]')!;
   const stack = root.querySelector<HTMLElement>('[data-review-card]')!;
+  const timerLine = root.querySelector<HTMLElement>('.testimonial-timer')!;
+  const fill = () => timerLine.querySelector<HTMLElement>('[data-fill]')!;
   const pins: Pin[] = [...root.querySelectorAll<HTMLButtonElement>('[data-pin]')].map(button => {
     const lat = Number(button.dataset.lat), lng = Number(button.dataset.lng);
     return { button, lat, lng, point: unit([lat, lng]), index: Number(button.dataset.index) };
@@ -29,7 +30,7 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   const webgl = hasWebGL();
   const gpu = webgl && hasGpu();
   let canMove = gpu && !motion.matches;
-  let visible = true, held = false, autoplay = canMove, raf = 0, timer = 0, last = 0;
+  let visible = true, held = false, autoplay = canMove, raf = 0, last = 0;
   let width = 0, height = 0, dpr = 1, globe: ReturnType<typeof createDots> | null = null;
   let colors: { line: Rgb; dark: boolean } = { line: [1, 1, 1], dark: true };
   let current = 0, phi = phiFacing(pins[0].lng), theta = toRad(pins[0].lat);
@@ -145,15 +146,17 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     }
   }
 
+  // The shared fill line is the autoplay clock: it runs while autoplay is on and nothing holds it,
+  // and its animationend (7 s, in globals.css) brings the next review. Paused, it resumes where it was.
   function scheduleAutoplay() {
-    window.clearTimeout(timer);
-    if (!autoplay || held || !visible || document.hidden)
-      return;
-    timer = window.setTimeout(() => {
-      if (drag?.moved) return scheduleAutoplay();
-      select(nextInSpin(), false);
-      scheduleAutoplay();
-    }, AUTOPLAY_MS);
+    timerLine.toggleAttribute('data-off', !autoplay);
+    fill().toggleAttribute('data-held', !autoplay || held || !visible || document.hidden || Boolean(drag?.moved));
+  }
+
+  function restartFill() {
+    const next = fill().cloneNode(false) as HTMLElement;
+    fill().replaceWith(next);
+    scheduleAutoplay();
   }
 
   // How far the globe must still turn, in its spin direction, to face a longitude.
@@ -253,6 +256,7 @@ export function mountTestimonialGlobe(root: HTMLElement) {
       transition = null;
       sphere.setPointerCapture(event.pointerId);
       sphere.dataset.dragging = '';
+      scheduleAutoplay();
     }
     const radius = R * height / 2, dt = Math.max(1, event.timeStamp - drag.t) / 1000;
     const turn = dx / radius;
@@ -285,6 +289,8 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     more.addEventListener('click', () => setOpen(review, more.getAttribute('aria-expanded') !== 'true'));
   }
   new ResizeObserver(markLong).observe(stack);
+
+  timerLine.addEventListener('animationend', () => { if (autoplay) { select(nextInSpin(), false); restartFill(); } });
 
   root.querySelector('[data-prev]')?.addEventListener('click', () => select((current + reviews.length - 1) % reviews.length, true));
   root.querySelector('[data-next]')?.addEventListener('click', () => select((current + 1) % reviews.length, true));
