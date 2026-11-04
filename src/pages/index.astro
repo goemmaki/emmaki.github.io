@@ -16,6 +16,12 @@ import cannonBrooke from '@/assets/testimonials/cannon-brooke.webp';
 import { heroPortrait } from '@/lib/hero-portrait';
 import { TESTIMONIALS } from '@/lib/content';
 const portrait = await heroPortrait();
+// The globe opens on Shilo and turns west, so the first stops are the strongest run (Shilo, Antónia,
+// Mark, René, Indre); next/previous and the 01 / 11 count follow the same order as the spin.
+const globeLead = TESTIMONIALS.find((t) => t.name === 'Shilo Abramovicz');
+if (globeLead?.lng === undefined) throw new Error('The testimonial globe needs its lead review, Shilo Abramovicz, with a longitude');
+const westOf = (lng: number) => (((globeLead.lng! - lng) % 360) + 360) % 360;
+const globeReviews = [...TESTIMONIALS].sort((a, b) => westOf(a.lng!) - westOf(b.lng!));
 const links = [
   { text: 'get it', href: '/proof', metric: '00%', summary: 'Placeholder: what changed for the client', client: 'Client one' },
   { text: 'want it', href: '/proof', metric: '0 weeks', summary: 'Placeholder: what was written, and for what', client: 'Client two' },
@@ -89,7 +95,7 @@ const gigs = [
     </div>
     <div class="mt-12"><GigShelf {gigs} avatar={gigAvatar} seller="Emma R." badge="Vetted Pro" rating="5.0" extra="Offers video consultations" /></div>
   </section>
-  <TestimonialGlobe reviews={TESTIMONIALS} />
+  <TestimonialGlobe reviews={globeReviews} />
   <div class="mt-32"><WhyMe kicker="Why me" {credibility} /></div>
   <section class="shell pt-32">
     <p class="type-meta text-fg-2 uppercase">My approach</p>

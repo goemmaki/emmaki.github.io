@@ -22,6 +22,8 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   const stack = root.querySelector<HTMLElement>('[data-review-card]')!;
   const timerLine = root.querySelector<HTMLElement>('.testimonial-timer')!;
   const fill = () => timerLine.querySelector<HTMLElement>('[data-fill]')!;
+  const toggle = root.querySelector<HTMLButtonElement>('[data-autoplay]')!;
+  const card = root.querySelector<HTMLElement>('.testimonial-card')!;
   const pins: Pin[] = [...root.querySelectorAll<HTMLButtonElement>('[data-pin]')].map(button => {
     const lat = Number(button.dataset.lat), lng = Number(button.dataset.lng);
     return { button, lat, lng, point: unit([lat, lng]), index: Number(button.dataset.index) };
@@ -30,7 +32,8 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   const webgl = hasWebGL();
   const gpu = webgl && hasGpu();
   let canMove = gpu && !motion.matches;
-  let visible = true, held = false, autoplay = canMove, raf = 0, last = 0;
+  // visible: the section is on screen (the globe draws); inView: most of the card is (the review clock runs).
+  let visible = true, inView = false, autoplay = canMove, raf = 0, last = 0;
   let width = 0, height = 0, dpr = 1, globe: ReturnType<typeof createDots> | null = null;
   let colors: { line: Rgb; dark: boolean } = { line: [1, 1, 1], dark: true };
   let current = 0, phi = phiFacing(pins[0].lng), theta = toRad(pins[0].lat);
@@ -146,11 +149,16 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     }
   }
 
-  // The shared fill line is the autoplay clock: it runs while autoplay is on and nothing holds it,
-  // and its animationend (7 s, in globals.css) brings the next review. Paused, it resumes where it was.
+  // The shared fill line is the autoplay clock: its animationend (7 s, in globals.css) brings the next
+  // review. It runs only while most of the card is on screen, and holds (resuming where it was) when
+  // the visitor pauses, drags the globe or opens a long review. A pick by hand pauses it too.
   function scheduleAutoplay() {
-    timerLine.toggleAttribute('data-off', !autoplay);
-    fill().toggleAttribute('data-held', !autoplay || held || !visible || document.hidden || Boolean(drag?.moved));
+    const reading = Boolean(stack.querySelector('[data-current] [data-more][aria-expanded="true"]'));
+    timerLine.toggleAttribute('data-off', !canMove);
+    toggle.hidden = !canMove;
+    toggle.setAttribute('aria-pressed', String(!autoplay));
+    toggle.setAttribute('aria-label', autoplay ? 'Pause reviews' : 'Play reviews');
+    fill().toggleAttribute('data-held', !autoplay || !inView || document.hidden || reading || Boolean(drag?.moved));
   }
 
   function restartFill() {
@@ -238,7 +246,7 @@ export function mountTestimonialGlobe(root: HTMLElement) {
     }
     render();
     wake();
-    if (manual) scheduleAutoplay();
+    if (manual) restartFill();
   }
 
   // Grab and turn the globe. Horizontal drags spin it, vertical ones tilt it (mouse and pen; touch keeps vertical scrolling).
@@ -286,7 +294,7 @@ export function mountTestimonialGlobe(root: HTMLElement) {
 
   for (const review of reviews) {
     const more = review.querySelector<HTMLButtonElement>('[data-more]')!;
-    more.addEventListener('click', () => setOpen(review, more.getAttribute('aria-expanded') !== 'true'));
+    more.addEventListener('click', () => { setOpen(review, more.getAttribute('aria-expanded') !== 'true'); scheduleAutoplay(); });
   }
   new ResizeObserver(markLong).observe(stack);
 
@@ -297,12 +305,8 @@ export function mountTestimonialGlobe(root: HTMLElement) {
   for (const pin of pins)
     pin.button.addEventListener('click', () => select(pin.index, true));
 
-  root.addEventListener('pointerenter', () => { held = true; scheduleAutoplay(); });
-  root.addEventListener('pointerleave', () => { held = false; scheduleAutoplay(); });
-  root.addEventListener('focusin', () => { held = true; scheduleAutoplay(); });
-  root.addEventListener('focusout', event => {
-    if (!root.contains(event.relatedTarget as Node)) { held = false; scheduleAutoplay(); }
-  });
+  toggle.addEventListener('click', () => { autoplay = !autoplay; scheduleAutoplay(); });
+  new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; scheduleAutoplay(); }, { threshold: 0.6 }).observe(card);
   new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
     if (!visible) {

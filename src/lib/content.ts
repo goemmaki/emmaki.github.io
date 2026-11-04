@@ -8,7 +8,7 @@ import antoniaLukacinova from "@/assets/testimonials/antonia-lukacinova.jpg";
 import samuelRomanov from "@/assets/testimonials/samuel-romanov.jpg";
 import rooWright from "@/assets/testimonials/roo-wright.png";
 import louChalmer from "@/assets/testimonials/lou-chalmer.jpg";
-import ziahOrion from "@/assets/testimonials/ziah-orion.jpg";
+import indreRoberge from "@/assets/testimonials/indre-roberge.webp";
 import justinReckling from "@/assets/testimonials/justin-reckling.png";
 
 export const FIVERR_INBOX_URL = "https://www.fiverr.com/inbox/emmaki";
@@ -215,15 +215,15 @@ export const TESTIMONIALS: Testimonial[] = [
     lng: 144.96,
   },
   {
-    quote: "Great work! Emma went above and beyond to help us create copy for our website. We will absolutely use her again for our copywriting needs!",
-    name: "Ziah Orion",
-    role: "Founder & CEO",
-    company: "DeepGem Interactive",
-    photo: ziahOrion,
-    city: "Denver",
-    country: "us",
-    lat: 39.74,
-    lng: -104.99,
+    quote: "Let me say, I’ve been working on and off with content writers in the last 7 years and I know it can be very hard to find ones that are honestly creative and captivating with their content. I am quite picky too… But, I have to say that I simply got lucky to find Emma. She is an absolutely amazing writer! Thank you for fast and top quality content!",
+    name: "Indre Roberge",
+    role: "Co-Founder & Board Member (Operations)",
+    company: "Arc4dia",
+    photo: indreRoberge,
+    city: "Montréal",
+    country: "ca",
+    lat: 45.5,
+    lng: -73.57,
   },
   {
     quote: "We can always rely on Emma to help us put that final polish on our efforts. It’s strange how much the little details make such a big difference in how our services are explained to a future client. We’re always confident that the copy is as fine-tuned as it possibly can be with her services, which brings some peace of mind in the chaotic world of marketing.",
