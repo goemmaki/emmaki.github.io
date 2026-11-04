@@ -123,6 +123,7 @@ export function hasGpu() {
 
 export type GlobeHandle = {
   setVisible(value: boolean): void;
+  setReducedMotion(value: boolean, canSpin: boolean): void;
   refreshTheme(): void;
 };
 
@@ -268,7 +269,8 @@ export function mountGlobe(root: HTMLElement, opts: { intro: boolean; spin: bool
     drawCrete(v);
   }
 
-  const moving = () => shaderPending || !introDone() || opts.spin;
+  let reducedMotion = false;
+  const moving = () => !reducedMotion && (shaderPending || !introDone() || opts.spin);
 
   function tick(ms: number) {
     raf = 0;
@@ -335,6 +337,20 @@ export function mountGlobe(root: HTMLElement, opts: { intro: boolean; spin: bool
         cancelAnimationFrame(raf);
         raf = 0;
         last = 0;
+      }
+    },
+    setReducedMotion(value, canSpin) {
+      reducedMotion = value;
+      if (value) {
+        opts.spin = false;
+        clock = INTRO_SECONDS;
+        cancelAnimationFrame(raf);
+        raf = 0;
+        last = 0;
+        render();
+      } else {
+        opts.spin = canSpin;
+        wake();
       }
     },
     refreshTheme() {

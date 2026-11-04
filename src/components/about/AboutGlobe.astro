@@ -105,12 +105,13 @@
       root.dataset.noWebgl = '';
     else {
       const compact = matchMedia('(width < 1100px), (pointer: coarse)').matches;
-      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const motion = matchMedia('(prefers-reduced-motion: reduce)');
       // Without a graphics card the globe is a still, facing Europe with Crete in view.
       const gpu = hasGpu();
       if (compact)
         root.dataset.compact = '';
-      const globe = mountGlobe(root, { intro: gpu && !compact && !reduced, spin: gpu && !reduced });
+      const globe = mountGlobe(root, { intro: gpu && !compact && !motion.matches, spin: gpu && !motion.matches });
+      motion.addEventListener('change', event => globe.setReducedMotion(event.matches, gpu));
       new IntersectionObserver(([entry]) => globe.setVisible(entry.isIntersecting)).observe(root);
       new MutationObserver(() => globe.refreshTheme()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     }
