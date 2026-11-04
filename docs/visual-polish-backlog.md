@@ -52,3 +52,4 @@ Open items: 1–8, 11, 13–16 and 19 (12 awaiting the owner's Chrome check; 17 
 
 - Home hero at very wide screens (2560): the disk and portrait sit low. Revisit when the owner's real photos replace the AI stand-in.
 - About globe: design real controls; the Globedots review slider and Starwind popover experiments were dropped.
+- Gig card link arrow (owner, 2026-11-04): "a little too low and close to the edge. It does not feel like it sits deliberately in the card." Now 24px, bottom-right on the 12px inset, bottom-aligned with the video row (`GigCard.astro`). Not today.
