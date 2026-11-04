@@ -1,50 +1,31 @@
 ---
-// Caution tape between the client logos and the statement: the page turns from the hero's swagger to
-// the measured voice of everything below it. Two crossed strips of flat yellow with hazard edges and
-// warning signs between the phrases. Decorative (the next heading
-// carries the meaning), so it is hidden from assistive tech.
+// Caution tape between the client logos and the statement: two crossed strips sway in a breeze,
+// carrying the page from the hero's swagger to the measured voice below. Decorative, so it is
+// hidden from assistive tech; the next heading carries the meaning.
 const phrase = 'Fun’s over';
-// Each half of the track must outrun the widest screen so the crawl loop never shows a gap. 18 tiles a half
-// is also three whole ripple waves (6 tiles each).
-const copies = Array.from({ length: 18 });
-// Motion trial (owner, 2026-11-04): crawl, breeze, ripple or still. The dev-only switcher picks one
-// live; remove it and the losing variants once the owner chooses.
-const motions = ['crawl', 'breeze', 'ripple', 'still'];
-const dev = import.meta.env.DEV;
+// Enough repeated tiles to cover the widest screen without a moving loop.
+const copies = Array.from({ length: 48 });
 ---
-<div class="tape" data-tape data-motion="crawl" aria-hidden="true">
+<div class="tape" data-tape aria-hidden="true">
   {[true, false].map(back => (
     <div class:list={['tape-band', back && 'tape-band--back']}>
-      <div class="tape-track">{[0, 1].map(() => <div class="tape-half">{copies.map((_, i) => <span class="tape-tile" style={`--i:${i % 6}`}><span class="tape-item">{phrase}</span><svg class="tape-sign" viewBox="0 0 24 22"><path fill-rule="evenodd" d="M12 .5 23.5 21.5H.5ZM10.7 7.5h2.6l-.45 7.6h-1.7ZM12 16.4a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 1 0 0-2.9Z" /></svg></span>)}</div>)}</div>
+      <div class="tape-track">{copies.map(() => <span class="tape-tile"><span class="tape-item">{phrase}</span><svg class="tape-sign" viewBox="0 0 24 22"><path fill-rule="evenodd" d="M12 .5 23.5 21.5H.5ZM10.7 7.5h2.6l-.45 7.6h-1.7ZM12 16.4a1.45 1.45 0 1 0 0 2.9 1.45 1.45 0 1 0 0-2.9Z" /></svg></span>)}</div>
     </div>
   ))}
 </div>
-{dev && <div class="tape-switch">{motions.map(m => <button type="button" data-tape-motion={m}>{m}</button>)}</div>}
 <script>
   const tape = document.querySelector<HTMLElement>('[data-tape]');
   if (tape) {
-    // A steady crawl speed, and tiles a whole number of hazard stripes wide, so the moving edges loop
-    // without a jump. Six tiles make one ripple wave, whose slope keeps neighbors joined.
-    const STRIPE = 16, WAVE_TILES = 6, RIPPLE_PX = 4;
-    const pace = () => {
-      const tiles = [...tape.querySelectorAll<HTMLElement>('.tape-tile')];
-      for (const t of tiles) t.style.paddingInlineEnd = '';
-      const width = tiles[0].offsetWidth, pad = (STRIPE - (width % STRIPE)) % STRIPE;
-      for (const t of tiles) t.style.paddingInlineEnd = `${pad}px`;
-      tape.style.setProperty('--tape-duration', `${tape.querySelector<HTMLElement>('.tape-half')!.offsetWidth / 40}s`);
-      // Each tile tilts to the wave's slope where it sits, so neighbors meet edge to edge.
-      tape.style.setProperty('--tape-a', `${RIPPLE_PX}px`);
-      tape.style.setProperty('--tape-k', `${Math.atan(RIPPLE_PX * 2 * Math.PI / WAVE_TILES / (width + pad))}rad`);
+    const STRIPE = 16;
+    const tiles = [...tape.querySelectorAll<HTMLElement>('.tape-tile')];
+    const alignStripes = () => {
+      for (const tile of tiles) tile.style.paddingInlineEnd = '';
+      const width = tiles[0].offsetWidth;
+      const pad = (STRIPE - (width % STRIPE)) % STRIPE;
+      for (const tile of tiles) tile.style.paddingInlineEnd = `${pad}px`;
     };
-    document.fonts.ready.then(pace).catch(error => console.error('Tape font failed to load', error));
+    document.fonts.ready.then(alignStripes).catch(error => console.error('Tape font failed to load', error));
     new IntersectionObserver(([entry]) => tape.toggleAttribute('data-paused', !entry.isIntersecting)).observe(tape);
-    const buttons = [...document.querySelectorAll<HTMLElement>('[data-tape-motion]')];
-    const pick = (motion: string) => {
-      tape.dataset.motion = motion;
-      for (const button of buttons) button.toggleAttribute('data-on', button.dataset.tapeMotion === motion);
-    };
-    for (const button of buttons) button.addEventListener('click', () => pick(button.dataset.tapeMotion!));
-    pick(new URLSearchParams(location.search).get('tape') ?? 'crawl');
   }
 </script>
 <style>
@@ -57,47 +38,23 @@ const dev = import.meta.env.DEV;
   .tape-band { --tilt: -3deg; position: relative; grid-area: 1 / 1; width: 110vw; margin-left: -5vw; display: flex; height: clamp(2.75rem, 3.6vw, 3.5rem); background: var(--tape-yellow); color: var(--tape-black); overflow: hidden; rotate: var(--tilt); }
   /* The strip underneath is a shade darker and runs the other way. */
   .tape-band--back { --tilt: 3deg; }
-  .tape-band--back .tape-track { animation-direction: reverse; }
   .tape-track { display: flex; width: max-content; }
   .tape-band:not(.tape-band--back) { filter: drop-shadow(0 3px 2px rgb(0 0 0 / 0.45)) drop-shadow(0 10px 14px rgb(0 0 0 / 0.3)); }
   .tape-band--back { filter: brightness(0.72) saturate(0.9); }
-  .tape-half { display: flex; }
-  /* Each phrase and its sign is a tile of tape carrying its own yellow and hazard edges. */
+  /* Each phrase and sign forms one tile; padding aligns the stripe pattern at tile edges. */
   .tape-tile { display: flex; align-items: center; background-color: var(--tape-yellow); background-image: var(--tape-stripes), var(--tape-stripes); background-position: top left, bottom left; background-size: 16px var(--tape-edge), 16px var(--tape-edge); background-repeat: repeat-x, repeat-x; }
   .tape-item { padding-inline-end: 1.1em; font-family: var(--font-heading); font-weight: 800; font-size: clamp(1rem, 1.45vw, 1.375rem); letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
   /* A black warning sign between the phrases; the ! is cut out, so the tape's yellow shows through. */
   .tape-sign { flex: none; width: 1.35em; height: auto; margin-inline-end: 1.1em; font-size: clamp(1rem, 1.45vw, 1.375rem); fill: currentColor; translate: 0 -.05em; }
   @media (prefers-reduced-motion: no-preference) {
-    .tape[data-motion="crawl"] .tape-track { animation: tape-crawl var(--tape-duration, 60s) linear infinite; }
-    /* Breeze: each strip lifts and settles on its own slow swell, as if the wind caught it. */
-    .tape[data-motion="breeze"] .tape-band { animation: tape-sway 3.8s ease-in-out infinite alternate; }
-    .tape[data-motion="breeze"] .tape-band--back { animation-duration: 4.6s; animation-delay: -1.7s; }
-    /* Ripple: a wave travels across each strip without a crawl. The strip goes transparent so the bent tiles
-       carry the yellow, and the shadow follows the wavy edge. */
-    .tape[data-motion="ripple"] .tape-band { background: none; overflow: visible; }
-    .tape[data-motion="ripple"] .tape-tile { animation: tape-ripple 2.6s linear infinite; animation-delay: calc((var(--i) - 6) * 2.6s / 6); }
-    .tape[data-motion="ripple"] .tape-band--back .tape-tile { animation-duration: 3.4s; animation-delay: calc((var(--i) - 6) * 3.4s / 6); }
+    .tape-band { animation: tape-sway 3.8s ease-in-out infinite alternate; }
+    .tape-band--back { animation-duration: 4.6s; animation-delay: -1.7s; }
     .tape[data-paused], .tape[data-paused] * { animation-play-state: paused; }
   }
-  @keyframes tape-crawl { to { transform: translateX(-50%); } }
   @keyframes tape-sway { from { rotate: var(--tilt); translate: 0 0; } to { rotate: calc(var(--tilt) + 0.7deg); translate: 0 -5px; } }
-  /* One sine period in eighths: the tile rises and falls, tilted with the wave's slope. */
-  @keyframes tape-ripple {
-    0%, 100% { transform: translateY(0) skewY(var(--tape-k)); }
-    12.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * .7071)); }
-    25% { transform: translateY(var(--tape-a)) skewY(0deg); }
-    37.5% { transform: translateY(calc(var(--tape-a) * .7071)) skewY(calc(var(--tape-k) * -.7071)); }
-    50% { transform: translateY(0) skewY(calc(var(--tape-k) * -1)); }
-    62.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * -.7071)); }
-    75% { transform: translateY(calc(var(--tape-a) * -1)) skewY(0deg); }
-    87.5% { transform: translateY(calc(var(--tape-a) * -.7071)) skewY(calc(var(--tape-k) * .7071)); }
-  }
   /* Over a narrow screen ±3° barely diverges, so phones get a steeper cross. */
   @media (max-width: 599px) {
     .tape-band { --tilt: -7deg; }
     .tape-band--back { --tilt: 7deg; }
   }
-  .tape-switch { position: fixed; right: 1rem; bottom: 1rem; z-index: 100; display: flex; gap: .25rem; padding: .25rem; border: 1px solid var(--color-line); border-radius: var(--shape-control-radius); background: var(--color-bg); font-family: var(--font-heading); font-size: .75rem; text-transform: uppercase; }
-  .tape-switch button { padding: .5rem .75rem; color: var(--color-fg-2); border-radius: var(--shape-control-radius); }
-  .tape-switch button[data-on] { background: var(--color-fg-max); color: var(--color-bg); }
 </style>
