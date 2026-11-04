@@ -24,7 +24,8 @@
 
 ## Next action
 
-- Latest (2026-11-03 evening): home h1, Services shelf, page order and My approach on `design/h1-options-20261103` (dev 3004): [docs/handoffs/20261103-home-sections.md](docs/handoffs/20261103-home-sections.md).
+- Latest (2026-11-04): overnight checks and the audit fixes: [docs/handoffs/20261104-overnight.md](docs/handoffs/20261104-overnight.md).
+- Earlier (2026-11-03 evening): home h1, Services shelf, page order and My approach on `design/h1-options-20261103` (dev 3004): [docs/handoffs/20261103-home-sections.md](docs/handoffs/20261103-home-sections.md).
 - Earlier (2026-11-03): owner review round on `review/overnight-20261103`, superseded by the line above for what's next: [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md).
 - Home hero and copy (2026-11-03; 2560 composition and placeholder h1 remain): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
 - The plan (page jobs, Home's sections, performance targets, measuring the Fiverr handoff, open questions): [docs/site-plan.md](docs/site-plan.md).
@@ -39,3 +40,11 @@
 - Earlier (2026-11-01): the Astro migration is merged; resume from [docs/handoffs/20261101-site-after-migration.md](docs/handoffs/20261101-site-after-migration.md). Migration record: [docs/exec-plans/20261031-astro-migration.md](docs/exec-plans/20261031-astro-migration.md); case-study material: [docs/journal/case-study-notes.md](docs/journal/case-study-notes.md).
 - Proof and Home (2026-10-29; its case-study parts are superseded by the 2026-11-02 handoff): resume from [docs/handoffs/20261029-proof-case-study.md](docs/handoffs/20261029-proof-case-study.md).
 - Home hero: resume from [docs/handoffs/20261025-home-hero.md](docs/handoffs/20261025-home-hero.md). The nib section and `/hero-lab` were deleted on 2026-10-27.
+
+# Fiverr assets
+
+Fiverr gig thumbnails and portfolio images live in `fiverr/`, not in the site code. When asked for a "Fiverr gig thumbnail", work in `fiverr/gig-thumbnails/`. When asked for a "portfolio thumbnail", "portfolio cover", or Fiverr portfolio images, work in `fiverr/portfolio-thumbnails/`. Start from the `_template/` SVGs and follow the specs and rules in `fiverr/README.md` (1280 × 769 canvas, per-template safe areas, pure black background).
+
+# Knowledge hub
+
+This repository is routed from Second Brain (`slashrepeat/second-brain`, read from `~/worktrees/second-brain/main`: `AGENTS.md`, then `CONTEXT.md`). Emmaki business facts, brand decisions, and Fiverr profile/portfolio state live there under `business/emmaki/`; do not copy them here.
