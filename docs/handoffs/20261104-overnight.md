@@ -1,5 +1,7 @@
 # Session handoff: overnight checks and morning fixes (2026-11-04)
 
+Superseded on 2026-11-05 by [the Home sections handoff](20261105-home-sections.md) for what's next; its open items still stand.
+
 Current handoff. It replaces [20261103-home-sections.md](20261103-home-sections.md) for what's next; that file keeps the home-sections detail and its open items, which still stand. History: [journal](../journal/20261104-overnight.md).
 
 ## State

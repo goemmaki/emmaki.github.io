@@ -53,3 +53,7 @@ Open items: 1–8, 11, 13–16 and 19 (12 awaiting the owner's Chrome check; 17 
 - Home hero at very wide screens (2560): the disk and portrait sit low. Revisit when the owner's real photos replace the AI stand-in.
 - About globe: design real controls; the Globedots review slider and Starwind popover experiments were dropped.
 - Gig card link arrow (owner, 2026-11-04): "a little too low and close to the edge. It does not feel like it sits deliberately in the card." Now 24px, bottom-right on the 12px inset, bottom-aligned with the video row (`GigCard.astro`). Not today.
+- Bottom blur "seems higher than it was" (owner, 2026-11-04). Measured: the geometry (53svh tall, 17svh below the window, so it starts 64% down), its 8 layers and their masks are identical to the Next build of 2026-10-29 and unchanged since the blur was added (`f5ce86cc`, 2026-10-28). Lowering it means choosing a new start (about 75%, or a temporary switcher with 64/72/80%). Owner to pick.
+- Client strip grows about 120px while it initializes (found by Codex, 2026-11-04; pre-existing).
+- Tape cut before Resources (first pass, `a0bbd0df`): it leaves a reserved but empty band of about 300px above Resources; under reduced motion the second tape is hidden instead of shown already cut; the falling halves briefly cover the Resources heading. Owner refines it.
+- My approach hover stack (first pass, `9a88ee5e`): the rotated first and last cards stick out about 24px past the content edges at rest; the card design is a placeholder.

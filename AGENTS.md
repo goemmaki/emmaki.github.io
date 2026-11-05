@@ -24,7 +24,8 @@
 
 ## Next action
 
-- Latest (2026-11-04): overnight checks and the audit fixes: [docs/handoffs/20261104-overnight.md](docs/handoffs/20261104-overnight.md).
+- Latest (2026-11-05): Home sections (bento done, approach hover stack, Resources, tape cut; next: schema map and Orwell cards): [docs/handoffs/20261105-home-sections.md](docs/handoffs/20261105-home-sections.md).
+- Earlier (2026-11-04): overnight checks and the audit fixes, superseded by the line above for what's next: [docs/handoffs/20261104-overnight.md](docs/handoffs/20261104-overnight.md).
 - Earlier (2026-11-03 evening): home h1, Services shelf, page order and My approach on `design/h1-options-20261103` (dev 3004): [docs/handoffs/20261103-home-sections.md](docs/handoffs/20261103-home-sections.md).
 - Earlier (2026-11-03): owner review round on `review/overnight-20261103`, superseded by the line above for what's next: [docs/handoffs/20261103-owner-round.md](docs/handoffs/20261103-owner-round.md).
 - Home hero and copy (2026-11-03; 2560 composition and placeholder h1 remain): [docs/handoffs/20261102-hero-poster.md](docs/handoffs/20261102-hero-poster.md).
